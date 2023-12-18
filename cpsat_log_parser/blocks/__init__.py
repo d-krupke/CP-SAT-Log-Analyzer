@@ -11,6 +11,11 @@ from .solver_response import ResponseBlock
 from .presolve_log import PresolveLogBlock
 from .initial_model import InitialModelBlock
 from .presolved_model import PresolvedModelBlock
+from .lp_stats import LpStatsBlock
+from .lp_debug import LpDebugBlock
+from .lp_dimension import LpDimensionBlock
+from .lp_pool import LpPoolBlock
+from .lp_cut import LpCutBlock
 
 __all__ = [
     "SearchProgressBlock",
@@ -26,4 +31,9 @@ __all__ = [
     "PresolveLogBlock",
     "InitialModelBlock",
     "PresolvedModelBlock",
+    "LpStatsBlock",
+    "LpDebugBlock",
+    "LpDimensionBlock",
+    "LpPoolBlock",
+    "LpCutBlock",
 ]

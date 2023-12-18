@@ -12,6 +12,11 @@ from .blocks import (
     PresolveLogBlock,
     InitialModelBlock,
     PresolvedModelBlock,
+    LpStatsBlock,
+    LpDebugBlock,
+    LpDimensionBlock,
+    LpPoolBlock,
+    LpCutBlock,
 )
 
 
@@ -47,29 +52,30 @@ def parse_blocks(log: typing.Union[str, typing.List[str]]) -> typing.List[LogBlo
     Parse a log into its blocks.
     """
     blocks = []
+    sub_parser = [
+        SolverBlock,
+        SearchProgressBlock,
+        SearchStatsBlock,
+        LnsStatsBlock,
+        SolutionRepositoriesBlock,
+        SolutionsBlock,
+        ResponseBlock,
+        ObjectiveBoundsBlock,
+        PresolveLogBlock,
+        InitialModelBlock,
+        PresolvedModelBlock,
+        LpStatsBlock,
+        LpDebugBlock,
+        LpDimensionBlock,
+        LpPoolBlock,
+        LpCutBlock,
+        LogBlock
+    ]
     for data in _split_log(log):
-        if SolverBlock.matches(data):
-            blocks.append(SolverBlock(data))
-        elif SearchProgressBlock.matches(data):
-            blocks.append(SearchProgressBlock(data))
-        elif SearchStatsBlock.matches(data):
-            blocks.append(SearchStatsBlock(data))
-        elif LnsStatsBlock.matches(data):
-            blocks.append(LnsStatsBlock(data))
-        elif SolutionRepositoriesBlock.matches(data):
-            blocks.append(SolutionRepositoriesBlock(data))
-        elif SolutionsBlock.matches(data):
-            blocks.append(SolutionsBlock(data))
-        elif ResponseBlock.matches(data):
-            blocks.append(ResponseBlock(data))
-        elif ObjectiveBoundsBlock.matches(data):
-            blocks.append(ObjectiveBoundsBlock(data))
-        elif PresolveLogBlock.matches(data):
-            blocks.append(PresolveLogBlock(data))
-        elif InitialModelBlock.matches(data):
-            blocks.append(InitialModelBlock(data))
-        elif PresolvedModelBlock.matches(data):
-            blocks.append(PresolvedModelBlock(data))
+        for parser in sub_parser:
+            if parser.matches(data):
+                blocks.append(parser(data))
+                break
         else:
-            blocks.append(LogBlock(data))
+            raise ValueError(f"Could not parse data: {data}")
     return blocks

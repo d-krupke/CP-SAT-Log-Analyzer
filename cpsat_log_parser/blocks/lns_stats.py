@@ -13,3 +13,15 @@ class LnsStatsBlock(TableBlock):
         if not lines:
             return False
         return lines[0].strip().startswith("LNS stats")
+    
+    def get_title(self) -> str:
+        return "LNS Stats"
+    
+    def get_help(self) -> typing.Optional[str]:
+        return """
+        This table gives you some statistics on the Large Neighborhood Search (LNS) strategies employed to find better solutions.
+
+        If you are mainly interested in good solutions, you can use this information
+        to determine which LNS strategies are most effective, and tell the solver to
+        use more of those strategies in parallel.
+"""

@@ -2,7 +2,7 @@ import typing
 import abc
 
 
-class LogBlock(abc.ABC):
+class LogBlock:
     def __init__(self, lines: typing.List[str]) -> None:
         self.lines = [l for l in lines if l.strip()]
 
@@ -14,3 +14,8 @@ class LogBlock(abc.ABC):
 
     def get_help(self) -> typing.Optional[str]:
         return None
+    
+    @staticmethod
+    @abc.abstractmethod
+    def matches(lines: typing.List[str]) -> bool:
+        return True
