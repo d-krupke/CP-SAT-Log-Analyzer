@@ -28,21 +28,55 @@ Initial satisfaction model '': (model_fingerprint: 0x26124a74348f784d)
 #kInterval: 48
 #kLinear1: 48
 #kNoOverlap2D: 1 (#rectangles: 24)
+
+
+```
+Initial satisfaction model '': (model_fingerprint: 0x758d3d7aad74b155)
+#Variables: 48
+  - 3 in [0,100000]
+  - 6 in [0,110000]
+  - 6 in [0,120000]
+  - 9 in [0,130000]
+  - 4 in [0,270000]
+  - 2 in [0,280000]
+  - 5 in [0,290000]
+  - 2 in [0,310000]
+  - 2 in [0,330000]
+  - 1 in [0,340000]
+  - 2 in [0,350000]
+  - 2 in [0,370000]
+  - 2 in [0,380000]
+  - 2 in [0,390000]
+#kInterval: 48
+#kLinear1: 48
+#kNoOverlap2D: 1 (#rectangles: 24)
+```
 """
 
 from .log_block import LogBlock
 import typing
-
+import re
 
 class InitialModelBlock(LogBlock):
     def __init__(self, lines: typing.List[str]) -> None:
         super().__init__(lines)
+        if not self.lines:
+            raise ValueError("No lines given")
+        if not self.matches(self.lines):
+            raise ValueError("Lines do not match")
 
     @staticmethod
     def matches(lines: typing.List[str]) -> bool:
         if not lines:
             return False
-        return lines[0].startswith("Initial optimization model")
+        if re.match(r"Initial (satisfaction|optimization) model", lines[0]):
+            return True
+        return False
+    
+    def is_optimization(self) -> bool:
+        if not self.lines:
+            return False
+        return self.lines[0].startswith("Initial optimization model")
 
     def get_title(self) -> str:
         return "Initial Optimization Model"

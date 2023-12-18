@@ -58,6 +58,7 @@ else:
         "example_logs/98_02.txt",
         "example_logs/98_03.txt",
         "example_logs/98_04.txt",
+        "example_logs/98_05.txt",
         "example_logs/97_01.txt",
     ]
     cols = st.columns(len(examples))
@@ -136,7 +137,7 @@ CP-SAT can have 5 different statuses:
         help="The time spent in presolve. This is usually a small fraction of the total time.",
     )
 
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
     col1.metric(
         label="Variables",
         value=initial_model_block.get_num_variables(),
@@ -146,6 +147,11 @@ CP-SAT can have 5 different statuses:
         label="Constraints",
         value=initial_model_block.get_num_constraints(),
         help="CP-SAT can handle (hundreds of) thousands of constraints. More important than the number is the type of constraints. Some constraints are more expensive than others. Check *Initial Optimization Model* for more information.",
+    )
+    col3.metric(
+        label="Type",
+        value="Optimization" if initial_model_block.is_optimization() else "Satisfaction",
+        help="Is the model an optimization or satisfaction model?",
     )
     # col3.metric("Model Fingerprint", value=initial_model_block.get_model_fingerprint())
 
@@ -171,7 +177,7 @@ CP-SAT can have 5 different statuses:
                 "CP-SAT returned the status `OPTIMAL`, but does not have a matching bound. This indicates a bug."
             )
 
-    if response["status"] in ("OPTIMAL", "FEASIBLE"):
+    if response["status"] in ("OPTIMAL", "FEASIBLE") and initial_model_block.is_optimization():
         st.plotly_chart(search_progress_block.as_plotly(), use_container_width=True)
 
 
