@@ -20,6 +20,7 @@ Lp dimension                                                                    
 from .tables import TableBlock
 import typing
 
+
 class LpDimensionBlock(TableBlock):
     def __init__(self, lines: typing.List[str]) -> None:
         super().__init__(lines)

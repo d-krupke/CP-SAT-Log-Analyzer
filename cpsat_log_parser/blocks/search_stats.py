@@ -13,10 +13,10 @@ class SearchStatsBlock(TableBlock):
         if not lines:
             return False
         return lines[0].strip().startswith("Search stats")
-    
+
     def get_title(self) -> str:
         return "Search Strategies: Statistics"
-    
+
     def get_help(self) -> typing.Optional[str]:
         return """
         This table gives you some statistics on the different search strategies.

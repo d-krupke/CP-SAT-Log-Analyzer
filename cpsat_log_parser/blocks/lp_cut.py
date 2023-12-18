@@ -29,6 +29,7 @@ Lp Cut             max_lp  reduced_costs  pseudo_costs  lb_tree_search  probing_
 from .tables import TableBlock
 import typing
 
+
 class LpCutBlock(TableBlock):
     def __init__(self, lines: typing.List[str]) -> None:
         super().__init__(lines)

@@ -20,8 +20,7 @@ Lp stats                      Component  Iterations  AddedCuts  OPTIMAL  DUAL_F.
 
 from .tables import TableBlock
 import typing
-import pandas as pd
-import re
+
 
 class LpStatsBlock(TableBlock):
     def __init__(self, lines: typing.List[str]) -> None:

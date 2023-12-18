@@ -75,7 +75,7 @@ def parse_blocks(log: typing.Union[str, typing.List[str]]) -> typing.List[LogBlo
         LsStatsBlock,
         ImprovingBoundsSharedBlock,
         ClausesSharedBlock,
-        LogBlock
+        LogBlock,
     ]
     for data in _split_log(log):
         for parser in sub_parser:

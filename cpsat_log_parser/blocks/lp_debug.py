@@ -20,6 +20,7 @@ Lp debug                      CutPropag  CutEqPropag  Adjust  Overflow      Bad 
 from .tables import TableBlock
 import typing
 
+
 class LpDebugBlock(TableBlock):
     def __init__(self, lines: typing.List[str]) -> None:
         super().__init__(lines)

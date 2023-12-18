@@ -11,6 +11,7 @@ Clauses shared            Num
 import typing
 from .tables import TableBlock
 
+
 class ClausesSharedBlock(TableBlock):
     def __init__(self, lines: typing.List[str]) -> None:
         super().__init__(lines)

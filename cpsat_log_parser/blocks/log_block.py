@@ -14,7 +14,7 @@ class LogBlock:
 
     def get_help(self) -> typing.Optional[str]:
         return None
-    
+
     @staticmethod
     @abc.abstractmethod
     def matches(lines: typing.List[str]) -> bool:

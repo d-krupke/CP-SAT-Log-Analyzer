@@ -20,6 +20,7 @@ Lp pool                       Constraints  Updates  Simplif  Merged  Shortened  
 from .tables import TableBlock
 import typing
 
+
 class LpPoolBlock(TableBlock):
     def __init__(self, lines: typing.List[str]) -> None:
         super().__init__(lines)

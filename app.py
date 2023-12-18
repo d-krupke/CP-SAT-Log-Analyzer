@@ -18,8 +18,12 @@ st.markdown(
     "Dive into the world of constraint programming with ease using our CP-SAT Log Analyzer. This tool transforms the dense and detailed logs of CP-SAT into clear, readable formats, complemented by intuitive visualizations of key metrics. Whether you're tuning your model or exploring data, our analyzer simplifies and enlightens your journey with CP-SAT. Let us make complex logs simple and actionable!"
 )
 
-st.markdown("[![d-krupke - CP-SAT Log Analyzer](https://img.shields.io/badge/d--krupke-CP--SAT%20Log%20Analyzer-blue?style=for-the-badge&logo=github)](https://github.com/d-krupke/CP-SAT-Log-Analyzer) Feel free to open issues or contribute.")
-st.markdown("[![d-krupke - CP-SAT Primer](https://img.shields.io/badge/d--krupke-CP--SAT%20Primer-blue?style=for-the-badge&logo=github)](https://github.com/d-krupke/cpsat-primer) This project is a sibling of the CP-SAT Primer.")
+st.markdown(
+    "[![d-krupke - CP-SAT Log Analyzer](https://img.shields.io/badge/d--krupke-CP--SAT%20Log%20Analyzer-blue?style=for-the-badge&logo=github)](https://github.com/d-krupke/CP-SAT-Log-Analyzer) Feel free to open issues or contribute."
+)
+st.markdown(
+    "[![d-krupke - CP-SAT Primer](https://img.shields.io/badge/d--krupke-CP--SAT%20Primer-blue?style=for-the-badge&logo=github)](https://github.com/d-krupke/cpsat-primer) This project is a sibling of the CP-SAT Primer."
+)
 
 
 st.header("Log File")
@@ -50,7 +54,11 @@ else:
         data = log_text
     # example logs per button
     st.markdown("Or use one of the following example logs:")
-    examples = ["example_logs/98_02.txt","example_logs/98_03.txt", "example_logs/97_01.txt"]
+    examples = [
+        "example_logs/98_02.txt",
+        "example_logs/98_03.txt",
+        "example_logs/97_01.txt",
+    ]
     cols = st.columns(len(examples))
     for i, example in enumerate(examples):
         if cols[i].button(f"Example {i+1}"):

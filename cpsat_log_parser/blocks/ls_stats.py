@@ -16,6 +16,7 @@ LS stats                   Batches  Restarts  LinMoves  GenMoves  CompoundMoves 
 from .tables import TableBlock
 import typing
 
+
 class LsStatsBlock(TableBlock):
     def __init__(self, lines: typing.List[str]) -> None:
         super().__init__(lines)
