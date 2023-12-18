@@ -19,7 +19,7 @@ st.markdown(
 )
 
 st.markdown("[![d-krupke - CP-SAT Log Analyzer](https://img.shields.io/badge/d--krupke-CP--SAT%20Log%20Analyzer-blue?style=for-the-badge&logo=github)](https://github.com/d-krupke/CP-SAT-Log-Analyzer) Feel free to open issues or contribute.")
-st.markdown("[![d-krupke - CP-SAT Primer](https://img.shields.io/badge/d--krupke-CP--SAT%20Primer-blue?style=for-the-badge&logo=github)](https://github.com/d-krupke/cpsat-primer) This project is a sister project of the CP-SAT Primer.")
+st.markdown("[![d-krupke - CP-SAT Primer](https://img.shields.io/badge/d--krupke-CP--SAT%20Primer-blue?style=for-the-badge&logo=github)](https://github.com/d-krupke/cpsat-primer) This project is a sibling of the CP-SAT Primer.")
 
 
 st.header("Log File")
