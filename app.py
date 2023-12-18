@@ -157,6 +157,10 @@ CP-SAT can have 5 different statuses:
         col3.metric(label="Gap", value="N/A", help=gap_help)
     else:
         col3.metric(label="Gap", value=f"{gap:.2f}%", help=gap_help)
+        if response["status"] == "OPTIMAL" and gap > 0:
+            st.error(
+                "CP-SAT returned the status `OPTIMAL`, but does not have a matching bound. This indicates a bug."
+            )
 
     if response["status"] in ("OPTIMAL", "FEASIBLE"):
         st.plotly_chart(search_progress_block.as_plotly(), use_container_width=True)
