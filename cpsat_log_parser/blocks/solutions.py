@@ -22,7 +22,7 @@ class SolutionsBlock(TableBlock):
     def get_title(self) -> str:
         return "Solutions"
 
-    def get_help(self) -> str | None:
+    def get_help(self) -> typing.Optional[str]:
         return """
         Which strategy found the most solutions?
         The rank indicates how good the found solutions are.
