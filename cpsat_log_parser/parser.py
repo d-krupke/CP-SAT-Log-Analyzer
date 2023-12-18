@@ -20,6 +20,7 @@ from .blocks import (
     ImprovingBoundsSharedBlock,
     ClausesSharedBlock,
     LsStatsBlock,
+    TaskTimingBlock,
 )
 
 
@@ -75,6 +76,7 @@ def parse_blocks(log: typing.Union[str, typing.List[str]]) -> typing.List[LogBlo
         LsStatsBlock,
         ImprovingBoundsSharedBlock,
         ClausesSharedBlock,
+        TaskTimingBlock,
         LogBlock,
     ]
     for data in _split_log(log):

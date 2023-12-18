@@ -10,6 +10,7 @@ from cpsat_log_parser.blocks import (
     ResponseBlock,
     PresolveLogBlock,
     InitialModelBlock,
+    TaskTimingBlock,
     PresolvedModelBlock,
 )
 
@@ -234,7 +235,14 @@ else:
                         ),
                     },
                 )
-
+        elif isinstance(block, TaskTimingBlock):
+            with st.expander(block.get_title()):
+                if block.get_help():
+                    st.info(block.get_help())
+                tab1, tab2 = st.tabs(["Table", "Raw"])
+                df = block.to_pandas()
+                tab1.dataframe(df, use_container_width=True)
+                tab2.text(str(block))
         elif isinstance(block, SolutionsBlock):
             with st.expander(block.get_title()):
                 if block.get_help():

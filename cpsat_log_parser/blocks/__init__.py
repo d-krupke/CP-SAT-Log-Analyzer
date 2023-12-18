@@ -19,6 +19,7 @@ from .lp_cut import LpCutBlock
 from .ls_stats import LsStatsBlock
 from .improving_bounds import ImprovingBoundsSharedBlock
 from .clauses_shared import ClausesSharedBlock
+from .task_timing import TaskTimingBlock
 
 __all__ = [
     "SearchProgressBlock",
@@ -42,4 +43,5 @@ __all__ = [
     "LsStatsBlock",
     "ImprovingBoundsSharedBlock",
     "ClausesSharedBlock",
+    "TaskTimingBlock",
 ]
