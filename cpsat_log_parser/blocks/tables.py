@@ -4,6 +4,7 @@ import pandas as pd
 from io import StringIO
 from .log_block import LogBlock
 
+
 class TableBlock(LogBlock):
     def __init__(self, lines: typing.List[str]) -> None:
         if not lines:
@@ -20,7 +21,7 @@ class TableBlock(LogBlock):
         log = log.replace("'", "")
 
         # Replace two or more spaces with a single tab
-        log = re.sub('\s\s+', '\t', log) 
+        log = re.sub("\s\s+", "\t", log)
 
         # Use StringIO to convert the string to a file-like object for read_csv
         log_file = StringIO(log)

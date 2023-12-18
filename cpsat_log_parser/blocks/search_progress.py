@@ -3,6 +3,7 @@ import typing
 import plotly.graph_objects as go
 from .log_block import LogBlock
 
+
 def parse_time(time: str):
     # seconds
     if re.match(r"\d+\.\d+s", time):
@@ -15,6 +16,7 @@ def parse_time(time: str):
         return float(time[:-2]) / 1000
     raise ValueError(f"Unknown time format: {time}")
 
+
 def _get_bound(match: re.Match):
     """
     Extract the bound from a match object.
@@ -22,8 +24,12 @@ def _get_bound(match: re.Match):
     """
     if "next_lb" not in match.groupdict():
         return match.group("obj")
-    bound_lb, bound_ub = int(match.group("next_lb")), int(match.group("next_ub"))
-    obj = int(match.group("obj"))
+    next_lb = match.group("next_lb")
+    next_ub = match.group("next_ub")
+    if next_lb is None or next_ub is None:
+        return match.group("obj")
+    bound_lb, bound_ub = int(next_lb), int(next_ub)
+    obj = float(match.group("obj"))
     if obj < bound_lb:
         return bound_ub  # upper bound
     else:
@@ -31,7 +37,9 @@ def _get_bound(match: re.Match):
 
 
 class BoundEvent:
-    def __init__(self, time: float, obj: typing.Optional[int], bound: int, msg: str) -> None:
+    def __init__(
+        self, time: float, obj: typing.Optional[int], bound: int, msg: str
+    ) -> None:
         self.bound = bound
         self.msg = msg
         self.time = time
@@ -41,7 +49,7 @@ class BoundEvent:
         if self.obj is None:
             return None  # unknown
         return self.bound > self.obj
-    
+
     def is_lower_bound(self):
         if self.obj is None:
             return None  # unknown
@@ -56,7 +64,10 @@ class BoundEvent:
         if m:
             obj = int(m.group("obj")) if m.group("obj") != "inf" else None
             return BoundEvent(
-                time=parse_time(m.group("time")),obj=obj, bound=_get_bound(m), msg=m.group("msg")
+                time=parse_time(m.group("time")),
+                obj=obj,
+                bound=_get_bound(m),
+                msg=m.group("msg"),
             )
         else:
             return None
@@ -68,7 +79,7 @@ class ObjEvent:
         self.obj = obj
         self.msg = msg
         self.bound = bound
-        
+
     @staticmethod
     def parse(line: str) -> typing.Optional["ObjEvent"]:
         # obj events start with # and a number
@@ -79,7 +90,7 @@ class ObjEvent:
             return ObjEvent(
                 time=parse_time(m.group("time")),
                 obj=int(m.group("obj")),
-                bound = _get_bound(m),
+                bound=_get_bound(m),
                 msg=m.group("msg"),
             )
         else:
@@ -116,10 +127,19 @@ class SearchProgressBlock(LogBlock):
                 events.append(bound_event)
                 continue
         return events
-    
+
+    def get_presolve_time(self) -> float:
+        # first line looks like this "Starting search at 16.74s with 24 workers."
+        m = re.match(
+            r"Starting search at (?P<time>\d+\.\d+s) with \d+ workers.", self.lines[0]
+        )
+        if m:
+            return parse_time(m.group("time"))
+        raise ValueError(f"Could not parse presolve time from '{self.lines[0]}'")
+
     def get_title(self) -> str:
         return "Search progress:"
-    
+
     def get_help(self) -> str | None:
         return """
         The search progress log is probably the most important part of the log.
@@ -138,36 +158,72 @@ class SearchProgressBlock(LogBlock):
         obj_events = [e for e in events if isinstance(e, ObjEvent)]
         bound_events = [e for e in events if isinstance(e, BoundEvent)]
         fig = go.Figure()
-
+        if not obj_events and not bound_events:
+            return fig
         max_time = max([e.time for e in bound_events + obj_events])
-        
+
         # make sure that both bounds and objs have a value at max_time
-        if obj_events[-1].time < max_time:
+        if obj_events and obj_events[-1].time < max_time:
             if bound_events[-1].obj is None:
                 # Should nearly never happen
-                obj_events.append(ObjEvent(time=max_time, obj=obj_events[-1].obj, bound=bound_events[-1].bound, msg=""))
+                obj_events.append(
+                    ObjEvent(
+                        time=max_time,
+                        obj=obj_events[-1].obj,
+                        bound=bound_events[-1].bound,
+                        msg="",
+                    )
+                )
             else:
-                obj_events.append(ObjEvent(time=max_time, obj=bound_events[-1].obj, bound=bound_events[-1].bound, msg=""))
-        if bound_events[-1].time < max_time:
-            bound_events.append(BoundEvent(time=max_time, obj=obj_events[-1].obj, bound=obj_events[-1].bound, msg=""))
+                obj_events.append(
+                    ObjEvent(
+                        time=max_time,
+                        obj=bound_events[-1].obj,
+                        bound=bound_events[-1].bound,
+                        msg="",
+                    )
+                )
+        if bound_events and bound_events[-1].time < max_time:
+            bound_events.append(
+                BoundEvent(
+                    time=max_time,
+                    obj=obj_events[-1].obj,
+                    bound=obj_events[-1].bound,
+                    msg="",
+                )
+            )
 
         # plot the objective values over time. Add the comment as hover text
-        fig.add_trace(go.Scatter(x=[o.time for o in obj_events], y=[o.obj for o in obj_events], mode='lines+markers', line=dict(color='green'), name='Objective', hovertext=[o.msg for o in obj_events]))
+        fig.add_trace(
+            go.Scatter(
+                x=[o.time for o in obj_events],
+                y=[o.obj for o in obj_events],
+                mode="lines+markers",
+                line=dict(color="green"),
+                name="Objective",
+                hovertext=[o.msg for o in obj_events],
+            )
+        )
 
         # plot the bounds over time. Add the comment as hover text
-        fig.add_trace(go.Scatter(x=[b.time for b in bound_events], y=[b.bound for b in bound_events], mode='lines+markers', line=dict(color='red'), name='Bound', hovertext=[b.msg for b in bound_events]))
+        fig.add_trace(
+            go.Scatter(
+                x=[b.time for b in bound_events],
+                y=[b.bound for b in bound_events],
+                mode="lines+markers",
+                line=dict(color="red"),
+                name="Bound",
+                hovertext=[b.msg for b in bound_events],
+            )
+        )
 
         # make the x-axis start at 0
-        fig.update_xaxes(range=[0, 1.01*max_time])
+        fig.update_xaxes(range=[0, 1.01 * max_time])
         fig.update_layout(
-            title='Search progress',
-            xaxis_title='Time (s)',
-            yaxis_title='Objective',
-            legend_title='Legend',
-            font=dict(
-                family="Courier New, monospace",
-                size=18,
-                color="RebeccaPurple"
-            )
+            title="Search progress",
+            xaxis_title="Time (s)",
+            yaxis_title="Objective",
+            legend_title="Legend",
+            font=dict(family="Courier New, monospace", size=18, color="RebeccaPurple"),
         )
         return fig

@@ -1,7 +1,22 @@
 import typing
-from .blocks import LogBlock, SearchProgressBlock, SearchStatsBlock, LnsStatsBlock, SolutionRepositoriesBlock, SolutionsBlock, ObjectiveBoundsBlock, SolverBlock
+from .blocks import (
+    LogBlock,
+    SearchProgressBlock,
+    SearchStatsBlock,
+    LnsStatsBlock,
+    SolutionRepositoriesBlock,
+    SolutionsBlock,
+    ObjectiveBoundsBlock,
+    SolverBlock,
+    ResponseBlock,
+    PresolveLogBlock,
+    InitialModelBlock,
+)
 
-def _split_log(log: typing.Union[typing.List[str], str]) -> typing.List[typing.List[str]]:
+
+def _split_log(
+    log: typing.Union[typing.List[str], str]
+) -> typing.List[typing.List[str]]:
     """
     Split the log into its elements. Two elements are separated by a blank line.
     """
@@ -44,8 +59,14 @@ def parse_blocks(log: typing.Union[str, typing.List[str]]) -> typing.List[LogBlo
             blocks.append(SolutionRepositoriesBlock(data))
         elif SolutionsBlock.matches(data):
             blocks.append(SolutionsBlock(data))
+        elif ResponseBlock.matches(data):
+            blocks.append(ResponseBlock(data))
         elif ObjectiveBoundsBlock.matches(data):
             blocks.append(ObjectiveBoundsBlock(data))
+        elif PresolveLogBlock.matches(data):
+            blocks.append(PresolveLogBlock(data))
+        elif InitialModelBlock.matches(data):
+            blocks.append(InitialModelBlock(data))
         else:
             blocks.append(LogBlock(data))
     return blocks

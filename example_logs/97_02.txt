@@ -1,0 +1,107 @@
+Starting CP-SAT solver v9.7.2996
+Parameters: log_search_progress: true
+Setting number of workers to 16
+
+Initial optimization model '': (model_fingerprint: 0xe6c7f45766634620)
+#Variables: 3 (#bools: 3 in objective)
+- 3 Booleans in [0,1]
+#kLinear3: 1
+
+Starting presolve at 0.00s
+[ExtractEncodingFromLinear] #potential_supersets=0 #potential_subsets=0 #at_most_one_encodings=0 #exactly_one_encodings=0 #unique_terms=0 #multiple_terms=0 #literals=0 time=5.71e-07s
+[Symmetry] Graph for symmetry has 3 nodes and 0 arcs.
+[Symmetry] Symmetry computation done. time: 7.704e-06 dtime: 1.8e-07
+[DetectDuplicateConstraints] #duplicates=0 #without_enforcements=0 time=4.799e-06s
+[DetectDominatedLinearConstraints] #relevant_constraints=0 #work_done=0 #num_inclusions=0 #num_redundant=0 time=5.01e-07s
+[ProcessSetPPC] #relevant_constraints=0 #num_inclusions=0 work=0 time=9.22e-07s
+[FindBigHorizontalLinearOverlap] #blocks=0 #saved_nz=0 #linears=0 #work_done=0/1e+09 time=3.1e-07s
+[FindBigVerticalLinearOverlap] #blocks=0 #nz_reduction=0 #work_done=0 time=1.7e-07s
+[MergeClauses] #num_collisions=0 #num_merges=0 #num_saved_literals=0 work=0/100000000 time=8.11e-07s
+[Symmetry] Graph for symmetry has 3 nodes and 0 arcs.
+[Symmetry] Symmetry computation done. time: 2.585e-06 dtime: 1.8e-07
+[DetectDuplicateConstraints] #duplicates=0 #without_enforcements=0 time=1.753e-06s
+[DetectDominatedLinearConstraints] #relevant_constraints=0 #work_done=0 #num_inclusions=0 #num_redundant=0 time=2.1e-07s
+[ProcessSetPPC] #relevant_constraints=0 #num_inclusions=0 work=0 time=3.4e-07s
+[FindBigHorizontalLinearOverlap] #blocks=0 #saved_nz=0 #linears=0 #work_done=0/1e+09 time=7e-08s
+[FindBigVerticalLinearOverlap] #blocks=0 #nz_reduction=0 #work_done=0 time=1.4e-07s
+[MergeClauses] #num_collisions=0 #num_merges=0 #num_saved_literals=0 work=0/100000000 time=2.71e-07s
+[ExpandObjective] #propagations=0 #entries=0 #tight_variables=0 #tight_constraints=0 #expands=0 #issues=0 time=1.172e-06s
+
+Presolve summary:
+- 0 affine relations were detected.
+- rule 'independent linear: solved by DP' was applied 1 time.
+- rule 'linear: divide by GCD' was applied 1 time.
+- rule 'linear: simplified rhs' was applied 1 time.
+- rule 'objective: variable not used elsewhere' was applied 3 times.
+- rule 'presolve: 3 unused variables removed.' was applied 1 time.
+- rule 'presolve: iteration' was applied 2 times.
+
+Presolved optimization model '': (model_fingerprint: 0xff7559ba82d6f157)
+#Variables: 0 ( in objective)
+
+
+Preloading model.
+#Bound   0.00s best:-inf  next:[50,50]    initial_domain
+[Symmetry] Graph for symmetry has 0 nodes and 0 arcs.
+#Model   0.00s var:0/0 constraints:0/0
+
+Starting search at 0.00s with 16 workers.
+6 full problem subsolvers: [default_lp, less_encoding, max_lp, no_lp, quick_restart, quick_restart_no_lp]
+8 first solution subsolvers: [jump, jump_decay_perturb, jump_decay_rnd_on_rst, jump_no_rst, random(2), random_quick_restart(2)]
+2 incomplete subsolvers: [feasibility_pump, rins/rens]
+2 helper subsolvers: [neighborhood_helper, synchronization_agent]
+#1       0.00s best:50    next:[]         default_lp fixed_bools:0/0
+#Done    0.00s default_lp
+#Done    0.00s less_encoding
+
+Task timing                        n [     min,      max]      avg      dev     time         n [     min,      max]      avg      dev    dtime
+'synchronization_agent':         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns
+    'neighborhood_helper':         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns
+            'default_lp':         1 [106.26us, 106.26us] 106.26us   0.00ns 106.26us         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns
+        'less_encoding':         1 [116.92us, 116.92us] 116.92us   0.00ns 116.92us         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns
+                'no_lp':         1 [ 67.20us,  67.20us]  67.20us   0.00ns  67.20us         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns
+                'max_lp':         1 [103.14us, 103.14us] 103.14us   0.00ns 103.14us         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns
+        'quick_restart':         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns
+    'quick_restart_no_lp':         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns
+    'feasibility_pump':         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns
+            'rins/rens':         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns
+
+Search stats              Bools  Conflicts  Branches  Restarts  BoolPropag  IntegerPropag
+        'default_lp':      0          0         0         0           0              1
+        'less_encoding':      0          0         0         0           0              1
+                'no_lp':      0          0         0         0           0              0
+            'max_lp':      0          0         0         0           0              0
+        'quick_restart':      0          0         0         0           0              0
+'quick_restart_no_lp':      0          0         0         0           0              0
+
+LNS stats       Improv/Calls  Closed  Difficulty  TimeLimit
+'rins/rens':           0/0      0%        0.50       0.10
+
+Solutions (1)    Num   Rank
+'default_lp':    1  [1,1]
+
+Objective bounds     Num
+'initial_domain':    1
+
+Solution repositories    Added  Queried  Ignored  Synchro
+'feasible solutions':      0        0        0        0
+        'lp solutions':      0        0        0        0
+                'pump':      0        0
+
+CpSolverResponse summary:
+status: OPTIMAL
+objective: 50
+best_bound: 50
+integers: 0
+booleans: 0
+conflicts: 0
+branches: 0
+propagations: 0
+integer_propagations: 0
+restarts: 0
+lp_iterations: 0
+walltime: 0.00280518
+usertime: 0.00280529
+deterministic_time: 0
+gap_integral: 0
+solution_fingerprint: 0x50a599cdc5daff51

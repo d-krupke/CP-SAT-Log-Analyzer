@@ -1,6 +1,9 @@
 import typing
 
-def split_log(log: typing.Union[typing.List[str], str]) -> typing.List[typing.List[str]]:
+
+def split_log(
+    log: typing.Union[typing.List[str], str]
+) -> typing.List[typing.List[str]]:
     """
     Split the log into its elements. Two elements are separated by a blank line.
     """

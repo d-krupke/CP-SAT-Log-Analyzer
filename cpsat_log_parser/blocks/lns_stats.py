@@ -1,8 +1,8 @@
 import typing
 from .tables import TableBlock
 
-class LnsStatsBlock(TableBlock):
 
+class LnsStatsBlock(TableBlock):
     def __init__(self, lines: typing.List[str]) -> None:
         super().__init__(lines)
         if not lines[0].startswith("LNS stats"):
@@ -13,4 +13,3 @@ class LnsStatsBlock(TableBlock):
         if not lines:
             return False
         return lines[0].strip().startswith("LNS stats")
-    

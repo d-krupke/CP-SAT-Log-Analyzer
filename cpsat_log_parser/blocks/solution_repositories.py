@@ -1,8 +1,8 @@
 import typing
 from .tables import TableBlock
 
-class SolutionRepositoriesBlock(TableBlock):
 
+class SolutionRepositoriesBlock(TableBlock):
     def __init__(self, lines: typing.List[str]) -> None:
         super().__init__(lines)
         if not lines[0].startswith("Solution repositories"):
@@ -13,4 +13,3 @@ class SolutionRepositoriesBlock(TableBlock):
         if not lines:
             return False
         return lines[0].strip().startswith("Solution repositories")
-    
