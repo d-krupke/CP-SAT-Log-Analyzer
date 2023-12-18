@@ -68,7 +68,7 @@ class InitialModelBlock(LogBlock):
                 n += int(line.split(":")[1].strip().split(" ")[0].replace("'", ""))
         return n
 
-    def get_help(self) -> str | None:
+    def get_help(self) -> typing.Optional[str]:
         return """
         This block gives an overview of the model before presolve.
         It contains the number of variables and constraints, as well as coefficients and domains.

@@ -46,7 +46,7 @@ class PresolvedModelBlock(LogBlock):
                 n += int(line.split(":")[1].strip().split(" ")[0].replace("'", ""))
         return n
 
-    def get_help(self) -> str | None:
+    def get_help(self) -> typing.Optional[str]:
         return """
         This is the most important block of the presolve phase and gives an overview of the model after presolve.
         It contains the number of variables and constraints, as well as coefficients and domains.

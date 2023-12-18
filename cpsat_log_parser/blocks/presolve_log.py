@@ -69,7 +69,7 @@ class PresolveLogBlock(LogBlock):
     def get_title(self) -> str:
         return "Presolve Log"
 
-    def get_help(self) -> str | None:
+    def get_help(self) -> typing.Optional[str]:
         return """
         This block contains the presolve log.
         It contains information about the presolve steps and the time they took.

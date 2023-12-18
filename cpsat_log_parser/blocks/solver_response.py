@@ -41,7 +41,7 @@ class ResponseBlock(LogBlock):
     def to_pandas(self) -> pd.DataFrame:
         return pd.DataFrame([self.to_dict()])
 
-    def get_help(self) -> str | None:
+    def get_help(self) -> typing.Optional[str]:
         return """
         This final block of the log contains a summary by the solver.
         Here you find the most important information, such as how successful the search was.
