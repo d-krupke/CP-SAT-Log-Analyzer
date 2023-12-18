@@ -74,7 +74,7 @@ class TaskTimingBlock(LogBlock):
             if deterministic:
                 return "\t".join(split_line[:1] + split_line[n // 2 + 1 :])
             else:
-                return "\t".join(split_line[: n // 2])
+                return "\t".join(split_line[: n // 2+1])
 
         lines = [filter(l) for l in lines]
         if deterministic:
