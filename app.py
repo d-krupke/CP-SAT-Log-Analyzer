@@ -18,6 +18,10 @@ st.markdown(
     "Dive into the world of constraint programming with ease using our CP-SAT Log Analyzer. This tool transforms the dense and detailed logs of CP-SAT into clear, readable formats, complemented by intuitive visualizations of key metrics. Whether you're tuning your model or exploring data, our analyzer simplifies and enlightens your journey with CP-SAT. Let us make complex logs simple and actionable!"
 )
 
+st.markdown("[![d-krupke - CP-SAT Log Analyzer](https://img.shields.io/badge/d--krupke-CP--SAT%20Log%20Analyzer-blue?style=for-the-badge&logo=github)](https://github.com/d-krupke/CP-SAT-Log-Analyzer) Feel free to open issues or contribute.")
+st.markdown("[![d-krupke - CP-SAT Primer](https://img.shields.io/badge/d--krupke-CP--SAT%20Primer-blue?style=for-the-badge&logo=github)](https://github.com/d-krupke/cpsat-primer) This project is a sister project of the CP-SAT Primer.")
+
+
 st.header("Log File")
 st.markdown(
     """
@@ -44,6 +48,10 @@ else:
     log_text = st.text_area("Or paste a log here")
     if log_text:
         data = log_text
+    # example logs per button
+    st.markdown("Or use one of the following example logs:")
+    if st.button("Example 1"):
+        data = open("example_logs/97_01.txt").read()
 
 
 def get_named_blocks(blocks) -> dict:
