@@ -50,8 +50,12 @@ else:
         data = log_text
     # example logs per button
     st.markdown("Or use one of the following example logs:")
-    if st.button("Example 1"):
-        data = open("example_logs/97_01.txt").read()
+    examples = ["example_logs/98_02.txt","example_logs/98_03.txt", "example_logs/97_01.txt"]
+    cols = st.columns(len(examples))
+    for i, example in enumerate(examples):
+        if cols[i].button(f"Example {i+1}"):
+            with open(example) as f:
+                data = f.read()
 
 
 def get_named_blocks(blocks) -> dict:
