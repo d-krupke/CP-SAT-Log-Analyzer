@@ -36,7 +36,7 @@ class ResponseBlock(LogBlock):
             bound = int(vals["best_bound"])
         except TypeError:
             return None
-        return abs(obj - bound) / max(1, abs(obj))
+        return 100*(abs(obj - bound) / max(1, abs(obj)))
 
     def to_pandas(self) -> pd.DataFrame:
         return pd.DataFrame([self.to_dict()])
