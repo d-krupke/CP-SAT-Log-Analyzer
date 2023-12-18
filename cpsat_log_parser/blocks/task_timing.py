@@ -39,6 +39,7 @@ import re
 from io import StringIO
 from .log_block import LogBlock
 
+
 class TaskTimingBlock(LogBlock):
     def __init__(self, lines: List[str]) -> None:
         super().__init__(lines)
@@ -50,14 +51,14 @@ class TaskTimingBlock(LogBlock):
         if not lines:
             return False
         return lines[0].startswith("Task timing")
-    
+
     def get_help(self) -> typing.Optional[str]:
         return "The time spent on each subsolver. Does not give much useful information for the common user."
-    
+
     def get_title(self) -> str:
         return "Task Timing"
-    
-    def to_pandas(self, deterministic: bool)->pd.DataFrame:
+
+    def to_pandas(self, deterministic: bool) -> pd.DataFrame:
         lines = [l.strip() for l in self.lines if l.strip()]
         lines = [l.replace("'", "") for l in lines]
         lines = [l.replace("[", "  ") for l in lines]
@@ -65,14 +66,16 @@ class TaskTimingBlock(LogBlock):
         lines = [l.replace(",", "  ") for l in lines]
         lines = [l.replace("\t", "  ") for l in lines]
         lines = [l.replace("s ", "s  ") for l in lines]
-        lines = [re.sub("\s\s+", "\t",l) for l in lines]
+        lines = [re.sub("\s\s+", "\t", l) for l in lines]
+
         def filter(l):
             split_line = l.split("\t")
             n = len(split_line)
             if deterministic:
-                return "\t".join(split_line[:1]+split_line[n//2+1:])
+                return "\t".join(split_line[:1] + split_line[n // 2 + 1 :])
             else:
-                return "\t".join(split_line[:n//2])
+                return "\t".join(split_line[: n // 2])
+
         lines = [filter(l) for l in lines]
         if deterministic:
             lines[0] = lines[0].replace("Task timing", "Task timing (deterministic)")

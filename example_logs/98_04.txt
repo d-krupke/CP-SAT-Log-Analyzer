@@ -8,9 +8,9 @@ Initial optimization model '': (model_fingerprint: 0x111b26c0e39f4663)
 #kLinearN: 330 (#terms: 18'000)
 
 Starting presolve at 0.00s
-  4.56e-03s  0.00e+00d  [DetectDominanceRelations] 
-  1.18e-02s  0.00e+00d  [PresolveToFixPoint] #num_loops=2 #num_dual_strengthening=1 
-  3.88e-05s  0.00e+00d  [ExtractEncodingFromLinear] #potential_supersets=300 
+  4.56e-03s  0.00e+00d  [DetectDominanceRelations]
+  1.18e-02s  0.00e+00d  [PresolveToFixPoint] #num_loops=2 #num_dual_strengthening=1
+  3.88e-05s  0.00e+00d  [ExtractEncodingFromLinear] #potential_supersets=300
 [Symmetry] Graph for symmetry has 16'260 nodes and 24'930 arcs.
 [Symmetry] Symmetry computation done. time: 0.00546832 dtime: 0.00631223
 [Symmetry] #generators: 19, average support size: 202.105
@@ -18,42 +18,42 @@ Starting presolve at 0.00s
 [Symmetry] Num fixable by binary propagation in orbit: 1 / 4
 [Symmetry] Num fixable by intersecting at_most_one with orbits: 5 largest_orbit: 4
 [Symmetry] Found orbitope of size 30 x 2
-  2.84e-02s  2.54e-02d  [Probe] #probed=17'990 
-  1.36e-03s  0.00e+00d  [MaxClique] 
-  4.49e-03s  0.00e+00d  [DetectDominanceRelations] 
-  8.93e-03s  0.00e+00d  [PresolveToFixPoint] #num_loops=1 #num_dual_strengthening=1 
-  2.14e-03s  0.00e+00d  [DetectDuplicateConstraints] 
-  1.94e-05s  0.00e+00d  [DetectDifferentVariables] 
-  1.48e-04s  2.70e-05d  [DetectDominatedLinearConstraints] #relevant_constraints=30 
-  2.66e-03s  4.50e-05d  [ProcessSetPPC] #relevant_constraints=330 
-  1.47e-05s  0.00e+00d  [FindAlmostIdenticalLinearConstraints] 
-  3.18e-04s  1.35e-03d  [FindBigHorizontalLinearOverlap] #linears=30 
-  1.16e-03s  1.36e-02d  [FindBigVerticalLinearOverlap] 
-  1.37e-05s  0.00e+00d  [MergeClauses] 
-  4.49e-03s  0.00e+00d  [DetectDominanceRelations] 
-  7.87e-03s  0.00e+00d  [PresolveToFixPoint] #num_loops=1 #num_dual_strengthening=1 
-  4.47e-03s  0.00e+00d  [DetectDominanceRelations] 
-  7.86e-03s  0.00e+00d  [PresolveToFixPoint] #num_loops=1 #num_dual_strengthening=1 
+  2.84e-02s  2.54e-02d  [Probe] #probed=17'990
+  1.36e-03s  0.00e+00d  [MaxClique]
+  4.49e-03s  0.00e+00d  [DetectDominanceRelations]
+  8.93e-03s  0.00e+00d  [PresolveToFixPoint] #num_loops=1 #num_dual_strengthening=1
+  2.14e-03s  0.00e+00d  [DetectDuplicateConstraints]
+  1.94e-05s  0.00e+00d  [DetectDifferentVariables]
+  1.48e-04s  2.70e-05d  [DetectDominatedLinearConstraints] #relevant_constraints=30
+  2.66e-03s  4.50e-05d  [ProcessSetPPC] #relevant_constraints=330
+  1.47e-05s  0.00e+00d  [FindAlmostIdenticalLinearConstraints]
+  3.18e-04s  1.35e-03d  [FindBigHorizontalLinearOverlap] #linears=30
+  1.16e-03s  1.36e-02d  [FindBigVerticalLinearOverlap]
+  1.37e-05s  0.00e+00d  [MergeClauses]
+  4.49e-03s  0.00e+00d  [DetectDominanceRelations]
+  7.87e-03s  0.00e+00d  [PresolveToFixPoint] #num_loops=1 #num_dual_strengthening=1
+  4.47e-03s  0.00e+00d  [DetectDominanceRelations]
+  7.86e-03s  0.00e+00d  [PresolveToFixPoint] #num_loops=1 #num_dual_strengthening=1
 [Symmetry] Graph for symmetry has 16'260 nodes and 24'920 arcs.
 [Symmetry] Symmetry computation done. time: 0.00263969 dtime: 0.0041113
 [Symmetry] #generators: 14, average support size: 60
 [Symmetry] 420 orbits with sizes: 2,2,2,2,2,2,2,2,2,2,...
 [Symmetry] Found orbitope of size 30 x 2
-  2.82e-02s  2.54e-02d  [Probe] #probed=17'990 
-  1.29e-03s  0.00e+00d  [MaxClique] 
-  4.50e-03s  0.00e+00d  [DetectDominanceRelations] 
-  8.44e-03s  0.00e+00d  [PresolveToFixPoint] #num_loops=1 #num_dual_strengthening=1 
-  2.14e-03s  0.00e+00d  [DetectDuplicateConstraints] 
-  1.96e-05s  0.00e+00d  [DetectDifferentVariables] 
-  1.49e-04s  2.70e-05d  [DetectDominatedLinearConstraints] #relevant_constraints=30 
-  2.68e-03s  4.50e-05d  [ProcessSetPPC] #relevant_constraints=330 
-  1.54e-05s  0.00e+00d  [FindAlmostIdenticalLinearConstraints] 
-  3.18e-04s  1.35e-03d  [FindBigHorizontalLinearOverlap] #linears=30 
-  1.16e-03s  1.36e-02d  [FindBigVerticalLinearOverlap] 
-  1.42e-05s  0.00e+00d  [MergeClauses] 
-  4.48e-03s  0.00e+00d  [DetectDominanceRelations] 
-  7.86e-03s  0.00e+00d  [PresolveToFixPoint] #num_loops=1 #num_dual_strengthening=1 
-  1.37e-03s  0.00e+00d  [ExpandObjective] 
+  2.82e-02s  2.54e-02d  [Probe] #probed=17'990
+  1.29e-03s  0.00e+00d  [MaxClique]
+  4.50e-03s  0.00e+00d  [DetectDominanceRelations]
+  8.44e-03s  0.00e+00d  [PresolveToFixPoint] #num_loops=1 #num_dual_strengthening=1
+  2.14e-03s  0.00e+00d  [DetectDuplicateConstraints]
+  1.96e-05s  0.00e+00d  [DetectDifferentVariables]
+  1.49e-04s  2.70e-05d  [DetectDominatedLinearConstraints] #relevant_constraints=30
+  2.68e-03s  4.50e-05d  [ProcessSetPPC] #relevant_constraints=330
+  1.54e-05s  0.00e+00d  [FindAlmostIdenticalLinearConstraints]
+  3.18e-04s  1.35e-03d  [FindBigHorizontalLinearOverlap] #linears=30
+  1.16e-03s  1.36e-02d  [FindBigVerticalLinearOverlap]
+  1.42e-05s  0.00e+00d  [MergeClauses]
+  4.48e-03s  0.00e+00d  [DetectDominanceRelations]
+  7.86e-03s  0.00e+00d  [PresolveToFixPoint] #num_loops=1 #num_dual_strengthening=1
+  1.37e-03s  0.00e+00d  [ExpandObjective]
 
 Presolve summary:
   - 0 affine relations were detected.

@@ -23,28 +23,28 @@ Initial satisfaction model '': (model_fingerprint: 0x375d8d958f7a6561)
 #kNoOverlap2D: 1 (#rectangles: 25)
 
 Starting presolve at 0.00s
-  1.61e-05s  0.00e+00d  [DetectDominanceRelations] 
-  1.07e-04s  0.00e+00d  [PresolveToFixPoint] #num_loops=2 #num_dual_strengthening=1 
-  1.83e-06s  0.00e+00d  [ExtractEncodingFromLinear] 
+  1.61e-05s  0.00e+00d  [DetectDominanceRelations]
+  1.07e-04s  0.00e+00d  [PresolveToFixPoint] #num_loops=2 #num_dual_strengthening=1
+  1.83e-06s  0.00e+00d  [ExtractEncodingFromLinear]
 [Symmetry] Graph for symmetry has 201 nodes and 300 arcs.
 [Symmetry] Symmetry computation done. time: 5.5143e-05 dtime: 5.931e-05
 [Symmetry] #generators: 3, average support size: 4
 [Symmetry] 6 orbits with sizes: 2,2,2,2,2,2
 [Symmetry] Found orbitope of size 2 x 2
-  1.04e-04s  5.00e-08d  [Probe] 
-  2.29e-06s  0.00e+00d  [MaxClique] 
-  1.88e-05s  0.00e+00d  [DetectDominanceRelations] 
-  7.91e-05s  0.00e+00d  [PresolveToFixPoint] #num_loops=2 #num_dual_strengthening=1 
-  6.97e-06s  0.00e+00d  [DetectDuplicateConstraints] 
-  5.11e-07s  0.00e+00d  [DetectDifferentVariables] 
-  1.09e-06s  0.00e+00d  [DetectDominatedLinearConstraints] 
-  1.34e-06s  0.00e+00d  [ProcessSetPPC] 
-  1.13e-06s  0.00e+00d  [FindAlmostIdenticalLinearConstraints] 
-  9.12e-07s  0.00e+00d  [FindBigHorizontalLinearOverlap] 
-  1.11e-06s  2.50e-07d  [FindBigVerticalLinearOverlap] 
-  1.16e-06s  0.00e+00d  [MergeClauses] 
-  7.29e-06s  0.00e+00d  [DetectDominanceRelations] 
-  4.34e-05s  0.00e+00d  [PresolveToFixPoint] #num_loops=1 #num_dual_strengthening=1 
+  1.04e-04s  5.00e-08d  [Probe]
+  2.29e-06s  0.00e+00d  [MaxClique]
+  1.88e-05s  0.00e+00d  [DetectDominanceRelations]
+  7.91e-05s  0.00e+00d  [PresolveToFixPoint] #num_loops=2 #num_dual_strengthening=1
+  6.97e-06s  0.00e+00d  [DetectDuplicateConstraints]
+  5.11e-07s  0.00e+00d  [DetectDifferentVariables]
+  1.09e-06s  0.00e+00d  [DetectDominatedLinearConstraints]
+  1.34e-06s  0.00e+00d  [ProcessSetPPC]
+  1.13e-06s  0.00e+00d  [FindAlmostIdenticalLinearConstraints]
+  9.12e-07s  0.00e+00d  [FindBigHorizontalLinearOverlap]
+  1.11e-06s  2.50e-07d  [FindBigVerticalLinearOverlap]
+  1.16e-06s  0.00e+00d  [MergeClauses]
+  7.29e-06s  0.00e+00d  [DetectDominanceRelations]
+  4.34e-05s  0.00e+00d  [PresolveToFixPoint] #num_loops=1 #num_dual_strengthening=1
 
 Presolve summary:
   - 0 affine relations were detected.

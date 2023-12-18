@@ -152,7 +152,9 @@ CP-SAT can have 5 different statuses:
     )
     col3.metric(
         label="Type",
-        value="Optimization" if initial_model_block.is_optimization() else "Satisfaction",
+        value="Optimization"
+        if initial_model_block.is_optimization()
+        else "Satisfaction",
         help="Is the model an optimization or satisfaction model?",
     )
     # col3.metric("Model Fingerprint", value=initial_model_block.get_model_fingerprint())
@@ -179,7 +181,10 @@ CP-SAT can have 5 different statuses:
                 "CP-SAT returned the status `OPTIMAL`, but does not have a matching bound. This indicates a bug."
             )
 
-    if response["status"] in ("OPTIMAL", "FEASIBLE") and initial_model_block.is_optimization():
+    if (
+        response["status"] in ("OPTIMAL", "FEASIBLE")
+        and initial_model_block.is_optimization()
+    ):
         st.plotly_chart(search_progress_block.as_plotly(), use_container_width=True)
 
 

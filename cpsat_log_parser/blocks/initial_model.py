@@ -57,6 +57,7 @@ from .log_block import LogBlock
 import typing
 import re
 
+
 class InitialModelBlock(LogBlock):
     def __init__(self, lines: typing.List[str]) -> None:
         super().__init__(lines)
@@ -72,7 +73,7 @@ class InitialModelBlock(LogBlock):
         if re.match(r"Initial (satisfaction|optimization) model", lines[0]):
             return True
         return False
-    
+
     def is_optimization(self) -> bool:
         if not self.lines:
             return False

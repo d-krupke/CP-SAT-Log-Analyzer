@@ -12,6 +12,7 @@ from .log_block import LogBlock
 import typing
 import re
 
+
 class PresolvedModelBlock(LogBlock):
     def __init__(self, lines: typing.List[str]) -> None:
         super().__init__(lines)
@@ -23,7 +24,6 @@ class PresolvedModelBlock(LogBlock):
         if re.match(r"Presolved (satisfaction|optimization) model", lines[0]):
             return True
         return False
-
 
     def get_title(self) -> str:
         return "Presolved Model"
