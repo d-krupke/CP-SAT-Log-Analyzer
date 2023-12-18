@@ -141,7 +141,7 @@ class SearchProgressBlock(LogBlock):
     def get_title(self) -> str:
         return "Search progress:"
 
-    def get_help(self) -> str | None:
+    def get_help(self) -> typing.Optional[str]:
         return """
         The search progress log is one of the most important parts of the log and allows you to pinpoint performance issues.
         Here you can see, how the solver progresses over time and were it struggles
