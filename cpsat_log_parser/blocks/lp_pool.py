@@ -31,7 +31,7 @@ class LpPoolBlock(TableBlock):
         return lines[0].startswith("Lp pool")
 
     def get_title(self) -> str:
-        return "LP Pool"
+        return "Linear Programming: Pool"
 
     def get_help(self) -> typing.Optional[str]:
         return None  # TODO

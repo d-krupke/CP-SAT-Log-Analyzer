@@ -16,6 +16,9 @@ from .lp_debug import LpDebugBlock
 from .lp_dimension import LpDimensionBlock
 from .lp_pool import LpPoolBlock
 from .lp_cut import LpCutBlock
+from .ls_stats import LsStatsBlock
+from .improving_bounds import ImprovingBoundsSharedBlock
+from .clauses_shared import ClausesSharedBlock
 
 __all__ = [
     "SearchProgressBlock",
@@ -36,4 +39,7 @@ __all__ = [
     "LpDimensionBlock",
     "LpPoolBlock",
     "LpCutBlock",
+    "LsStatsBlock",
+    "ImprovingBoundsSharedBlock",
+    "ClausesSharedBlock",
 ]

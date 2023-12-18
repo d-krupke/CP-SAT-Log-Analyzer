@@ -18,7 +18,6 @@ Lp stats                      Component  Iterations  AddedCuts  OPTIMAL  DUAL_F.
 """
 
 
-from .log_block import LogBlock
 from .tables import TableBlock
 import typing
 import pandas as pd

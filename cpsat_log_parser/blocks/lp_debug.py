@@ -31,7 +31,7 @@ class LpDebugBlock(TableBlock):
         return lines[0].startswith("Lp debug")
 
     def get_title(self) -> str:
-        return "LP Debug"
+        return "Linear Programming: Debug Information"
 
     def get_help(self) -> typing.Optional[str]:
         return """

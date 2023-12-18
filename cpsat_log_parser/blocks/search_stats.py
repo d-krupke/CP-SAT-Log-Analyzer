@@ -15,7 +15,7 @@ class SearchStatsBlock(TableBlock):
         return lines[0].strip().startswith("Search stats")
     
     def get_title(self) -> str:
-        return "Search Stats"
+        return "Search Strategies: Statistics"
     
     def get_help(self) -> typing.Optional[str]:
         return """
