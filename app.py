@@ -240,8 +240,10 @@ else:
                 if block.get_help():
                     st.info(block.get_help())
                 tab1, tab2 = st.tabs(["Table", "Raw"])
-                df = block.to_pandas()
-                tab1.dataframe(df, use_container_width=True)
+                df_1 = block.to_pandas(deterministic=False)
+                tab1.dataframe(df_1, use_container_width=True)
+                df_2 = block.to_pandas(deterministic=True)
+                tab1.dataframe(df_2, use_container_width=True)
                 tab2.text(str(block))
         elif isinstance(block, SolutionsBlock):
             with st.expander(block.get_title()):

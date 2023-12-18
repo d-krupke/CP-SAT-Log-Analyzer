@@ -52,22 +52,33 @@ class TaskTimingBlock(LogBlock):
         return lines[0].startswith("Task timing")
     
     def get_help(self) -> typing.Optional[str]:
-        return "This block is still WIP as I do not yet fully understand its content."
+        return "The time spent on each subsolver. Does not give much useful information for the common user."
     
     def get_title(self) -> str:
         return "Task Timing"
     
-    def to_pandas(self)->pd.DataFrame:
-        log = "\n".join((l.strip() for l in self.lines))
-        # Replace the single quotes with nothing
-        log = log.replace("'", "")
-        log = log.replace("[", "  ")
-        log = log.replace("]", "  ")
-        log = log.replace(",", "  ")
-        log = log.replace("\t", "  ")
-        log = log.replace("s ", "s  ")
+    def to_pandas(self, deterministic: bool)->pd.DataFrame:
+        lines = [l.strip() for l in self.lines if l.strip()]
+        lines = [l.replace("'", "") for l in lines]
+        lines = [l.replace("[", "  ") for l in lines]
+        lines = [l.replace("]", "  ") for l in lines]
+        lines = [l.replace(",", "  ") for l in lines]
+        lines = [l.replace("\t", "  ") for l in lines]
+        lines = [l.replace("s ", "s  ") for l in lines]
+        lines = [re.sub("\s\s+", "\t",l) for l in lines]
+        def filter(l):
+            split_line = l.split("\t")
+            n = len(split_line)
+            if deterministic:
+                return "\t".join(split_line[:1]+split_line[n//2+1:])
+            else:
+                return "\t".join(split_line[:n//2])
+        lines = [filter(l) for l in lines]
+        if deterministic:
+            lines[0] = lines[0].replace("Task timing", "Task timing (deterministic)")
 
         # Replace two or more spaces with a single tab
+        log = "\n".join(lines)
         log = re.sub("\s\s+", "\t", log)
 
         # Use StringIO to convert the string to a file-like object for read_csv
