@@ -59,6 +59,7 @@ else:
         "example_logs/98_03.txt",
         "example_logs/98_04.txt",
         "example_logs/98_05.txt",
+        "example_logs/98_06.txt",
         "example_logs/97_01.txt",
     ]
     cols = st.columns(len(examples))

@@ -1,0 +1,166 @@
+Starting CP-SAT solver v9.8.3296
+Parameters: max_time_in_seconds: 60 log_search_progress: true
+Setting number of workers to 16
+
+Initial satisfaction model '': (model_fingerprint: 0x375d8d958f7a6561)
+#Variables: 50
+  - 3 in [0,100000]
+  - 6 in [0,110000]
+  - 7 in [0,120000]
+  - 9 in [0,130000]
+  - 4 in [0,270000]
+  - 2 in [0,280000]
+  - 5 in [0,290000]
+  - 2 in [0,310000]
+  - 2 in [0,330000]
+  - 2 in [0,340000]
+  - 2 in [0,350000]
+  - 2 in [0,370000]
+  - 2 in [0,380000]
+  - 2 in [0,390000]
+#kInterval: 50
+#kLinear1: 50
+#kNoOverlap2D: 1 (#rectangles: 25)
+
+Starting presolve at 0.00s
+  1.61e-05s  0.00e+00d  [DetectDominanceRelations] 
+  1.07e-04s  0.00e+00d  [PresolveToFixPoint] #num_loops=2 #num_dual_strengthening=1 
+  1.83e-06s  0.00e+00d  [ExtractEncodingFromLinear] 
+[Symmetry] Graph for symmetry has 201 nodes and 300 arcs.
+[Symmetry] Symmetry computation done. time: 5.5143e-05 dtime: 5.931e-05
+[Symmetry] #generators: 3, average support size: 4
+[Symmetry] 6 orbits with sizes: 2,2,2,2,2,2
+[Symmetry] Found orbitope of size 2 x 2
+  1.04e-04s  5.00e-08d  [Probe] 
+  2.29e-06s  0.00e+00d  [MaxClique] 
+  1.88e-05s  0.00e+00d  [DetectDominanceRelations] 
+  7.91e-05s  0.00e+00d  [PresolveToFixPoint] #num_loops=2 #num_dual_strengthening=1 
+  6.97e-06s  0.00e+00d  [DetectDuplicateConstraints] 
+  5.11e-07s  0.00e+00d  [DetectDifferentVariables] 
+  1.09e-06s  0.00e+00d  [DetectDominatedLinearConstraints] 
+  1.34e-06s  0.00e+00d  [ProcessSetPPC] 
+  1.13e-06s  0.00e+00d  [FindAlmostIdenticalLinearConstraints] 
+  9.12e-07s  0.00e+00d  [FindBigHorizontalLinearOverlap] 
+  1.11e-06s  2.50e-07d  [FindBigVerticalLinearOverlap] 
+  1.16e-06s  0.00e+00d  [MergeClauses] 
+  7.29e-06s  0.00e+00d  [DetectDominanceRelations] 
+  4.34e-05s  0.00e+00d  [PresolveToFixPoint] #num_loops=1 #num_dual_strengthening=1 
+
+Presolve summary:
+  - 0 affine relations were detected.
+  - rule 'TODO dual: only one blocking constraint?' was applied 300 times.
+  - rule 'TODO symmetry: add symmetry breaking inequalities?' was applied 1 time.
+  - rule 'linear: always true' was applied 50 times.
+  - rule 'presolve: 0 unused variables removed.' was applied 1 time.
+  - rule 'presolve: iteration' was applied 1 time.
+
+Presolved satisfaction model '': (model_fingerprint: 0xd23a4d49d498572d)
+#Variables: 50
+  - 3 in [0,100000]
+  - 6 in [0,110000]
+  - 7 in [0,120000]
+  - 9 in [0,130000]
+  - 4 in [0,270000]
+  - 2 in [0,280000]
+  - 5 in [0,290000]
+  - 2 in [0,310000]
+  - 2 in [0,330000]
+  - 2 in [0,340000]
+  - 2 in [0,350000]
+  - 2 in [0,370000]
+  - 2 in [0,380000]
+  - 2 in [0,390000]
+#kInterval: 50
+#kNoOverlap2D: 1 (#rectangles: 25)
+
+Preloading model.
+[Symmetry] Graph for symmetry has 201 nodes and 300 arcs.
+[Symmetry] Symmetry computation done. time: 4.805e-05 dtime: 5.931e-05
+[Symmetry] #generators: 3, average support size: 4
+[Symmetry] Found orbitope of size 2 x 2
+#Model   0.00s var:50/50 constraints:51/51
+
+Starting search at 0.00s with 16 workers.
+7 full problem subsolvers: [default_lp, max_lp, no_lp, probing, probing_max_lp, quick_restart, quick_restart_no_lp]
+8 first solution subsolvers: [fj_long_default, fj_long_lin_default, fj_short_default, fj_short_lin_default, fs_random(2), fs_random_quick_restart(2)]
+2 incomplete subsolvers: [feasibility_pump, rins/rens]
+2 helper subsolvers: [neighborhood_helper, synchronization_agent]
+#Done    0.00s probing_max_lp [loading]
+#Done    0.00s probing_max_lp [loading]
+#Done    0.00s probing [loading]
+#Done    0.00s probing [loading]
+
+Task timing                          n [     min,      max]      avg      dev     time         n [     min,      max]      avg      dev    dtime
+               'default_lp':         1 [778.28us, 778.28us] 778.28us   0.00ns 778.28us         1 [ 28.44us,  28.44us]  28.44us   0.00ns  28.44us
+         'feasibility_pump':         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns
+          'fj_long_default':         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns
+      'fj_long_lin_default':         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns
+         'fj_short_default':         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns
+     'fj_short_lin_default':         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns
+                'fs_random':         1 [567.21us, 567.21us] 567.21us   0.00ns 567.21us         1 [  7.36us,   7.36us]   7.36us   0.00ns   7.36us
+                'fs_random':         1 [611.78us, 611.78us] 611.78us   0.00ns 611.78us         1 [  8.68us,   8.68us]   8.68us   0.00ns   8.68us
+  'fs_random_quick_restart':         1 [549.01us, 549.01us] 549.01us   0.00ns 549.01us         1 [ 13.83us,  13.83us]  13.83us   0.00ns  13.83us
+  'fs_random_quick_restart':         1 [592.94us, 592.94us] 592.94us   0.00ns 592.94us         1 [ 14.42us,  14.42us]  14.42us   0.00ns  14.42us
+                   'max_lp':         1 [733.39us, 733.39us] 733.39us   0.00ns 733.39us         1 [  2.55us,   2.55us]   2.55us   0.00ns   2.55us
+                    'no_lp':         1 [764.83us, 764.83us] 764.83us   0.00ns 764.83us         1 [ 10.44us,  10.44us]  10.44us   0.00ns  10.44us
+                  'probing':         1 [324.44us, 324.44us] 324.44us   0.00ns 324.44us         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns
+           'probing_max_lp':         1 [265.93us, 265.93us] 265.93us   0.00ns 265.93us         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns
+            'quick_restart':         1 [709.33us, 709.33us] 709.33us   0.00ns 709.33us         1 [ 17.46us,  17.46us]  17.46us   0.00ns  17.46us
+      'quick_restart_no_lp':         1 [687.85us, 687.85us] 687.85us   0.00ns 687.85us         1 [ 15.16us,  15.16us]  15.16us   0.00ns  15.16us
+                'rins/rens':         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns
+
+Search stats                  Bools  Conflicts  Branches  Restarts  BoolPropag  IntegerPropag
+               'default_lp':     68         63        73         1         113            186
+                'fs_random':     36         31        36         0          31             67
+                'fs_random':     42         37        42         0          37             79
+  'fs_random_quick_restart':     29         20        59         2          38             80
+  'fs_random_quick_restart':     31         21        66         2          33             88
+                   'max_lp':     13          8        13         0           8             21
+                    'no_lp':     50         45        50         0          45             95
+                  'probing':      0          1         0         0           0             35
+           'probing_max_lp':      0          1         0         0           0             35
+            'quick_restart':     47         30        83         3          84            113
+      'quick_restart_no_lp':     45         30        61         3          87             91
+
+Lp stats     Component  Iterations  AddedCuts  OPTIMAL  DUAL_F.  DUAL_U.
+  'max_lp':          1           0          0       12        1        0
+
+Lp dimension                                              Final dimension of first component
+     'max_lp':  0 rows, 50 columns, 0 entries with magnitude in [0.000000e+00, 0.000000e+00]
+
+Lp debug     CutPropag  CutEqPropag  Adjust  Overflow  Bad  BadScaling
+  'max_lp':          0            0       0         0    0           0
+
+Lp pool      Constraints  Updates  Simplif  Merged  Shortened  Split  Strenghtened  Cuts/Call
+  'max_lp':            0        0        0       0          0      0             0        0/0
+
+LNS stats       Improv/Calls  Closed  Difficulty  TimeLimit
+  'rins/rens':           0/0      0%        0.50       0.10
+
+LS stats                   Batches  Restarts  LinMoves  GenMoves  CompoundMoves  WeightUpdates
+       'fj_long_default':        0         0         0         0              0              0
+   'fj_long_lin_default':        0         0         0         0              0              0
+      'fj_short_default':        0         0         0         0              0              0
+  'fj_short_lin_default':        0         0         0         0              0              0
+
+Solution repositories    Added  Queried  Ignored  Synchro
+  'feasible solutions':      0        0        0        0
+        'lp solutions':      0        0        0        0
+                'pump':      0        0
+
+CpSolverResponse summary:
+status: INFEASIBLE
+objective: NA
+best_bound: NA
+integers: 50
+booleans: 68
+conflicts: 63
+branches: 73
+propagations: 113
+integer_propagations: 186
+restarts: 1
+lp_iterations: 0
+walltime: 0.0050114
+usertime: 0.00501147
+deterministic_time: 0.00011864
+gap_integral: 0
