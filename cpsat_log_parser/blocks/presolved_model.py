@@ -10,7 +10,7 @@ Presolved optimization model '': (model_fingerprint: 0x301e2e572c48f057)
 
 from .log_block import LogBlock
 import typing
-
+import re
 
 class PresolvedModelBlock(LogBlock):
     def __init__(self, lines: typing.List[str]) -> None:
@@ -20,10 +20,13 @@ class PresolvedModelBlock(LogBlock):
     def matches(lines: typing.List[str]) -> bool:
         if not lines:
             return False
-        return lines[0].startswith("Presolved optimization model")
+        if re.match(r"Presolved (satisfaction|optimization) model", lines[0]):
+            return True
+        return False
+
 
     def get_title(self) -> str:
-        return "Presolved Optimization Model"
+        return "Presolved Model"
 
     def get_model_fingerprint(self) -> str:
         return self.lines[0].split("model_fingerprint: ")[1].strip(")")
