@@ -18,6 +18,9 @@ class SolverBlock(LogBlock):
         for match in re.finditer(r"(?P<key>\w+): (?P<value>\w+)", line):
             parameters[match.group("key")] = match.group("value")
         return parameters
+    
+    def get_title(self) -> str:
+        return "Solver Information"
 
     @staticmethod
     def matches(lines: typing.List[str]) -> bool:
