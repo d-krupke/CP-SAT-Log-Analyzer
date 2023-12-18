@@ -1,11 +1,17 @@
 import typing
 from .tables import TableBlock
+import re
 
 
 class SolutionsBlock(TableBlock):
+    """
+
+    Not available for older versions of CP-SAT.
+    """
+
     def __init__(self, lines: typing.List[str]) -> None:
         super().__init__(lines)
-        if not lines[0].startswith("Solutions"):
+        if not self.matches(lines):
             raise ValueError(f"Not a valid progress log. First line: {lines[0]}")
 
     def get_num_solutions(self) -> int:
@@ -27,4 +33,6 @@ class SolutionsBlock(TableBlock):
     def matches(lines: typing.List[str]) -> bool:
         if not lines:
             return False
-        return lines[0].strip().startswith("Solutions")
+        # "Solutions (11)      Num    Rank"
+        match = re.match(r"Solutions\s+\(\d+\)\s+Num\s+Rank", lines[0])
+        return bool(match)

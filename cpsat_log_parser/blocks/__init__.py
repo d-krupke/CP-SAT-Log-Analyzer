@@ -10,6 +10,7 @@ from .solver import SolverBlock
 from .solver_response import ResponseBlock
 from .presolve_log import PresolveLogBlock
 from .initial_model import InitialModelBlock
+from .presolved_model import PresolvedModelBlock
 
 __all__ = [
     "SearchProgressBlock",
@@ -24,4 +25,5 @@ __all__ = [
     "ResponseBlock",
     "PresolveLogBlock",
     "InitialModelBlock",
+    "PresolvedModelBlock",
 ]

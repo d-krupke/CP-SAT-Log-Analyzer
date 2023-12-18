@@ -55,6 +55,7 @@ Starting presolve at 0.03s
 from .log_block import LogBlock
 import typing
 
+
 class PresolveLogBlock(LogBlock):
     def __init__(self, lines: typing.List[str]) -> None:
         super().__init__(lines)
@@ -64,10 +65,10 @@ class PresolveLogBlock(LogBlock):
         if not lines:
             return False
         return lines[0].strip().startswith("Starting presolve at")
-    
+
     def get_title(self) -> str:
         return "Presolve Log"
-    
+
     def get_help(self) -> str | None:
         return """
         This block contains the presolve log.
@@ -78,4 +79,3 @@ class PresolveLogBlock(LogBlock):
         These steps can take some time, but they can also significantly reduce
         the model size and the search space and thus the time it takes to find a solution. Usually, the summary is sufficient to look at to see what happened.
         """
-

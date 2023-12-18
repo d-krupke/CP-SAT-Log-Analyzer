@@ -13,3 +13,6 @@ class SolutionRepositoriesBlock(TableBlock):
         if not lines:
             return False
         return lines[0].strip().startswith("Solution repositories")
+
+    def get_title(self) -> str:
+        return "Solution Repositories"

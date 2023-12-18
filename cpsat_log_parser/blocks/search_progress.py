@@ -102,15 +102,15 @@ class SearchProgressBlock(LogBlock):
         lines = [l.strip() for l in lines if l.strip()]
         if not lines:
             raise ValueError("No lines to parse")
-        if not lines[0].startswith("Starting search"):
-            raise ValueError(f"Not a valid progress log. First line: {lines[0]}")
+        if not self.matches(lines):
+            raise ValueError("Lines do not match SearchProgressBlock")
         self.lines = lines
 
     @staticmethod
     def matches(lines: typing.List[str]) -> bool:
         if not lines:
             return False
-        return lines[0].strip().startswith("Starting search")
+        return lines[0].strip().lower().startswith("Starting search".lower())
 
     def _parse_events(self) -> typing.List[typing.Union[BoundEvent, ObjEvent]]:
         """
@@ -131,7 +131,8 @@ class SearchProgressBlock(LogBlock):
     def get_presolve_time(self) -> float:
         # first line looks like this "Starting search at 16.74s with 24 workers."
         m = re.match(
-            r"Starting search at (?P<time>\d+\.\d+s) with \d+ workers.", self.lines[0]
+            r"Starting [Ss]earch at (?P<time>\d+\.\d+s) with \d+ workers.",
+            self.lines[0],
         )
         if m:
             return parse_time(m.group("time"))
@@ -142,7 +143,7 @@ class SearchProgressBlock(LogBlock):
 
     def get_help(self) -> str | None:
         return """
-        The search progress log is probably the most important part of the log.
+        The search progress log is one of the most important parts of the log and allows you to pinpoint performance issues.
         Here you can see, how the solver progresses over time and were it struggles
         the most. Are the upper or the lower bounds the problem? Does the solver quickly find a near optimal solution, but then struggles to close a small gap?
 

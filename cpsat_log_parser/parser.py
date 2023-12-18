@@ -11,6 +11,7 @@ from .blocks import (
     ResponseBlock,
     PresolveLogBlock,
     InitialModelBlock,
+    PresolvedModelBlock,
 )
 
 
@@ -67,6 +68,8 @@ def parse_blocks(log: typing.Union[str, typing.List[str]]) -> typing.List[LogBlo
             blocks.append(PresolveLogBlock(data))
         elif InitialModelBlock.matches(data):
             blocks.append(InitialModelBlock(data))
+        elif PresolvedModelBlock.matches(data):
+            blocks.append(PresolvedModelBlock(data))
         else:
             blocks.append(LogBlock(data))
     return blocks
