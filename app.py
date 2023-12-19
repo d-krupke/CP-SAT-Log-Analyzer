@@ -214,6 +214,8 @@ else:
                 st.text(str(block))
                 fig = block.as_plotly()
                 st.plotly_chart(fig, use_container_width=True)
+                fig_2 = block.model_changes_as_plotly()
+                st.plotly_chart(fig_2, use_container_width=True)
             st.subheader("Statistics", divider=True)
             st.info(
                 "This part contains detailed statistics about the search. Only a few elements are useful for the common user."
