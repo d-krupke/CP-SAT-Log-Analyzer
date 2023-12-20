@@ -28,7 +28,7 @@ def _get_bound(match: re.Match):
     next_ub = match.group("next_ub")
     if next_lb is None or next_ub is None:
         return match.group("obj")
-    bound_lb, bound_ub = int(next_lb), int(next_ub)
+    bound_lb, bound_ub = float(next_lb), float(next_ub)
     obj = float(match.group("obj"))
     if obj < bound_lb:
         return bound_ub  # upper bound
@@ -38,7 +38,7 @@ def _get_bound(match: re.Match):
 
 class BoundEvent:
     def __init__(
-        self, time: float, obj: typing.Optional[int], bound: int, msg: str
+        self, time: float, obj: typing.Optional[float], bound: float, msg: str
     ) -> None:
         self.bound = bound
         self.msg = msg
@@ -59,10 +59,10 @@ class BoundEvent:
     def parse(line: str) -> typing.Optional["BoundEvent"]:
         # bound events start with #Bound
         # TODO: Allow more than just seconds
-        bound_pattern = r"#Bound\s+(?P<time>\d+\.\d+s)\s+(best:(?P<obj>-?\d+|inf))\s+next:\[(?P<next_lb>-?\d+),(?P<next_ub>-?\d+)\]\s+(?P<msg>.*)"
+        bound_pattern = r"#Bound\s+(?P<time>\d+\.\d+s)\s+(best:(?P<obj>[-+]?([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?|inf)))\s+next:\[(?P<next_lb>[-+]?([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?|inf)),(?P<next_ub>[-+]?([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?|inf))\]\s+(?P<msg>.*)"
         m = re.match(bound_pattern, line)
         if m:
-            obj = int(m.group("obj")) if m.group("obj") != "inf" else None
+            obj = float(m.group("obj")) if m.group("obj") != "inf" else None
             return BoundEvent(
                 time=parse_time(m.group("time")),
                 obj=obj,
@@ -74,7 +74,7 @@ class BoundEvent:
 
 
 class ObjEvent:
-    def __init__(self, time: float, obj: int, bound: int, msg: str) -> None:
+    def __init__(self, time: float, obj: float, bound: float, msg: str) -> None:
         self.time = time
         self.obj = obj
         self.msg = msg
@@ -84,12 +84,12 @@ class ObjEvent:
     def parse(line: str) -> typing.Optional["ObjEvent"]:
         # obj events start with # and a number
         # TODO: Allow more than just seconds
-        obj_pattern = r"#(-?\d+)\s+(?P<time>\d+\.\d+s)\s+(best:(?P<obj>-?\d+))\s+next:\[((?P<next_lb>-?\d+),(?P<next_ub>-?\d+))?\]\s+(?P<msg>.*)"
+        obj_pattern = r"#(-?\d+)\s+(?P<time>\d+\.\d+s)\s+(best:(?P<obj>[-+]?([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?|inf)))\s+next:\[((?P<next_lb>[-+]?([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?|inf)),(?P<next_ub>[-+]?([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?|inf)))?\]\s+(?P<msg>.*)"
         m = re.match(obj_pattern, line)
         if m:
             return ObjEvent(
                 time=parse_time(m.group("time")),
-                obj=int(m.group("obj")),
+                obj=float(m.group("obj")),
                 bound=_get_bound(m),
                 msg=m.group("msg"),
             )
@@ -179,12 +179,19 @@ class SearchProgressBlock(LogBlock):
 
     def get_help(self) -> typing.Optional[str]:
         return """
-        The search progress log is one of the most important parts of the log and allows you to pinpoint performance issues.
-        Here you can see, how the solver progresses over time and were it struggles
-        the most. Are the upper or the lower bounds the problem? Does the solver quickly find a near optimal solution, but then struggles to close a small gap?
+The search progress log is an essential element of the overall log, crucial for identifying performance bottlenecks. It clearly demonstrates the solver's progression over time and pinpoints where it faces significant challenges. It is important to discern whether the upper or lower bounds are causing issues, or if the solver initially finds a near-optimal solution but struggles to minimize a small remaining gap.
 
-        You probably have to zoom into the plot to see the details as the first
-        values can be very large. Check out which part converges the fastest.
+The structure of the log entries is standardized as follows:
+`EVENT_NAME\tTIME\tBEST SOLUTION\tRANGE OF THE SEARCH\tCOMMENT`
+For instance, an event marked `#2` indicates the discovery of the second solution. Here, you will observe an improvement in the `BEST SOLUTION` metric. A notation like `best:16` confirms that the solver has found a solution with a value of 16.
+
+An event with `#Bound` denotes an enhancement in the bound, as seen by a reduction in the `RANGE OF THE SEARCH`. A detail such as `next:[7,14]` signifies that the solver is now focused on finding a solution valued between 7 and 14.
+
+The `COMMENT` section provides essential information about the strategies that led to these improvements.
+
+Events labeled `#Model` signal modifications to the model, such as fixing certain variables.
+
+To fully grasp the nuances, zooming into the plot is necessary, especially since the initial values can be quite large. A thorough examination of which sections of the process converge quickest is crucial for a comprehensive understanding.
         """
     
     def model_changes_as_plotly(self) -> go.Figure:
@@ -201,7 +208,7 @@ class SearchProgressBlock(LogBlock):
                 x=[e.time for e in model_events],
                 y=[100*(e.vars_remaining/e.vars) for e in model_events],
                 mode="lines+markers",
-                line=dict(color="red"),
+                line=dict(color="green"),
                 name="Variables",
                 hovertext=[e.msg for e in model_events],
             )
@@ -212,7 +219,7 @@ class SearchProgressBlock(LogBlock):
                 x=[e.time for e in model_events],
                 y=[100*(e.constr_remaining/e.constr) for e in model_events],
                 mode="lines+markers",
-                line=dict(color="blue"),
+                line=dict(color="orange"),
                 name="Constraints",
                 hovertext=[e.msg for e in model_events],
             )
@@ -279,7 +286,7 @@ class SearchProgressBlock(LogBlock):
                 x=[o.time for o in obj_events],
                 y=[o.obj for o in obj_events],
                 mode="lines+markers",
-                line=dict(color="green"),
+                line=dict(color="red"),
                 name="Objective",
                 hovertext=[o.msg for o in obj_events],
             )
@@ -291,7 +298,7 @@ class SearchProgressBlock(LogBlock):
                 x=[b.time for b in bound_events],
                 y=[b.bound for b in bound_events],
                 mode="lines+markers",
-                line=dict(color="red"),
+                line=dict(color="blue"),
                 name="Bound",
                 hovertext=[b.msg for b in bound_events],
             )

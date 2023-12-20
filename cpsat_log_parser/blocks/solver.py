@@ -1,3 +1,8 @@
+"""
+The solver block is the first part of the log.
+"""
+
+
 from .log_block import LogBlock
 import typing
 import re
@@ -21,6 +26,16 @@ class SolverBlock(LogBlock):
 
     def get_title(self) -> str:
         return "Solver Information"
+    
+    def get_help(self) -> str:
+        return """This block contains basic information about the solver.
+        As CP-SAT is still under active development and makes serious improvements with every release, it is important to know which version of the solver was used.
+        The number of workers, i.e., the level of parallelism, is also important to know.
+        CP-SAT is a portfolio solver and the higher the number of workers, the more strategies are used.
+        You can find an overview of the different tiers activated by the number of workers in the [CP-SAT documentation](https://github.com/google/or-tools/blob/main/ortools/sat/docs/troubleshooting.md#improving-performance-with-multiple-workers).
+        While you should be careful with tinkering with the parameters (they have sensible defaults), it is still good to know which parameters were used.
+        All of these information are actually already shown in the overview.
+        """
 
     @staticmethod
     def matches(lines: typing.List[str]) -> bool:

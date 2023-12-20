@@ -19,8 +19,10 @@ from .blocks import (
     LpCutBlock,
     ImprovingBoundsSharedBlock,
     ClausesSharedBlock,
+    PresolveSummaryBlock,
     LsStatsBlock,
     TaskTimingBlock,
+    PreloadingModelBlock,
 )
 
 
@@ -70,6 +72,7 @@ def parse_blocks(log: typing.Union[str, typing.List[str]]) -> typing.List[LogBlo
         PresolvedModelBlock,
         LpStatsBlock,
         LpDebugBlock,
+        PresolveSummaryBlock,
         LpDimensionBlock,
         LpPoolBlock,
         LpCutBlock,
@@ -77,6 +80,7 @@ def parse_blocks(log: typing.Union[str, typing.List[str]]) -> typing.List[LogBlo
         ImprovingBoundsSharedBlock,
         ClausesSharedBlock,
         TaskTimingBlock,
+        PreloadingModelBlock,
         LogBlock,
     ]
     for data in _split_log(log):

@@ -54,6 +54,10 @@ class PresolvedModelBlock(LogBlock):
         This is the most important block of the presolve phase and gives an overview of the model after presolve.
         It contains the number of variables and constraints, as well as coefficients and domains.
 
+        `- 200 in [0,199]` will indicate that there are 200 variables with domain `[0,199]`, i.e., values between 0 and 199.
+
+        `#kLinearN: 3'000 (#terms: 980'948)` indicates that there are 3000 linear constraints with 980'948 coefficients.`
+
         It is useful to compare this to the initial model, to see if your
         model was simplified by presolve, which indicates that you can
         simplify your model yourself, saving presolve time.

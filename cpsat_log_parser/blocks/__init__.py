@@ -20,6 +20,8 @@ from .ls_stats import LsStatsBlock
 from .improving_bounds import ImprovingBoundsSharedBlock
 from .clauses_shared import ClausesSharedBlock
 from .task_timing import TaskTimingBlock
+from .presolve_summary import PresolveSummaryBlock
+from .preloading_model import PreloadingModelBlock
 
 __all__ = [
     "SearchProgressBlock",
@@ -44,4 +46,6 @@ __all__ = [
     "ImprovingBoundsSharedBlock",
     "ClausesSharedBlock",
     "TaskTimingBlock",
+    "PreloadingModelBlock",
+    "PresolveSummaryBlock",
 ]

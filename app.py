@@ -56,17 +56,18 @@ else:
     # example logs per button
     st.markdown("Or use one of the following example logs:")
     examples = [
-        "example_logs/98_02.txt",
-        "example_logs/98_03.txt",
-        "example_logs/98_04.txt",
-        "example_logs/98_05.txt",
-        "example_logs/98_06.txt",
-        "example_logs/97_01.txt",
+        {"file": "example_logs/98_02.txt", "origin": "This log originates from a TSP with MTZ constraints."},
+        {"file": "example_logs/98_03.txt", "origin": "This log originates from a TSP with AddCircuit constraint."},
+        {"file": "example_logs/98_04.txt", "origin": "This log originates from a Multi-Knapsack problem."},
+        {"file": "example_logs/98_05.txt", "origin": "This log originates from a Packing problem."},
+        {"file": "example_logs/98_06.txt", "origin": "This log originates from a Packing problem."},
+        {"file": "example_logs/98_07.txt", "origin": "This log originates from a Knapsack problem run on an old Macbook."},
+        {"file": "example_logs/97_01.txt", "origin": "This was an example log flying around on my computer for teaching purposes."},
     ]
     cols = st.columns(len(examples))
     for i, example in enumerate(examples):
-        if cols[i].button(f"Example {i+1}"):
-            with open(example) as f:
+        if cols[i].button(f"Example {i+1}", help=example.get("origin", None)):
+            with open(example["file"]) as f:
                 data = f.read()
 
 
