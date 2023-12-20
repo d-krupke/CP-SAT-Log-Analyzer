@@ -60,7 +60,9 @@ class PresolvedModelBlock(LogBlock):
 
         It is useful to compare this to the initial model, to see if your
         model was simplified by presolve, which indicates that you can
-        simplify your model yourself, saving presolve time.
+        simplify your model yourself, saving presolve time. If you notice that a
+        lot of time is spent in presolve but it does not simplify your model,
+        you can try to disable/reduce presolve.
 
         It is also interesting to see if the presolve replaced some of your
         constraints with more efficient ones.
