@@ -1,3 +1,23 @@
+"""
+
+```
+Preloading model.
+#Bound   0.45s best:inf   next:[1,17]     initial_domain
+
+Starting Search at 0.47s with 16 workers.
+9 full subsolvers: [default_lp, no_lp, max_lp, reduced_costs, pseudo_costs, quick_restart, quick_restart_no_lp, lb_tree_search, probing]
+Interleaved subsolvers: [feasibility_pump, rnd_var_lns_default, rnd_cst_lns_default, graph_var_lns_default, graph_cst_lns_default, rins_lns_default, rens_lns_default]
+#1       0.71s best:17    next:[1,16]     quick_restart_no_lp fixed_bools:0/11849
+#2       0.72s best:16    next:[1,15]     quick_restart_no_lp fixed_bools:289/11849
+#3       0.74s best:15    next:[1,14]     no_lp fixed_bools:867/11849
+#Bound   1.30s best:15    next:[8,14]     max_lp initial_propagation
+#Done    3.40s max_lp
+#Done    3.40s probing
+```
+
+"""
+
+import math
 import re
 import typing
 import plotly.graph_objects as go
@@ -54,6 +74,11 @@ class BoundEvent:
         if self.obj is None:
             return None  # unknown
         return self.bound < self.obj
+    
+    def get_gap(self):
+        if self.obj is None:
+            return None
+        return 100 * (abs(self.obj - self.bound) / max(1, abs(self.obj)))
 
     @staticmethod
     def parse(line: str) -> typing.Optional["BoundEvent"]:
@@ -79,6 +104,9 @@ class ObjEvent:
         self.obj = obj
         self.msg = msg
         self.bound = bound
+
+    def get_gap(self):
+        return 100 * (abs(self.obj - self.bound) / max(1, abs(self.obj)))
 
     @staticmethod
     def parse(line: str) -> typing.Optional["ObjEvent"]:
@@ -194,14 +222,54 @@ Events labeled `#Model` signal modifications to the model, such as fixing certai
 To fully grasp the nuances, zooming into the plot is necessary, especially since the initial values can be quite large. A thorough examination of which sections of the process converge quickest is crucial for a comprehensive understanding.
         """
     
-    def model_changes_as_plotly(self) -> go.Figure:
+    def gap_as_plotly(self) -> typing.Optional[go.Figure]:
+        gap_events = [e for e in self._parse_events() if isinstance(e, BoundEvent) or isinstance(e, ObjEvent)]
+        def is_valid_gap(gap):
+            if gap is None:
+                return False
+            if not math.isfinite(gap):
+                return False
+            return True
+        gaps = [(e.time, e.get_gap()) for e in gap_events if is_valid_gap(e.get_gap())]
+        fig = go.Figure()
+        if not gap_events:
+            return None
+        # add gaps
+        fig.add_trace(
+            go.Scatter(
+                x=[t for t,_ in gaps],
+                y=[gap for _,gap in gaps],
+                mode="lines+markers",
+                line=dict(color="purple"),
+                name="Gap",
+                hovertext=[e.msg for e in gap_events],
+            )
+        )
+        # make the x-axis start at 0
+        fig.update_xaxes(range=[0, 1.01*gaps[-1][0]])
+        max_gap = max(gap for _,gap in gaps)
+        # make the y-axis start at 0
+        fig.update_yaxes(range=[-1, min(300, 1.01*max_gap)])
+        fig.update_layout(
+            title="Optimality Gap",
+            xaxis_title="Time (s)",
+            yaxis_title="Gap (%)",
+            legend_title="Legend",
+            font=dict(family="Courier New, monospace", size=18, color="RebeccaPurple"),
+        )
+        return fig
+
+    
+
+
+    def model_changes_as_plotly(self) -> typing.Optional[go.Figure]:
         """
         Plot the model changes in percent over time.
         """
         model_events = [e for e in self._parse_events() if isinstance(e, ModelEvent)]
         fig = go.Figure()
         if not model_events:
-            return fig
+            return None
         # add number of vars
         fig.add_trace(
             go.Scatter(
@@ -237,7 +305,7 @@ To fully grasp the nuances, zooming into the plot is necessary, especially since
         )
         return fig
 
-    def as_plotly(self) -> go.Figure:
+    def as_plotly(self) -> typing.Optional[go.Figure]:
         """
         Plot the progress of the solver.
         """
@@ -246,7 +314,7 @@ To fully grasp the nuances, zooming into the plot is necessary, especially since
         bound_events = [e for e in events if isinstance(e, BoundEvent)]
         fig = go.Figure()
         if not obj_events and not bound_events:
-            return fig
+            return None
         max_time = max([e.time for e in bound_events + obj_events])
 
         # make sure that both bounds and objs have a value at max_time

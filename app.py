@@ -56,12 +56,12 @@ else:
     # example logs per button
     st.markdown("Or use one of the following example logs:")
     examples = [
-        {"file": "example_logs/98_02.txt", "origin": "This log originates from a TSP with MTZ constraints."},
-        {"file": "example_logs/98_03.txt", "origin": "This log originates from a TSP with AddCircuit constraint."},
+        {"file": "example_logs/98_02.txt", "origin": "This log originates from a TSP with MTZ constraints. It is not solved to optimality."},
+        {"file": "example_logs/98_03.txt", "origin": "This log originates from a TSP with AddCircuit constraint. It only has a single, but expensive, constraint."},
         {"file": "example_logs/98_04.txt", "origin": "This log originates from a Multi-Knapsack problem."},
         {"file": "example_logs/98_05.txt", "origin": "This log originates from a Packing problem."},
         {"file": "example_logs/98_06.txt", "origin": "This log originates from a Packing problem."},
-        {"file": "example_logs/98_07.txt", "origin": "This log originates from a Knapsack problem run on an old Macbook."},
+        {"file": "example_logs/98_07.txt", "origin": "This log originates from a Knapsack problem run on an old Macbook. It spends most of the time in presolve."},
         {"file": "example_logs/97_01.txt", "origin": "This was an example log flying around on my computer for teaching purposes."},
     ]
     cols = st.columns(len(examples))
@@ -186,7 +186,9 @@ CP-SAT can have 5 different statuses:
         response["status"] in ("OPTIMAL", "FEASIBLE")
         and initial_model_block.is_optimization()
     ):
-        st.plotly_chart(search_progress_block.as_plotly(), use_container_width=True)
+        fig = search_progress_block.as_plotly()
+        if fig:
+            st.plotly_chart(fig, use_container_width=True)
 
 
 if not data:
@@ -214,13 +216,23 @@ else:
                     st.info(block.get_help())
                 st.text(str(block))
                 fig = block.as_plotly()
-                st.plotly_chart(fig, use_container_width=True)
+                if fig:
+                    st.plotly_chart(fig, use_container_width=True)
+                    st.info("This plot shows you how the quality of the solution (objective), and the proved quality (bound) converge over time. It allows you to estimate if finding good solutions or proving optimality is the bottleneck.")
+                fig_3 = block.gap_as_plotly()
+                if fig_3:
+                    st.plotly_chart(fig_3, use_container_width=True)
+                    st.info("This plot shows you how the gap between the objective and the bound changes over time. If it quickly reaches a small value but then does not improve for a long time, you could set the `relative_gap_limit` parameter to allow to stop the search as soon as a specific solution quality is reached.")
                 fig_2 = block.model_changes_as_plotly()
-                st.plotly_chart(fig_2, use_container_width=True)
+                if fig_2:
+                    st.plotly_chart(fig_2, use_container_width=True)
+                    st.info("This plot shows you how the size of the model changes over time.")
+                
             st.subheader("Statistics", divider=True)
             st.info(
                 "This part contains detailed statistics about the search. Only a few elements are useful for the common user."
             )
+            
         elif isinstance(block, SolverBlock):
             st.subheader("Initialization", divider=True)
             st.info(
