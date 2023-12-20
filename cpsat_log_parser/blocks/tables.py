@@ -16,7 +16,7 @@ class TableBlock(LogBlock):
         """
         Parse the table into a pandas DataFrame.
         """
-        log = "\n".join((l.strip() for l in self.lines))
+        log = "\n".join((line.strip() for line in self.lines))
         # Replace the single quotes with nothing
         log = log.replace("'", "")
 

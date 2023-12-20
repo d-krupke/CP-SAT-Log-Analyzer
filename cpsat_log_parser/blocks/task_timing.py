@@ -59,24 +59,24 @@ class TaskTimingBlock(LogBlock):
         return "Task Timing"
 
     def to_pandas(self, deterministic: bool) -> pd.DataFrame:
-        lines = [l.strip() for l in self.lines if l.strip()]
-        lines = [l.replace("'", "") for l in lines]
-        lines = [l.replace("[", "  ") for l in lines]
-        lines = [l.replace("]", "  ") for l in lines]
-        lines = [l.replace(",", "  ") for l in lines]
-        lines = [l.replace("\t", "  ") for l in lines]
-        lines = [l.replace("s ", "s  ") for l in lines]
-        lines = [re.sub("\s\s+", "\t", l) for l in lines]
+        lines = [line.strip() for line in self.lines if line.strip()]
+        lines = [line.replace("'", "") for line in lines]
+        lines = [line.replace("[", "  ") for line in lines]
+        lines = [line.replace("]", "  ") for line in lines]
+        lines = [line.replace(",", "  ") for line in lines]
+        lines = [line.replace("\t", "  ") for line in lines]
+        lines = [line.replace("s ", "s  ") for line in lines]
+        lines = [re.sub("\s\s+", "\t", line) for line in lines]
 
-        def filter(l):
-            split_line = l.split("\t")
+        def filter(line):
+            split_line = line.split("\t")
             n = len(split_line)
             if deterministic:
                 return "\t".join(split_line[:1] + split_line[n // 2 + 1 :])
             else:
                 return "\t".join(split_line[: n // 2 + 1])
 
-        lines = [filter(l) for l in lines]
+        lines = [filter(line) for line in lines]
         if deterministic:
             lines[0] = lines[0].replace("Task timing", "Task timing (deterministic)")
 

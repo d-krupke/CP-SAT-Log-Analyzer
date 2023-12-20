@@ -169,7 +169,7 @@ class ModelEvent:
 
 class SearchProgressBlock(LogBlock):
     def __init__(self, lines: typing.List[str]) -> None:
-        lines = [l.strip() for l in lines if l.strip()]
+        lines = [line.strip() for line in lines if line.strip()]
         if not lines:
             raise ValueError("No lines to parse")
         if not self.matches(lines):
@@ -223,7 +223,7 @@ The search progress log is an essential element of the overall log, crucial for 
 
 The structure of the log entries is standardized as follows:
 
-`EVENT_NAME\t|\tTIME\t|\tBEST SOLUTION\t|\tRANGE OF THE SEARCH\t|\tCOMMENT`
+`EVENT NAME\t|\tTIME\t|\tBEST SOLUTION\t|\tRANGE OF THE SEARCH\t|\tCOMMENT`
 
 For instance, an event marked `#2` indicates the discovery of the second solution. Here, you will observe an improvement in the `BEST SOLUTION` metric. A notation like `best:16` confirms that the solver has found a solution with a value of 16.
 
@@ -364,8 +364,6 @@ To fully grasp the nuances, zooming into the plot is necessary, especially since
                     msg="",
                 )
             )
-
-
 
         # plot the bounds over time. Add the comment as hover text
         fig.add_trace(

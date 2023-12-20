@@ -1,5 +1,5 @@
-
 import streamlit as st
+
 
 def print_header():
     st.title("CP-SAT Log Analyzer")
@@ -13,7 +13,6 @@ def print_header():
     st.markdown(
         "[![d-krupke - CP-SAT Primer](https://img.shields.io/badge/d--krupke-CP--SAT%20Primer-blue?style=for-the-badge&logo=github)](https://github.com/d-krupke/cpsat-primer) This project is a sibling of the CP-SAT Primer."
     )
-
 
     st.header("Log File")
     st.markdown(

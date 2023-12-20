@@ -1,5 +1,6 @@
 import streamlit as st
 
+
 def input_log():
     # accept log via file upload or text input
     data = None
@@ -14,8 +15,14 @@ def input_log():
         if url:
             import urllib.request
             import urllib.parse
-            url_ = "https://cpsat-log-analyzer.streamlit.app/?"+urllib.parse.urlencode({"from_url": url})
-            st.info(f"Loading log from `{url}`. You can share it with others using [{url_}]({url_}).")
+
+            url_ = (
+                "https://cpsat-log-analyzer.streamlit.app/?"
+                + urllib.parse.urlencode({"from_url": url})
+            )
+            st.info(
+                f"Loading log from `{url}`. You can share it with others using [{url_}]({url_})."
+            )
             data = urllib.request.urlopen(url).read(20_000).decode("utf-8")
         # example logs per button
         st.markdown("Or use one of the following example logs:")
@@ -54,23 +61,31 @@ def input_log():
             if cols[i].button(f"Example {i+1}", help=example.get("origin", None)):
                 with open(example["file"]) as f:
                     data = f.read()
-        
-
 
     query_params = st.experimental_get_query_params()
     if not data and "from_url" in query_params:
         url = query_params["from_url"][0]
         import urllib.request
         import urllib.parse
-        url_ = "https://cpsat-log-analyzer.streamlit.app/?"+urllib.parse.urlencode({"from_url": url})
-        st.info(f"Loading log from `{url}`. You can share it with others using [{url_}]({url_}).")
+
+        url_ = "https://cpsat-log-analyzer.streamlit.app/?" + urllib.parse.urlencode(
+            {"from_url": url}
+        )
+        st.info(
+            f"Loading log from `{url}`. You can share it with others using [{url_}]({url_})."
+        )
         data = urllib.request.urlopen(url).read(20_000).decode("utf-8")
     if not data and "example" in query_params:
         example = query_params["example"][0]
         import urllib.request
         import urllib.parse
-        url = "https://cpsat-log-analyzer.streamlit.app/?"+urllib.parse.urlencode({"example": example})
-        st.info(f"Loading example log `{example}`. You can share it with others using [{url}]({url}).")
+
+        url = "https://cpsat-log-analyzer.streamlit.app/?" + urllib.parse.urlencode(
+            {"example": example}
+        )
+        st.info(
+            f"Loading example log `{example}`. You can share it with others using [{url}]({url})."
+        )
         with open(f"example_logs/{example}.txt") as f:
             data = f.read()
     return data

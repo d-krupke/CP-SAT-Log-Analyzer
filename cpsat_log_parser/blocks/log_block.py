@@ -4,7 +4,7 @@ import abc
 
 class LogBlock:
     def __init__(self, lines: typing.List[str]) -> None:
-        self.lines = [l for l in lines if l.strip()]
+        self.lines = [line for line in lines if line.strip()]
 
     def __str__(self) -> str:
         return "\n".join(self.lines)

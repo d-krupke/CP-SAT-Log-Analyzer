@@ -2,21 +2,18 @@ import streamlit as st
 
 from cpsat_log_parser.blocks import (
     SearchProgressBlock,
-    SearchStatsBlock,
-    SolutionsBlock,
-    TableBlock,
     SolverBlock,
     ResponseBlock,
-    PresolveLogBlock,
     InitialModelBlock,
-    TaskTimingBlock,
-    PresolvedModelBlock,
 )
+
+
 def get_named_blocks(blocks) -> dict:
     named_blocks = {}
     for block in blocks:
         named_blocks[type(block)] = block
     return named_blocks
+
 
 def show_overview(blocks):
     block_dict = get_named_blocks(blocks)
@@ -129,4 +126,3 @@ CP-SAT can have 5 different statuses:
         fig = search_progress_block.as_plotly()
         if fig:
             st.plotly_chart(fig, use_container_width=True)
-
