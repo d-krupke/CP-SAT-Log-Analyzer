@@ -23,29 +23,33 @@ from .task_timing import TaskTimingBlock
 from .presolve_summary import PresolveSummaryBlock
 from .preloading_model import PreloadingModelBlock
 
-__all__ = [
-    "SearchProgressBlock",
-    "SearchStatsBlock",
-    "LnsStatsBlock",
-    "SolutionRepositoriesBlock",
-    "SolutionsBlock",
-    "ObjectiveBoundsBlock",
-    "LogBlock",
-    "TableBlock",
-    "SolverBlock",
-    "ResponseBlock",
-    "PresolveLogBlock",
-    "InitialModelBlock",
-    "PresolvedModelBlock",
-    "LpStatsBlock",
-    "LpDebugBlock",
-    "LpDimensionBlock",
-    "LpPoolBlock",
-    "LpCutBlock",
-    "LsStatsBlock",
-    "ImprovingBoundsSharedBlock",
-    "ClausesSharedBlock",
-    "TaskTimingBlock",
-    "PreloadingModelBlock",
-    "PresolveSummaryBlock",
+# The order of the following list is important.
+# The first matching block is used.
+ALL_BLOCKS = [
+    SearchProgressBlock,
+    SearchStatsBlock,
+    LnsStatsBlock,
+    SolutionRepositoriesBlock,
+    SolutionsBlock,
+    ObjectiveBoundsBlock,
+    SolverBlock,
+    ResponseBlock,
+    PresolveLogBlock,
+    InitialModelBlock,
+    PresolvedModelBlock,
+    LpStatsBlock,
+    LpDebugBlock,
+    LpDimensionBlock,
+    LpPoolBlock,
+    LpCutBlock,
+    LsStatsBlock,
+    ImprovingBoundsSharedBlock,
+    ClausesSharedBlock,
+    TaskTimingBlock,
+    PreloadingModelBlock,
+    PresolveSummaryBlock,
+    TableBlock,
+    LogBlock,
 ]
+
+__all__ = ALL_BLOCKS

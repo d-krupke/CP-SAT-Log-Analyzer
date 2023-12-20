@@ -1,29 +1,5 @@
 import typing
-from .blocks import (
-    LogBlock,
-    SearchProgressBlock,
-    SearchStatsBlock,
-    LnsStatsBlock,
-    SolutionRepositoriesBlock,
-    SolutionsBlock,
-    ObjectiveBoundsBlock,
-    SolverBlock,
-    ResponseBlock,
-    PresolveLogBlock,
-    InitialModelBlock,
-    PresolvedModelBlock,
-    LpStatsBlock,
-    LpDebugBlock,
-    LpDimensionBlock,
-    LpPoolBlock,
-    LpCutBlock,
-    ImprovingBoundsSharedBlock,
-    ClausesSharedBlock,
-    PresolveSummaryBlock,
-    LsStatsBlock,
-    TaskTimingBlock,
-    PreloadingModelBlock,
-)
+from .blocks import ALL_BLOCKS, LogBlock
 
 
 def _split_log(
@@ -58,31 +34,7 @@ def parse_blocks(log: typing.Union[str, typing.List[str]]) -> typing.List[LogBlo
     Parse a log into its blocks.
     """
     blocks = []
-    sub_parser = [
-        SolverBlock,
-        SearchProgressBlock,
-        SearchStatsBlock,
-        LnsStatsBlock,
-        SolutionRepositoriesBlock,
-        SolutionsBlock,
-        ResponseBlock,
-        ObjectiveBoundsBlock,
-        PresolveLogBlock,
-        InitialModelBlock,
-        PresolvedModelBlock,
-        LpStatsBlock,
-        LpDebugBlock,
-        PresolveSummaryBlock,
-        LpDimensionBlock,
-        LpPoolBlock,
-        LpCutBlock,
-        LsStatsBlock,
-        ImprovingBoundsSharedBlock,
-        ClausesSharedBlock,
-        TaskTimingBlock,
-        PreloadingModelBlock,
-        LogBlock,
-    ]
+    sub_parser = ALL_BLOCKS
     for data in _split_log(log):
         for parser in sub_parser:
             if parser.matches(data):

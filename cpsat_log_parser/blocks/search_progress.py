@@ -365,6 +365,20 @@ To fully grasp the nuances, zooming into the plot is necessary, especially since
                 )
             )
 
+
+
+        # plot the bounds over time. Add the comment as hover text
+        fig.add_trace(
+            go.Scatter(
+                x=[b.time for b in bound_events],
+                y=[b.bound for b in bound_events],
+                mode="lines+markers",
+                line=dict(color="cyan"),
+                name="Bound",
+                hovertext=[b.msg for b in bound_events],
+            )
+        )
+
         # plot the objective values over time. Add the comment as hover text
         fig.add_trace(
             go.Scatter(
@@ -374,18 +388,6 @@ To fully grasp the nuances, zooming into the plot is necessary, especially since
                 line=dict(color="red"),
                 name="Objective",
                 hovertext=[o.msg for o in obj_events],
-            )
-        )
-
-        # plot the bounds over time. Add the comment as hover text
-        fig.add_trace(
-            go.Scatter(
-                x=[b.time for b in bound_events],
-                y=[b.bound for b in bound_events],
-                mode="lines+markers",
-                line=dict(color="blue"),
-                name="Bound",
-                hovertext=[b.msg for b in bound_events],
             )
         )
 
