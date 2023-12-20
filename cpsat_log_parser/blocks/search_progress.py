@@ -74,7 +74,7 @@ class BoundEvent:
         if self.obj is None:
             return None  # unknown
         return self.bound < self.obj
-    
+
     def get_gap(self):
         if self.obj is None:
             return None
@@ -132,7 +132,16 @@ class ModelEvent:
     #Model   9.71s var:37230/39800 constraints:1/1 [skipped_logs=5]
     ```
     """
-    def __init__(self, time: float, vars_remaining:int, vars:int, constr_remaining: int, constr: int, msg: typing.Optional[str]):
+
+    def __init__(
+        self,
+        time: float,
+        vars_remaining: int,
+        vars: int,
+        constr_remaining: int,
+        constr: int,
+        msg: typing.Optional[str],
+    ):
         self.time = time
         self.vars_remaining = vars_remaining
         self.vars = vars
@@ -157,6 +166,7 @@ class ModelEvent:
         else:
             return None
 
+
 class SearchProgressBlock(LogBlock):
     def __init__(self, lines: typing.List[str]) -> None:
         lines = [l.strip() for l in lines if l.strip()]
@@ -172,7 +182,9 @@ class SearchProgressBlock(LogBlock):
             return False
         return lines[0].strip().lower().startswith("Starting search".lower())
 
-    def _parse_events(self) -> typing.List[typing.Union[BoundEvent, ObjEvent, ModelEvent]]:
+    def _parse_events(
+        self,
+    ) -> typing.List[typing.Union[BoundEvent, ObjEvent, ModelEvent]]:
         """
         Parse the log file into a list of BoundEvent and ObjEvent.
         """
@@ -221,15 +233,21 @@ Events labeled `#Model` signal modifications to the model, such as fixing certai
 
 To fully grasp the nuances, zooming into the plot is necessary, especially since the initial values can be quite large. A thorough examination of which sections of the process converge quickest is crucial for a comprehensive understanding.
         """
-    
+
     def gap_as_plotly(self) -> typing.Optional[go.Figure]:
-        gap_events = [e for e in self._parse_events() if isinstance(e, BoundEvent) or isinstance(e, ObjEvent)]
+        gap_events = [
+            e
+            for e in self._parse_events()
+            if isinstance(e, BoundEvent) or isinstance(e, ObjEvent)
+        ]
+
         def is_valid_gap(gap):
             if gap is None:
                 return False
             if not math.isfinite(gap):
                 return False
             return True
+
         gaps = [(e.time, e.get_gap()) for e in gap_events if is_valid_gap(e.get_gap())]
         fig = go.Figure()
         if not gap_events:
@@ -237,8 +255,8 @@ To fully grasp the nuances, zooming into the plot is necessary, especially since
         # add gaps
         fig.add_trace(
             go.Scatter(
-                x=[t for t,_ in gaps],
-                y=[gap for _,gap in gaps],
+                x=[t for t, _ in gaps],
+                y=[gap for _, gap in gaps],
                 mode="lines+markers",
                 line=dict(color="purple"),
                 name="Gap",
@@ -246,10 +264,10 @@ To fully grasp the nuances, zooming into the plot is necessary, especially since
             )
         )
         # make the x-axis start at 0
-        fig.update_xaxes(range=[0, 1.01*gaps[-1][0]])
-        max_gap = max(gap for _,gap in gaps)
+        fig.update_xaxes(range=[0, 1.01 * gaps[-1][0]])
+        max_gap = max(gap for _, gap in gaps)
         # make the y-axis start at 0
-        fig.update_yaxes(range=[-1, min(300, 1.01*max_gap)])
+        fig.update_yaxes(range=[-1, min(300, 1.01 * max_gap)])
         fig.update_layout(
             title="Optimality Gap",
             xaxis_title="Time (s)",
@@ -258,9 +276,6 @@ To fully grasp the nuances, zooming into the plot is necessary, especially since
             font=dict(family="Courier New, monospace", size=18, color="RebeccaPurple"),
         )
         return fig
-
-    
-
 
     def model_changes_as_plotly(self) -> typing.Optional[go.Figure]:
         """
@@ -274,7 +289,7 @@ To fully grasp the nuances, zooming into the plot is necessary, especially since
         fig.add_trace(
             go.Scatter(
                 x=[e.time for e in model_events],
-                y=[100*(e.vars_remaining/e.vars) for e in model_events],
+                y=[100 * (e.vars_remaining / e.vars) for e in model_events],
                 mode="lines+markers",
                 line=dict(color="green"),
                 name="Variables",
@@ -285,7 +300,7 @@ To fully grasp the nuances, zooming into the plot is necessary, especially since
         fig.add_trace(
             go.Scatter(
                 x=[e.time for e in model_events],
-                y=[100*(e.constr_remaining/e.constr) for e in model_events],
+                y=[100 * (e.constr_remaining / e.constr) for e in model_events],
                 mode="lines+markers",
                 line=dict(color="orange"),
                 name="Constraints",

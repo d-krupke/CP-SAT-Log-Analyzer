@@ -111,7 +111,7 @@ class InitialModelBlock(LogBlock):
         `- 200 in [0,199]` will indicate that there are 200 variables with domain `[0,199]`, i.e., values between 0 and 199.
 
         `#kLinearN: 3'000 (#terms: 980'948)` indicates that there are 3000 linear constraints with 980'948 coefficients.`
-        
+
         It is useful to compare this to the model after presolve and also if this matches your expectations.
         The presolve-phase may reformulate your model extensively to make it more efficient.
         """

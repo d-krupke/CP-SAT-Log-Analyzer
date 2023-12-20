@@ -26,7 +26,7 @@ class SolverBlock(LogBlock):
 
     def get_title(self) -> str:
         return "Solver Information"
-    
+
     def get_help(self) -> str:
         return """This block contains basic information about the solver.
         As CP-SAT is still under active development and makes serious improvements with every release, it is important to know which version of the solver was used.

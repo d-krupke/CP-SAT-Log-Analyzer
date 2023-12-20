@@ -19,6 +19,7 @@ Presolve summary:
 from .log_block import LogBlock
 import typing
 
+
 class PresolveSummaryBlock(LogBlock):
     def __init__(self, lines: typing.List[str]) -> None:
         super().__init__(lines)
