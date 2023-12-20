@@ -98,20 +98,28 @@ CP-SAT can have 5 different statuses:
     # col3.metric("Model Fingerprint", value=initial_model_block.get_model_fingerprint())
 
     col1, col2, col3 = st.columns(3)
+    try:
+        obj = float(response["objective"])
+    except ValueError:
+        obj = None
     col1.metric(
         label="Objective",
-        value=response["objective"],
+        value=obj,
         help="Value of the best solution found.",
     )
+    try:
+        bound = float(response["best_bound"])
+    except ValueError:
+        bound = None
     col2.metric(
         label="Best bound",
-        value=response["best_bound"],
+        value=bound,
         help="Bound on how good the best solution can be. If it matches the objective, the solution is optimal.",
     )
     gap = response_block.get_gap()
     gap_help = "The gap is the difference between the objective and the best bound. The smaller the better. A gap of 0% means that the solution is optimal."
     if gap is None:
-        col3.metric(label="Gap", value="N/A", help=gap_help)
+        col3.metric(label="Gap", value=None, help=gap_help)
     else:
         col3.metric(label="Gap", value=f"{gap:.2f}%", help=gap_help)
         if response["status"] == "OPTIMAL" and gap > 0:

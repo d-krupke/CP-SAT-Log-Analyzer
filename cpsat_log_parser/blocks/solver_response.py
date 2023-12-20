@@ -32,8 +32,8 @@ class ResponseBlock(LogBlock):
     def get_gap(self):
         vals = self.to_dict()
         try:
-            obj = int(vals["objective"])
-            bound = int(vals["best_bound"])
+            obj = float(vals["objective"])
+            bound = float(vals["best_bound"])
         except TypeError:
             return None
         except ValueError:
