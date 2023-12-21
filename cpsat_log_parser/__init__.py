@@ -1,3 +1,3 @@
-from .parser import parse_blocks, LogParser
+from .parser import LogParser
 
-__all__ = ["parse_blocks", "LogParser"]
+__all__ = ["LogParser"]

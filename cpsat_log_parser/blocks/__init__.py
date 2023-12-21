@@ -1,3 +1,7 @@
+"""
+This folder contains the logic for parsing individual blocks from the log.
+"""
+
 from .search_progress import SearchProgressBlock
 from .search_stats import SearchStatsBlock
 from .lns_stats import LnsStatsBlock
