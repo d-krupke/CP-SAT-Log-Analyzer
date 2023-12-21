@@ -1,3 +1,9 @@
+"""
+This file is the main entry point for the Streamlit app.
+Further parts of the app are in the `_app` folder.
+The logic for parsing the log is in the `cpsat_log_parser` folder.
+"""
+
 import streamlit as st
 from cpsat_log_parser import parse_blocks
 

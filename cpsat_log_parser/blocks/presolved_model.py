@@ -1,11 +1,11 @@
 """
-
+```
 Presolved optimization model '': (model_fingerprint: 0x301e2e572c48f057)
 #Variables: 243'301 (#bools: 243'301 in objective)
   - 243'301 Booleans in [0,1]
 #kAtMostOne: 2'000 (#literals: 486'602)
 #kLinearN: 1'000 (#terms: 486'602)
-
+```
 """
 
 from .log_block import LogBlock
