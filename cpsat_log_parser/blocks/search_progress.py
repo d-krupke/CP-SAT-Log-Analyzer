@@ -37,7 +37,7 @@ def parse_time(time: str):
     raise ValueError(f"Unknown time format: {time}")
 
 
-def _get_bound(match: re.Match):
+def _get_bound(match: re.Match) -> float:
     """
     Extract the bound from a match object.
     Needs to differ between upper and lower bound.
@@ -47,7 +47,7 @@ def _get_bound(match: re.Match):
     next_lb = match.group("next_lb")
     next_ub = match.group("next_ub")
     if next_lb is None or next_ub is None:
-        return match.group("obj")
+        return float(match.group("obj"))
     bound_lb, bound_ub = float(next_lb), float(next_ub)
     obj = float(match.group("obj"))
     if obj < bound_lb:
@@ -102,10 +102,12 @@ class ObjEvent:
     def __init__(self, time: float, obj: float, bound: float, msg: str) -> None:
         self.time = time
         self.obj = obj
+        assert isinstance(bound, float)
         self.msg = msg
         self.bound = bound
+        assert isinstance(obj, float)
 
-    def get_gap(self):
+    def get_gap(self) -> float:
         return 100 * (abs(self.obj - self.bound) / max(1, abs(self.obj)))
 
     @staticmethod
