@@ -54,6 +54,9 @@ class SolverBlock(LogBlock):
         for line in self.lines:
             if line.startswith("Setting number of workers to"):
                 return int(line.strip().split(" ")[-1])
+        # If `num_search_workers` is set, the number of workers is not shown in the log.
+        if "num_search_workers" in self.get_parameters():
+            return int(self.get_parameters()["num_search_workers"])
         raise ValueError("No number of workers found")
 
     def get_version(self) -> str:
