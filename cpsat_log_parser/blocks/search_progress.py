@@ -43,7 +43,7 @@ def _get_bound(match: re.Match):
     Needs to differ between upper and lower bound.
     """
     if "next_lb" not in match.groupdict():
-        return match.group("obj")
+        return float(match.group("obj"))
     next_lb = match.group("next_lb")
     next_ub = match.group("next_ub")
     if next_lb is None or next_ub is None:
