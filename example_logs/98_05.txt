@@ -1,7 +1,8 @@
 // This log originates from a rectangle packing problem. For a set of
 // rectangles, it asks if they can be packed without overlap
 // in a container. It uses the `NoOverlap2D` constraint and
-// interval variables for this.
+// interval variables for this. There are only few variables but
+// they have large domains.
 //
 // This is a satisfaction problem without an objective, which
 // is why the overview shows some `-`. This specific instance
