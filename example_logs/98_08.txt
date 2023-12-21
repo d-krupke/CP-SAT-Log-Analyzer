@@ -25,9 +25,9 @@ Initial optimization model '': (model_fingerprint: 0x79cacb3bab6a1c8c)
 #kLinearN: 4'141 (#terms: 37'269)
 
 Starting presolve at 0.20s
-  3.34e-01s  0.00e+00d  [DetectDominanceRelations] 
-  3.88e+00s  0.00e+00d  [PresolveToFixPoint] #num_loops=20 #num_dual_strengthening=5 
-  1.41e-02s  0.00e+00d  [ExtractEncodingFromLinear] #potential_supersets=3'194 
+  3.34e-01s  0.00e+00d  [DetectDominanceRelations]
+  3.88e+00s  0.00e+00d  [PresolveToFixPoint] #num_loops=20 #num_dual_strengthening=5
+  1.41e-02s  0.00e+00d  [ExtractEncodingFromLinear] #potential_supersets=3'194
 [Symmetry] Graph for symmetry has 1'467'073 nodes and 1'851'233 arcs.
 [Symmetry] Graph too large. Skipping. You can use symmetry_level:3 or more to force it.
 [SAT presolve] num removable Booleans: 31000 / 43943
@@ -35,23 +35,23 @@ Starting presolve at 0.20s
 [SAT presolve] [0s] clauses:593441 literals:1756253 vars:43943 one_side_vars:4655 simple_definition:32902 singleton_clauses:0
 [SAT presolve] [0.632066s] clauses:581573 literals:1189687 vars:43943 one_side_vars:6916 simple_definition:31512 singleton_clauses:101
 [SAT presolve] [0.72703s] clauses:9818 literals:25447 vars:10750 one_side_vars:9286 simple_definition:1067 singleton_clauses:0
-  5.88e-01s  1.25e-01d  [Probe] #probed=224'181 #fixed_bools=289 #equiv=2'285 #new_binary_clauses=2'361 
-  9.64e-02s  0.00e+00d  [MaxClique] Merged 7478(15522 literals) into 4341(25505 literals) at_most_ones. 
-  1.83e-01s  0.00e+00d  [DetectDominanceRelations] 
-  1.81e-01s  0.00e+00d  [DetectDominanceRelations] 
-  7.99e-01s  0.00e+00d  [PresolveToFixPoint] #num_loops=12 #num_dual_strengthening=6 
-  2.70e-02s  0.00e+00d  [DetectDuplicateConstraints] #duplicates=146 
-  1.46e-02s  0.00e+00d  [DetectDifferentVariables] 
-  2.30e-02s  0.00e+00d  [DetectDominatedLinearConstraints] 
-  5.69e-02s  5.39e-05d  [ProcessSetPPC] #relevant_constraints=1'126 #num_inclusions=35 
-  1.68e-02s  0.00e+00d  [FindAlmostIdenticalLinearConstraints] 
-  1.58e-02s  0.00e+00d  [FindBigHorizontalLinearOverlap] 
-  1.58e-02s  5.00e-05d  [FindBigVerticalLinearOverlap] 
-  3.66e-02s  4.48e-06d  [MergeClauses] #num_collisions=41 #num_merges=41 #num_saved_literals=118 
-  1.76e-01s  0.00e+00d  [DetectDominanceRelations] 
-  3.94e-01s  0.00e+00d  [PresolveToFixPoint] #num_loops=4 #num_dual_strengthening=3 
-  1.72e-01s  0.00e+00d  [DetectDominanceRelations] 
-  2.62e-01s  0.00e+00d  [PresolveToFixPoint] #num_loops=1 #num_dual_strengthening=1 
+  5.88e-01s  1.25e-01d  [Probe] #probed=224'181 #fixed_bools=289 #equiv=2'285 #new_binary_clauses=2'361
+  9.64e-02s  0.00e+00d  [MaxClique] Merged 7478(15522 literals) into 4341(25505 literals) at_most_ones.
+  1.83e-01s  0.00e+00d  [DetectDominanceRelations]
+  1.81e-01s  0.00e+00d  [DetectDominanceRelations]
+  7.99e-01s  0.00e+00d  [PresolveToFixPoint] #num_loops=12 #num_dual_strengthening=6
+  2.70e-02s  0.00e+00d  [DetectDuplicateConstraints] #duplicates=146
+  1.46e-02s  0.00e+00d  [DetectDifferentVariables]
+  2.30e-02s  0.00e+00d  [DetectDominatedLinearConstraints]
+  5.69e-02s  5.39e-05d  [ProcessSetPPC] #relevant_constraints=1'126 #num_inclusions=35
+  1.68e-02s  0.00e+00d  [FindAlmostIdenticalLinearConstraints]
+  1.58e-02s  0.00e+00d  [FindBigHorizontalLinearOverlap]
+  1.58e-02s  5.00e-05d  [FindBigVerticalLinearOverlap]
+  3.66e-02s  4.48e-06d  [MergeClauses] #num_collisions=41 #num_merges=41 #num_saved_literals=118
+  1.76e-01s  0.00e+00d  [DetectDominanceRelations]
+  3.94e-01s  0.00e+00d  [PresolveToFixPoint] #num_loops=4 #num_dual_strengthening=3
+  1.72e-01s  0.00e+00d  [DetectDominanceRelations]
+  2.62e-01s  0.00e+00d  [PresolveToFixPoint] #num_loops=1 #num_dual_strengthening=1
 [Symmetry] Graph for symmetry has 833'226 nodes and 8'617 arcs.
 [Symmetry] Symmetry computation done. time: 0.0461247 dtime: 0.0507815
 [Symmetry] #generators: 33, average support size: 3.33333
@@ -62,23 +62,23 @@ Starting presolve at 0.20s
 [SAT presolve] [0s] clauses:253 literals:1000 vars:534 one_side_vars:425 simple_definition:104 singleton_clauses:0
 [SAT presolve] [0.000221751s] clauses:253 literals:958 vars:534 one_side_vars:459 simple_definition:75 singleton_clauses:0
 [SAT presolve] [0.000325885s] clauses:202 literals:657 vars:349 one_side_vars:301 simple_definition:48 singleton_clauses:0
-  4.36e-01s  7.73e-02d  [Probe] #probed=208'956 #equiv=11 #new_binary_clauses=11 
-  1.03e-01s  0.00e+00d  [MaxClique] Merged 791(7284 literals) into 521(5598 literals) at_most_ones. 
-  1.79e-01s  0.00e+00d  [DetectDominanceRelations] 
-  1.57e-01s  0.00e+00d  [DetectDominanceRelations] 
-  6.83e-01s  0.00e+00d  [PresolveToFixPoint] #num_loops=12 #num_dual_strengthening=5 
-  2.59e-02s  0.00e+00d  [DetectDuplicateConstraints] #duplicates=4 
-  1.39e-02s  0.00e+00d  [DetectDifferentVariables] 
-  2.09e-02s  0.00e+00d  [DetectDominatedLinearConstraints] 
-  5.15e-02s  7.69e-06d  [ProcessSetPPC] #relevant_constraints=386 #num_inclusions=116 
-  1.67e-02s  0.00e+00d  [FindAlmostIdenticalLinearConstraints] 
-  1.47e-02s  0.00e+00d  [FindBigHorizontalLinearOverlap] 
-  1.51e-02s  6.17e-06d  [FindBigVerticalLinearOverlap] 
-  3.39e-02s  8.30e-07d  [MergeClauses] #num_collisions=3 #num_merges=3 #num_saved_literals=9 
-  1.73e-01s  0.00e+00d  [DetectDominanceRelations] 
-  3.22e-01s  0.00e+00d  [PresolveToFixPoint] #num_loops=2 #num_dual_strengthening=2 
-  1.70e-01s  0.00e+00d  [DetectDominanceRelations] 
-  2.58e-01s  0.00e+00d  [PresolveToFixPoint] #num_loops=1 #num_dual_strengthening=1 
+  4.36e-01s  7.73e-02d  [Probe] #probed=208'956 #equiv=11 #new_binary_clauses=11
+  1.03e-01s  0.00e+00d  [MaxClique] Merged 791(7284 literals) into 521(5598 literals) at_most_ones.
+  1.79e-01s  0.00e+00d  [DetectDominanceRelations]
+  1.57e-01s  0.00e+00d  [DetectDominanceRelations]
+  6.83e-01s  0.00e+00d  [PresolveToFixPoint] #num_loops=12 #num_dual_strengthening=5
+  2.59e-02s  0.00e+00d  [DetectDuplicateConstraints] #duplicates=4
+  1.39e-02s  0.00e+00d  [DetectDifferentVariables]
+  2.09e-02s  0.00e+00d  [DetectDominatedLinearConstraints]
+  5.15e-02s  7.69e-06d  [ProcessSetPPC] #relevant_constraints=386 #num_inclusions=116
+  1.67e-02s  0.00e+00d  [FindAlmostIdenticalLinearConstraints]
+  1.47e-02s  0.00e+00d  [FindBigHorizontalLinearOverlap]
+  1.51e-02s  6.17e-06d  [FindBigVerticalLinearOverlap]
+  3.39e-02s  8.30e-07d  [MergeClauses] #num_collisions=3 #num_merges=3 #num_saved_literals=9
+  1.73e-01s  0.00e+00d  [DetectDominanceRelations]
+  3.22e-01s  0.00e+00d  [PresolveToFixPoint] #num_loops=2 #num_dual_strengthening=2
+  1.70e-01s  0.00e+00d  [DetectDominanceRelations]
+  2.58e-01s  0.00e+00d  [PresolveToFixPoint] #num_loops=1 #num_dual_strengthening=1
 [Symmetry] Graph for symmetry has 832'311 nodes and 1'380 arcs.
 [Symmetry] Symmetry computation done. time: 0.0410595 dtime: 0.0501095
 [Symmetry] #generators: 15, average support size: 3.2
@@ -90,23 +90,23 @@ Starting presolve at 0.20s
 [SAT presolve] [0s] clauses:96 literals:278 vars:117 one_side_vars:91 simple_definition:18 singleton_clauses:0
 [SAT presolve] [0.000205992s] clauses:96 literals:242 vars:117 one_side_vars:112 simple_definition:5 singleton_clauses:0
 [SAT presolve] [0.000261606s] clauses:55 literals:146 vars:83 one_side_vars:83 simple_definition:0 singleton_clauses:0
-  4.31e-01s  7.51e-02d  [Probe] #probed=208'266 #equiv=5 #new_binary_clauses=5 
-  6.28e-02s  0.00e+00d  [MaxClique] Merged 199(950 literals) into 46(251 literals) at_most_ones. 
-  1.71e-01s  0.00e+00d  [DetectDominanceRelations] 
-  1.09e-01s  0.00e+00d  [DetectDominanceRelations] 
-  4.85e-01s  0.00e+00d  [PresolveToFixPoint] #num_loops=4 #num_dual_strengthening=3 
-  2.43e-02s  0.00e+00d  [DetectDuplicateConstraints] #duplicates=4 
-  1.32e-02s  0.00e+00d  [DetectDifferentVariables] 
-  2.09e-02s  0.00e+00d  [DetectDominatedLinearConstraints] 
-  4.87e-02s  5.28e-07d  [ProcessSetPPC] #relevant_constraints=48 #num_inclusions=1 
-  1.59e-02s  0.00e+00d  [FindAlmostIdenticalLinearConstraints] 
-  1.64e-02s  0.00e+00d  [FindBigHorizontalLinearOverlap] 
-  1.48e-02s  8.15e-07d  [FindBigVerticalLinearOverlap] 
-  3.20e-02s  3.60e-07d  [MergeClauses] 
-  1.76e-01s  0.00e+00d  [DetectDominanceRelations] 
-  1.07e-01s  0.00e+00d  [DetectDominanceRelations] 
-  4.91e-01s  0.00e+00d  [PresolveToFixPoint] #num_loops=3 #num_dual_strengthening=3 
-  3.87e-02s  0.00e+00d  [ExpandObjective] #entries=24 #tight_variables=12 #tight_constraints=4 
+  4.31e-01s  7.51e-02d  [Probe] #probed=208'266 #equiv=5 #new_binary_clauses=5
+  6.28e-02s  0.00e+00d  [MaxClique] Merged 199(950 literals) into 46(251 literals) at_most_ones.
+  1.71e-01s  0.00e+00d  [DetectDominanceRelations]
+  1.09e-01s  0.00e+00d  [DetectDominanceRelations]
+  4.85e-01s  0.00e+00d  [PresolveToFixPoint] #num_loops=4 #num_dual_strengthening=3
+  2.43e-02s  0.00e+00d  [DetectDuplicateConstraints] #duplicates=4
+  1.32e-02s  0.00e+00d  [DetectDifferentVariables]
+  2.09e-02s  0.00e+00d  [DetectDominatedLinearConstraints]
+  4.87e-02s  5.28e-07d  [ProcessSetPPC] #relevant_constraints=48 #num_inclusions=1
+  1.59e-02s  0.00e+00d  [FindAlmostIdenticalLinearConstraints]
+  1.64e-02s  0.00e+00d  [FindBigHorizontalLinearOverlap]
+  1.48e-02s  8.15e-07d  [FindBigVerticalLinearOverlap]
+  3.20e-02s  3.60e-07d  [MergeClauses]
+  1.76e-01s  0.00e+00d  [DetectDominanceRelations]
+  1.07e-01s  0.00e+00d  [DetectDominanceRelations]
+  4.91e-01s  0.00e+00d  [PresolveToFixPoint] #num_loops=3 #num_dual_strengthening=3
+  3.87e-02s  0.00e+00d  [ExpandObjective] #entries=24 #tight_variables=12 #tight_constraints=4
 
 Presolve summary:
   - 54743 affine relations were detected.

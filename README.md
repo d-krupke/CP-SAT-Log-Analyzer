@@ -13,7 +13,8 @@ actionable!
 
 Various ways to quickly upload your log files, and multiple examples to get you
 started. If you have you log file uploaded somewhere, you can also create a link
-to it that you can share with others. There are some simple security measures in place to prevent abuse. Please let me know if they are too restrictive.
+to it that you can share with others. There are some simple security measures in
+place to prevent abuse. Please let me know if they are too restrictive.
 
 ![Upload](./.assets/log_upload.png)
 

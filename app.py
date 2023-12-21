@@ -5,7 +5,7 @@ The logic for parsing the log is in the `cpsat_log_parser` folder.
 """
 
 import streamlit as st
-from cpsat_log_parser import parse_blocks, LogParser
+from cpsat_log_parser import LogParser
 
 from cpsat_log_parser.blocks import (
     SearchProgressBlock,

@@ -45,13 +45,14 @@ def parse_blocks(log: typing.Union[str, typing.List[str]]) -> typing.List[LogBlo
     return blocks
 
 
-
 class LogParser:
     def __init__(self, log: typing.Union[str, typing.List[str]]) -> None:
         self.comments, log_without_comments = self._extract_comments(log)
         self.blocks = self.parse_blocks(log_without_comments)
 
-    def parse_blocks(self, log: typing.Union[str, typing.List[str]]) -> typing.List[LogBlock]:
+    def parse_blocks(
+        self, log: typing.Union[str, typing.List[str]]
+    ) -> typing.List[LogBlock]:
         """
         Parse a log into its blocks.
         """
@@ -65,8 +66,10 @@ class LogParser:
             else:
                 raise ValueError(f"Could not parse data: {data}")
         return blocks
-    
-    def _extract_comments(self, log: typing.Union[str, typing.List[str]]) -> typing.Tuple[typing.List[str], typing.List[str]]:
+
+    def _extract_comments(
+        self, log: typing.Union[str, typing.List[str]]
+    ) -> typing.Tuple[typing.List[str], typing.List[str]]:
         """
         Extract the comments from a log.
         """
@@ -82,8 +85,10 @@ class LogParser:
             else:
                 data.append(line)
         return comments, data
-    
-    def get_block_of_type(self, block_type: typing.Type[LogBlock]) -> typing.Optional[LogBlock]:
+
+    def get_block_of_type(
+        self, block_type: typing.Type[LogBlock]
+    ) -> typing.Optional[LogBlock]:
         for block in self.blocks:
             if isinstance(block, block_type):
                 return block
