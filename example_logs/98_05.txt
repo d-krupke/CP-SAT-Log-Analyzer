@@ -1,3 +1,11 @@
+// This log originates from a rectangle packing problem. For a set of
+// rectangles, it asks if they can be packed without overlap
+// in a container. It uses the `NoOverlap2D` constraint and
+// interval variables for this.
+//
+// This is a satisfaction problem without an objective, which
+// is why the overview shows some `-`. This specific instance
+// is feasible.
 Starting CP-SAT solver v9.8.3296
 Parameters: max_time_in_seconds: 60 log_search_progress: true use_timetabling_in_no_overlap_2d: true use_energetic_reasoning_in_no_overlap_2d: true use_pairwise_reasoning_in_no_overlap_2d: true
 Setting number of workers to 16

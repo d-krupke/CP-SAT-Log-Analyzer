@@ -52,15 +52,22 @@ def input_log():
                 "origin": "This log originates from a Knapsack problem run on an old Macbook. It spends most of the time in presolve.",
             },
             {
+                "file": "example_logs/98_08.txt",
+                "origin": "An example from an iteration of SampLNS",
+            },
+            {
                 "file": "example_logs/97_01.txt",
                 "origin": "This was an example log flying around on my computer for teaching purposes.",
             },
         ]
-        cols = st.columns(len(examples))
-        for i, example in enumerate(examples):
-            if cols[i].button(f"Example {i+1}", help=example.get("origin", None)):
-                with open(example["file"]) as f:
-                    data = f.read()
+        # at most 5 examples per row
+        row_length = 4
+        for i in range(0, len(examples), row_length):
+            cols = st.columns(min(len(examples) - i, row_length))
+            for j, example in enumerate(examples[i : i + row_length]):
+                if cols[j].button(f"Example {i+j+1}", help=example.get("origin", None)):
+                    with open(example["file"]) as f:
+                        data = f.read()
 
     query_params = st.experimental_get_query_params()
     if not data and "from_url" in query_params:

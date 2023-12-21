@@ -1,3 +1,16 @@
+// This log originates from a Multi-Knapsack Problem.
+// The presolve-phase replaces a lot of the constraints
+// by `AtMostOne`, but is only able to eliminate a small
+// amount of the variables during presolve. Only during the
+// search, the model gets strongly reduced.
+//
+// An important observation here is that CP-SAT very quickly
+// reaches near-optimality but struggles to close a tiny gap
+// at the end. This is actually quite common. By simply allowing
+// CP-SAT some slack by setting `relative_gap_limit`, e.g., to 0.01 to
+// allow it to stop with a 1% gap, can drastically speed up CP-SAT.
+// For many problems in practice, the underlying data has some error
+// anyway, such that 1% (or sometimes even 20%) is a negligible error.
 Starting CP-SAT solver v9.8.3296
 Parameters: max_time_in_seconds: 1800 log_search_progress: true relative_gap_limit: 0
 Setting number of workers to 16

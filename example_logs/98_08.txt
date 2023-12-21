@@ -1,3 +1,17 @@
+// This example is from SampLNS. It is a huge model in which we have nearly the
+// same SAT-formula copied around a 100 times, connected by some further logic.
+// Via hints, CP-SAT is already given a nearly optimal solution and is able
+// to derive the optimal solution nearly immediately. However, the presolve
+// is due to the size of the model quite expensive and it also reduces the
+// model from nearly a million variables to just 30, highlighting the power
+// of the presolver.
+//
+// Note that this is not an artificial problem but actually a real-world
+// instance. There are cases in which the model is huge but there is a
+// simple structure behind it that a good solver can exploit.
+//
+// SampLNS does extensive symmetry breaking and provides very good solutions
+// as hints to CP-SAT. Without that, the performance drops drastically.
 Starting CP-SAT solver v9.8.3296
 Parameters: max_time_in_seconds: 27.697044372558594 log_search_progress: true num_search_workers: 15 log_to_stdout: false
 

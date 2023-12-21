@@ -1,4 +1,7 @@
->>> This is a huge model with nearly a million variables that is essentially solved during presolve.
+// This is a huge model with nearly a million variables that is essentially solved during presolve.
+// It originates from a problem were the same boolean formula is used multiple times, leading to
+// a high degree of redundancy that can be detected by CP-SAT. In this case, it could have been useful
+// to use a SAT-presolver on that formula before building the model.
 Starting CP-SAT solver v9.8.3296
 Parameters: max_time_in_seconds: 24.145278453826904 log_search_progress: true num_search_workers: 15 log_to_stdout: false
 

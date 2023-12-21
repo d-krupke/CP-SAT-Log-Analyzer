@@ -1,3 +1,11 @@
+// This is the log for a Knapsack-problem with 10 000 elements.
+// The presolver does most of the work for this instance.
+//
+// The Knapsack-model has only a single and very simple constraint.
+// You can see in the log that CP-SAT not only excludes over 70% of the variables
+// during presolve, but also extends the model by nearly 2000
+// additional constraints. While these constraints make the model
+// larger, they help CP-SAT make deductions during the search.
 Starting CP-SAT solver v9.8.3296
 Parameters: max_time_in_seconds: 600 log_search_progress: true
 Setting number of workers to 8

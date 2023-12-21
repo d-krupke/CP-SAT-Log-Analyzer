@@ -1,3 +1,5 @@
+// This is an example using an older version of CP-SAT.
+// You will see a warning about the outdated version.
 Starting CP-SAT solver v9.7.2996
 Parameters: log_search_progress: true
 Setting number of workers to 24

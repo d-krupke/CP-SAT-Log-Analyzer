@@ -1,3 +1,21 @@
+// This log originates from a TSP model utilizing the `AddCircuit`-constraint.
+// It only has a single constraint, but this is a very expensive constraint
+// that actually automatically adds a bunch of further constraints.
+//
+// The presolver actually does nothing this time. In the search progress log,
+// we see that CP-SAT finds a feasible solution after 1s. This gap quickly
+// closes. The Search Progress plot is difficult to read this time, but
+// the Optimality Gap plot is nice and shows that we remain at 10-20%
+// optimality gap for a while and then suddenly make a jump to near-optimality.
+// During the search, the number of variables also drops continuously as CP-SAT
+// is able to determine more and more edges as either essential or suboptimal.
+// While the `AddCircuit`-constraint implicitly adds constraints, these do
+// not show up in the log.
+//
+// CP-SAT returns the status `OPTIMAL` despite not actually being optimal.
+// This is probably because of the `relative_gap_limit`, which relaxes the
+// optimality condition. I would have preferred a different status code for
+// this situation.
 Starting CP-SAT solver v9.8.3296
 Parameters: max_time_in_seconds: 90 log_search_progress: true relative_gap_limit: 0.001
 Setting number of workers to 24

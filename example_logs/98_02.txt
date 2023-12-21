@@ -2,10 +2,13 @@
 // This formulation is usually not very efficient as it has a very weak linear relaxation.
 //
 // It takes a while for CP-SAT to even find a feasible solution. Providing a solution hint
-// would probably have helped.
+// would probably have helped. Whenever it takes CP-SAT a long time to find a reasonably
+// good or even feasible solution, you may want to think about a heuristic that you
+// could use to compute an initial solution yourself. However, in this case we actually
+// know that we should have used `AddCircuit` instead.
 //
-// CP-SAT is not able to find an optimal solution but only a solution with an optimality gap
-// of <=15.78%.
+// In this case, CP-SAT is not able to find an optimal solution but only a solution with
+// an optimality gap of <=15.78%.
 Starting CP-SAT solver v9.8.3296
 Parameters: max_time_in_seconds: 90 log_search_progress: true relative_gap_limit: 0.01
 Setting number of workers to 24
