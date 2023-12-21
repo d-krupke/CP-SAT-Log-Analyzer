@@ -5,7 +5,7 @@ The logic for parsing the log is in the `cpsat_log_parser` folder.
 """
 
 import streamlit as st
-from cpsat_log_parser import parse_blocks
+from cpsat_log_parser import parse_blocks, LogParser
 
 from cpsat_log_parser.blocks import (
     SearchProgressBlock,
@@ -28,8 +28,8 @@ if data:
     st.warning(
         "This is just a prototype and may crash or show wrong results. Please report any issues [here](https://github.com/d-krupke/CP-SAT-Log-Analyzer). I welcome any feedback and complex logs to test this on."
     )
-    blocks = parse_blocks(data)
-    show_overview(blocks)
+    parser = LogParser(data)
+    show_overview(parser)
 
     st.markdown("*You can expand the following block to see the raw log.*")
     with st.expander("Raw Log"):
@@ -38,7 +38,7 @@ if data:
         "*The following part contains a parsed version of the log, easier for analysis. Depending on the CP-SAT version, not all parts may be parsed properly.*"
     )
 
-    for block in blocks:
+    for block in parser.blocks:
         if isinstance(block, SearchProgressBlock):
             st.subheader("Search", divider=True)
             with st.expander(block.get_title(), expanded=True):

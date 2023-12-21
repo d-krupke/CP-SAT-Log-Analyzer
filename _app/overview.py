@@ -15,9 +15,17 @@ def get_named_blocks(blocks) -> dict:
     return named_blocks
 
 
-def show_overview(blocks):
-    block_dict = get_named_blocks(blocks)
+def show_overview(parser):
+    block_dict = get_named_blocks(parser.blocks)
     st.subheader("Overview", divider=True)
+    if parser.comments:
+        with st.chat_message("user"):
+            # escape markdown to prevent XSS
+            comment = "\n".join(parser.comments)
+            comment = comment.replace("\\", "")
+            comment = comment.replace("[", "\\[*")
+            comment = comment.replace("]", "*\\]")
+            st.write(comment)
     solver_block = block_dict[SolverBlock]
     initial_model_block = block_dict[InitialModelBlock]
     search_progress_block = block_dict[SearchProgressBlock]

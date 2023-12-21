@@ -20,7 +20,7 @@ class SolverBlock(LogBlock):
         """
         parameters = {}
         line = line[len("Parameters:") :]
-        for match in re.finditer(r"(?P<key>\w+): (?P<value>\w+)", line):
+        for match in re.finditer(r"(?P<key>\w+): (?P<value>[^ ]+)", line):
             parameters[match.group("key")] = match.group("value")
         return parameters
 

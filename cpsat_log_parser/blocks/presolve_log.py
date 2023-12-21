@@ -77,5 +77,10 @@ class PresolveLogBlock(LogBlock):
         There are multiple rounds of domain reduction, expansion, equivalence
         checking, substitution, and probing performed during presolve.
         These steps can take some time, but they can also significantly reduce
-        the model size and the search space and thus the time it takes to find a solution. Usually, the summary is sufficient to look at to see what happened.
+        the model size and the search space and thus the time it takes to find
+        a solution. Usually, the summary is sufficient to look at to see what happened.
+
+        However, you may still want to scroll over the log for messages like
+          `removed duplicate constraint`, indicating redundancies (and possibly bugs)
+          in you model building.
         """

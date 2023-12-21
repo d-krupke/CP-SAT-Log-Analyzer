@@ -1,3 +1,11 @@
+// This is an example from a TSP model on 200 vertices that uses the Miller-Tucker-Zemlin-formulation.
+// This formulation is usually not very efficient as it has a very weak linear relaxation.
+//
+// It takes a while for CP-SAT to even find a feasible solution. Providing a solution hint
+// would probably have helped.
+//
+// CP-SAT is not able to find an optimal solution but only a solution with an optimality gap
+// of <=15.78%.
 Starting CP-SAT solver v9.8.3296
 Parameters: max_time_in_seconds: 90 log_search_progress: true relative_gap_limit: 0.01
 Setting number of workers to 24
