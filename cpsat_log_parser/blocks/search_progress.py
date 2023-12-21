@@ -269,7 +269,7 @@ To fully grasp the nuances, zooming into the plot is necessary, especially since
         )
         # make the x-axis start at 0
         fig.update_xaxes(range=[0, 1.01 * gaps[-1][0]])
-        max_gap = max(gap for _, gap in gaps)
+        max_gap = max(gap for _, gap in gaps if gap is not None)
         # make the y-axis start at 0
         fig.update_yaxes(range=[-1, min(300, 1.01 * max_gap)])
         fig.update_layout(

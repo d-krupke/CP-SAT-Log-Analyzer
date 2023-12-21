@@ -1,3 +1,6 @@
+"""
+A generic table block that can parse most tables in the log.
+"""
 import typing
 import re
 import pandas as pd
