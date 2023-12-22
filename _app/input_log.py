@@ -1,13 +1,12 @@
 import streamlit as st
 
+
 def get_data_from_url(url):
     import urllib.request
     import urllib.parse
-    from urllib.error import URLError
 
-    url_ = (
-        "https://cpsat-log-analyzer.streamlit.app/?"
-        + urllib.parse.urlencode({"from_url": url})
+    url_ = "https://cpsat-log-analyzer.streamlit.app/?" + urllib.parse.urlencode(
+        {"from_url": url}
     )
     try:
         data = urllib.request.urlopen(url).read(20_000).decode("utf-8")
@@ -18,6 +17,7 @@ def get_data_from_url(url):
         f"Loading log from `{url}`. You can share it with others using [{url_}]({url_})."
     )
     return data
+
 
 def input_log():
     # accept log via file upload or text input
@@ -30,7 +30,7 @@ def input_log():
         if log_text:
             data = log_text
         url = st.text_input("Or load a log from a URL:", value="")
-        if url: 
+        if url:
             data = get_data_from_url(url)
         # example logs per button
         st.markdown("Or use one of the following example logs:")

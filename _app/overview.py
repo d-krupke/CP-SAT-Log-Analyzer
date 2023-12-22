@@ -51,6 +51,7 @@ def show_overview(parser):
             md = "*CP-SAT was setup with the following parameters:*\n"
             st.markdown(md)
             st.json(solver_block.get_parameters())
+            st.markdown("*You can find more information about the parameters [here](https://github.com/google/or-tools/blob/stable/ortools/sat/sat_parameters.proto).*")
 
         col1, col2, col3 = st.columns(3)
         response = response_block.to_dict()
@@ -136,4 +137,6 @@ def show_overview(parser):
             if fig:
                 st.plotly_chart(fig, use_container_width=True)
     except KeyError as ke:
-        st.error(f"Error parsing information. Log seems to be incomplete: {ke}. Make sure you enter the full log without any modifications. The parser is sensitive to new lines.")
+        st.error(
+            f"Error parsing information. Log seems to be incomplete: {ke}. Make sure you enter the full log without any modifications. The parser is sensitive to new lines."
+        )
