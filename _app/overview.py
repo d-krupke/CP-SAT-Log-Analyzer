@@ -136,4 +136,4 @@ def show_overview(parser):
             if fig:
                 st.plotly_chart(fig, use_container_width=True)
     except KeyError as ke:
-        st.error(f"Error parsing information. Log seems to be incomplete: {ke}")
+        st.error(f"Error parsing information. Log seems to be incomplete: {ke}. Make sure you enter the full log without any modifications. The parser is sensitive to new lines.")

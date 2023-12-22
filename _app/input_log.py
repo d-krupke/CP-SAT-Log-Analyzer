@@ -1,5 +1,23 @@
 import streamlit as st
 
+def get_data_from_url(url):
+    import urllib.request
+    import urllib.parse
+    from urllib.error import URLError
+
+    url_ = (
+        "https://cpsat-log-analyzer.streamlit.app/?"
+        + urllib.parse.urlencode({"from_url": url})
+    )
+    try:
+        data = urllib.request.urlopen(url).read(20_000).decode("utf-8")
+    except Exception as e:
+        st.error(f"Could not load log from `{url}`. Error: {e}")
+        return None
+    st.info(
+        f"Loading log from `{url}`. You can share it with others using [{url_}]({url_})."
+    )
+    return data
 
 def input_log():
     # accept log via file upload or text input
@@ -11,19 +29,9 @@ def input_log():
         log_text = st.text_area("Or paste a log here")
         if log_text:
             data = log_text
-        url = st.text_input("Or load a log from a URL:")
-        if url:
-            import urllib.request
-            import urllib.parse
-
-            url_ = (
-                "https://cpsat-log-analyzer.streamlit.app/?"
-                + urllib.parse.urlencode({"from_url": url})
-            )
-            st.info(
-                f"Loading log from `{url}`. You can share it with others using [{url_}]({url_})."
-            )
-            data = urllib.request.urlopen(url).read(20_000).decode("utf-8")
+        url = st.text_input("Or load a log from a URL:", value="")
+        if url: 
+            data = get_data_from_url(url)
         # example logs per button
         st.markdown("Or use one of the following example logs:")
         examples = [
@@ -72,16 +80,7 @@ def input_log():
     query_params = st.experimental_get_query_params()
     if not data and "from_url" in query_params:
         url = query_params["from_url"][0]
-        import urllib.request
-        import urllib.parse
-
-        url_ = "https://cpsat-log-analyzer.streamlit.app/?" + urllib.parse.urlencode(
-            {"from_url": url}
-        )
-        st.info(
-            f"Loading log from `{url}`. You can share it with others using [{url_}]({url_})."
-        )
-        data = urllib.request.urlopen(url).read(20_000).decode("utf-8")
+        data = get_data_from_url(url)
     if not data and "example" in query_params:
         example = query_params["example"][0]
         import urllib.request
