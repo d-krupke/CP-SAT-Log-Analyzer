@@ -147,3 +147,5 @@ if data:
             st.error(
                 f"Could not render block `{block.get_title()}`. Error: '{e}'. Please check the raw log. If you think this is a bug, please report it [here](https://github.com/d-krupke/CP-SAT-Log-Analyzer/issues)."
             )
+            with st.expander("Raw Block", expanded=True):
+                st.text(str(block))
