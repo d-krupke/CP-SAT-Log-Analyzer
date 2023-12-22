@@ -56,4 +56,4 @@ ALL_BLOCKS = [
     LogBlock,
 ]
 
-__all__ = ALL_BLOCKS
+__all__ = list(ALL_BLOCKS)

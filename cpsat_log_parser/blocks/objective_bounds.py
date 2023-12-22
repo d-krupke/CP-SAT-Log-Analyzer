@@ -14,7 +14,7 @@ class ObjectiveBoundsBlock(TableBlock):
     def get_help(self) -> typing.Optional[str]:
         return """
         This table gives an overview on which strategies improved the objective bounds. Together with the solutions table, this can be used to determine the most effective strategies. The less effective strategies can then be removed from the search, potentially freeing up resources for the more effective strategies.
-"""
+        """
 
     @staticmethod
     def matches(lines: typing.List[str]) -> bool:

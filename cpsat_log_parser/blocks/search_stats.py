@@ -21,4 +21,4 @@ class SearchStatsBlock(TableBlock):
         return """
         This table gives you some statistics on the different search strategies.
         How many variables where in the search space, how many conflicts were found, how many branches were executed, how often was the search restarted, and how often where the boolean and integer propagators applied.
-"""
+        """

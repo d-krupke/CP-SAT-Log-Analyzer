@@ -76,4 +76,4 @@ class LogParser:
         for block in self.blocks:
             if isinstance(block, block_type):
                 return block
-        return None
+        raise KeyError(f"Could not find block '{block_type.__name__}'")
