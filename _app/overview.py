@@ -8,7 +8,6 @@ from cpsat_log_parser.blocks import (
 )
 
 
-
 def show_overview(parser):
     st.subheader("Overview", divider=True)
     if parser.comments:
