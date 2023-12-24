@@ -9,6 +9,8 @@ actionable!
 
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://cpsat-log-analyzer.streamlit.app/)
 
+*This project is not affiliated with Google.*
+
 ## Easy Upload
 
 Various ways to quickly upload your log files, and multiple examples to get you
@@ -63,3 +65,15 @@ commands:
 pip install -r requirements.txt
 streamlit run app.py
 ```
+
+
+## Related Projects
+
+1. [OR-Tools](https://github.com/google/or-tools/): Google's Operations Research
+   Tools containing the CP-SAT solver, for which this project was created.
+2. [CP-SAT Primer](https://github.com/d-krupke/cpsat-primer): A primer on
+   constraint programming with CP-SAT. This project was created to complement
+    this primer.
+3. [gurobi-logtools](https://github.com/Gurobi/gurobi-logtools): Gurobi's log analyzer which is
+   the inspiration for this project. However, this project is still very different
+    from Gurobi's log analyzer.
