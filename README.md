@@ -66,6 +66,45 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
+### Project Structure
+
+This project has a relatively simple structure, consisting of two main parts:
+1. The streamlit app with entry point `app.py` and implementation in `./_app`.
+2. The parser and log documentation in `cpsat_log_parser`.
+
+If you want to improve the parsing or documentation of a block of the log, you
+can do so by just editing the corresponding file in `cpsat_log_parser/blocks`.
+Every block has its own file with a name corresponding to the block name.
+
+If you want to add a new block, you can do so by creating a new file in
+`cpsat_log_parser/blocks`. The file should contain a class with the same name as
+the block. This class should inherit from `LogBlock` and implement a static `matches`-method
+that returns `True` if the passed part of the log matches the block. The `get_title` and `get_help`
+methods should return a title and help text for the block. For tables, there already is a `TableBlock` which
+is able to return the table as a pandas DataFrame and the front-end will know to display it as a table.
+If your block is more complex and wants to display plots or other things, you will have to add a special
+section to the front-end. For the block to be found, you will also have to add it to the `ALL_BLOCKS` in
+`cpsat_log_parser/blocks/__init__.py`. The parser will then automatically try to use it. Note that the order
+of the list is important, as the first block that matches will be used. The `LogBlock` should always be the
+last as it matches everything.
+
+### Roadmap
+
+Here are some ideas for future improvements:
+
+- [ ] Implement the ability to upload multiple log files and compare them.
+- [ ] Extend the documentation of the blocks. Currently, I only wrote some
+      documentation for the most important blocks, sometimes by just copying
+      from the CP-SAT Primer and letting ChatGPT quickly make it more readable.
+- [ ] A more extensive list of examples. I have some nice examples, where you can
+      actually see issues in different parts of the log, highlighting their importance.
+
+### Authors
+
+This project is developed by [Dominik Krupke](https://github.com/d-krupke/), Postdoctoral Researcher at the
+Algorithms Group of the Technische Universität Braunschweig. There is no funding for this project, and it is
+mainly developed in my free time. If you want to support this project, please consider contributing or
+contacting me for other ways to support it.
 
 ## Related Projects
 
