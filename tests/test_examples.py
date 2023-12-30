@@ -1,21 +1,16 @@
 import os
 import sys
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from cpsat_log_parser import LogParser
 from cpsat_log_parser.blocks import (
     SearchProgressBlock,
-    SearchStatsBlock,
-    SolutionsBlock,
-    TableBlock,
     SolverBlock,
     ResponseBlock,
-    PresolveLogBlock,
-    TaskTimingBlock,
-    PresolvedModelBlock,
 )
 
-EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../example_logs')
+EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), "../example_logs")
+
 
 def test_all_examples():
     for file in os.listdir(EXAMPLE_DIR):
@@ -27,5 +22,3 @@ def test_all_examples():
                 parser.get_block_of_type(SolverBlock).get_parameters()
                 parser.get_block_of_type(SearchProgressBlock)
                 parser.get_block_of_type(ResponseBlock)
-
-                

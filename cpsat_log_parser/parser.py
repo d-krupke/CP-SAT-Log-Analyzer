@@ -70,9 +70,7 @@ class LogParser:
                 data.append(line)
         return comments, data
 
-    def get_block_of_type(
-        self, block_type: typing.Type[LogBlock]
-    ) -> LogBlock:
+    def get_block_of_type(self, block_type: typing.Type[LogBlock]) -> LogBlock:
         for block in self.blocks:
             if isinstance(block, block_type):
                 return block

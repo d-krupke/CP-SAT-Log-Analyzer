@@ -9,7 +9,7 @@ actionable!
 
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://cpsat-log-analyzer.streamlit.app/)
 
-*This project is not affiliated with Google.*
+_This project is not affiliated with Google._
 
 ## Easy Upload
 
@@ -69,6 +69,7 @@ streamlit run app.py
 ### Project Structure
 
 This project has a relatively simple structure, consisting of two main parts:
+
 1. The streamlit app with entry point `app.py` and implementation in `./_app`.
 2. The parser and log documentation in `cpsat_log_parser`.
 
@@ -78,15 +79,18 @@ Every block has its own file with a name corresponding to the block name.
 
 If you want to add a new block, you can do so by creating a new file in
 `cpsat_log_parser/blocks`. The file should contain a class with the same name as
-the block. This class should inherit from `LogBlock` and implement a static `matches`-method
-that returns `True` if the passed part of the log matches the block. The `get_title` and `get_help`
-methods should return a title and help text for the block. For tables, there already is a `TableBlock` which
-is able to return the table as a pandas DataFrame and the front-end will know to display it as a table.
-If your block is more complex and wants to display plots or other things, you will have to add a special
-section to the front-end. For the block to be found, you will also have to add it to the `ALL_BLOCKS` in
-`cpsat_log_parser/blocks/__init__.py`. The parser will then automatically try to use it. Note that the order
-of the list is important, as the first block that matches will be used. The `LogBlock` should always be the
-last as it matches everything.
+the block. This class should inherit from `LogBlock` and implement a static
+`matches`-method that returns `True` if the passed part of the log matches the
+block. The `get_title` and `get_help` methods should return a title and help
+text for the block. For tables, there already is a `TableBlock` which is able to
+return the table as a pandas DataFrame and the front-end will know to display it
+as a table. If your block is more complex and wants to display plots or other
+things, you will have to add a special section to the front-end. For the block
+to be found, you will also have to add it to the `ALL_BLOCKS` in
+`cpsat_log_parser/blocks/__init__.py`. The parser will then automatically try to
+use it. Note that the order of the list is important, as the first block that
+matches will be used. The `LogBlock` should always be the last as it matches
+everything.
 
 ### Roadmap
 
@@ -96,15 +100,17 @@ Here are some ideas for future improvements:
 - [ ] Extend the documentation of the blocks. Currently, I only wrote some
       documentation for the most important blocks, sometimes by just copying
       from the CP-SAT Primer and letting ChatGPT quickly make it more readable.
-- [ ] A more extensive list of examples. I have some nice examples, where you can
-      actually see issues in different parts of the log, highlighting their importance.
+- [ ] A more extensive list of examples. I have some nice examples, where you
+      can actually see issues in different parts of the log, highlighting their
+      importance.
 
 ### Authors
 
-This project is developed by [Dominik Krupke](https://github.com/d-krupke/), Postdoctoral Researcher at the
-Algorithms Group of the Technische Universität Braunschweig. There is no funding for this project, and it is
-mainly developed in my free time. If you want to support this project, please consider contributing or
-contacting me for other ways to support it.
+This project is developed by [Dominik Krupke](https://github.com/d-krupke/),
+Postdoctoral Researcher at the Algorithms Group of the Technische Universität
+Braunschweig. There is no funding for this project, and it is mainly developed
+in my free time. If you want to support this project, please consider
+contributing or contacting me for other ways to support it.
 
 ## Related Projects
 
@@ -112,7 +118,7 @@ contacting me for other ways to support it.
    Tools containing the CP-SAT solver, for which this project was created.
 2. [CP-SAT Primer](https://github.com/d-krupke/cpsat-primer): A primer on
    constraint programming with CP-SAT. This project was created to complement
-    this primer.
-3. [gurobi-logtools](https://github.com/Gurobi/gurobi-logtools): Gurobi's log analyzer which is
-   the inspiration for this project. However, this project is still very different
-    from Gurobi's log analyzer.
+   this primer.
+3. [gurobi-logtools](https://github.com/Gurobi/gurobi-logtools): Gurobi's log
+   analyzer which is the inspiration for this project. However, this project is
+   still very different from Gurobi's log analyzer.

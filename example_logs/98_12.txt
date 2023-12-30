@@ -42,7 +42,7 @@ Initial optimization model '': (model_fingerprint: 0x5048f2ad51b57f87)
   - 1 in [0,538]
   - 2 in [0,547]
   - 1 in [0,548]
-  - 1 constants in {0} 
+  - 1 constants in {0}
 #kBoolOr: 20 (#enforced: 20) (#literals: 20)
 #kCircuit: 1
 #kInterval: 40 (#enforced: 40)
@@ -53,71 +53,71 @@ Initial optimization model '': (model_fingerprint: 0x5048f2ad51b57f87)
 
 Starting presolve at 0.00s
 The solution hint is complete and is feasible.
-  1.90e-04s  0.00e+00d  [DetectDominanceRelations] 
-  2.90e-03s  0.00e+00d  [PresolveToFixPoint] #num_loops=3 #num_dual_strengthening=1 
-  3.79e-06s  0.00e+00d  [ExtractEncodingFromLinear] 
+  1.90e-04s  0.00e+00d  [DetectDominanceRelations]
+  2.90e-03s  0.00e+00d  [PresolveToFixPoint] #num_loops=3 #num_dual_strengthening=1
+  3.79e-06s  0.00e+00d  [ExtractEncodingFromLinear]
 [SAT presolve] num removable Booleans: 0 / 590
 [SAT presolve] num trivial clauses: 0
 [SAT presolve] [0s] clauses:19 literals:38 vars:38 one_side_vars:38 simple_definition:0 singleton_clauses:0
 [SAT presolve] [1.046e-05s] clauses:19 literals:38 vars:38 one_side_vars:38 simple_definition:0 singleton_clauses:0
 [SAT presolve] [2.3093e-05s] clauses:19 literals:38 vars:38 one_side_vars:38 simple_definition:0 singleton_clauses:0
-  4.23e-03s  2.28e-03d  [Probe] #probed=1'218 #new_binary_clauses=1'558 
-  3.07e-05s  0.00e+00d  [MaxClique] 
-  1.85e-04s  0.00e+00d  [DetectDominanceRelations] 
-  1.12e-03s  0.00e+00d  [PresolveToFixPoint] #num_loops=2 #num_dual_strengthening=1 
-  4.71e-04s  0.00e+00d  [DetectDuplicateConstraints] #duplicates=1 
-  3.00e-04s  0.00e+00d  [DetectDifferentVariables] #different=171 #cliques=1 #size=19 
-  1.07e-05s  1.74e-07d  [DetectDominatedLinearConstraints] #relevant_constraints=20 
-  4.86e-05s  1.54e-07d  [ProcessSetPPC] #relevant_constraints=20 
-  9.30e-06s  0.00e+00d  [FindAlmostIdenticalLinearConstraints] 
-  4.27e-06s  1.00e-07d  [FindBigHorizontalLinearOverlap] #linears=1 
-  1.30e-04s  9.50e-05d  [FindBigVerticalLinearOverlap] 
-  3.40e-06s  0.00e+00d  [MergeClauses] 
-  1.96e-04s  0.00e+00d  [DetectDominanceRelations] 
-  1.16e-03s  0.00e+00d  [PresolveToFixPoint] #num_loops=1 #num_dual_strengthening=1 
-  1.84e-04s  0.00e+00d  [DetectDominanceRelations] 
-  1.13e-03s  0.00e+00d  [PresolveToFixPoint] #num_loops=1 #num_dual_strengthening=1 
+  4.23e-03s  2.28e-03d  [Probe] #probed=1'218 #new_binary_clauses=1'558
+  3.07e-05s  0.00e+00d  [MaxClique]
+  1.85e-04s  0.00e+00d  [DetectDominanceRelations]
+  1.12e-03s  0.00e+00d  [PresolveToFixPoint] #num_loops=2 #num_dual_strengthening=1
+  4.71e-04s  0.00e+00d  [DetectDuplicateConstraints] #duplicates=1
+  3.00e-04s  0.00e+00d  [DetectDifferentVariables] #different=171 #cliques=1 #size=19
+  1.07e-05s  1.74e-07d  [DetectDominatedLinearConstraints] #relevant_constraints=20
+  4.86e-05s  1.54e-07d  [ProcessSetPPC] #relevant_constraints=20
+  9.30e-06s  0.00e+00d  [FindAlmostIdenticalLinearConstraints]
+  4.27e-06s  1.00e-07d  [FindBigHorizontalLinearOverlap] #linears=1
+  1.30e-04s  9.50e-05d  [FindBigVerticalLinearOverlap]
+  3.40e-06s  0.00e+00d  [MergeClauses]
+  1.96e-04s  0.00e+00d  [DetectDominanceRelations]
+  1.16e-03s  0.00e+00d  [PresolveToFixPoint] #num_loops=1 #num_dual_strengthening=1
+  1.84e-04s  0.00e+00d  [DetectDominanceRelations]
+  1.13e-03s  0.00e+00d  [PresolveToFixPoint] #num_loops=1 #num_dual_strengthening=1
 [SAT presolve] num removable Booleans: 0 / 590
 [SAT presolve] num trivial clauses: 0
 [SAT presolve] [0s] clauses:532 literals:1064 vars:551 one_side_vars:380 simple_definition:171 singleton_clauses:0
 [SAT presolve] [2.2562e-05s] clauses:532 literals:1064 vars:551 one_side_vars:380 simple_definition:171 singleton_clauses:0
 [SAT presolve] [3.3282e-05s] clauses:532 literals:1064 vars:551 one_side_vars:380 simple_definition:171 singleton_clauses:0
-  4.58e-03s  2.37e-03d  [Probe] #probed=1'218 #new_binary_clauses=1'387 
-  4.36e-04s  0.00e+00d  [MaxClique] Merged 532(1064 literals) into 532(1235 literals) at_most_ones. 
-  1.99e-04s  0.00e+00d  [DetectDominanceRelations] 
-  1.21e-03s  0.00e+00d  [PresolveToFixPoint] #num_loops=1 #num_dual_strengthening=1 
-  5.58e-04s  0.00e+00d  [DetectDuplicateConstraints] 
-  2.27e-04s  0.00e+00d  [DetectDifferentVariables] 
-  1.40e-05s  1.74e-07d  [DetectDominatedLinearConstraints] #relevant_constraints=20 
-  1.57e-04s  3.80e-06d  [ProcessSetPPC] #relevant_constraints=533 
-  1.80e-05s  0.00e+00d  [FindAlmostIdenticalLinearConstraints] 
-  6.11e-06s  1.00e-07d  [FindBigHorizontalLinearOverlap] #linears=1 
-  1.37e-04s  1.01e-04d  [FindBigVerticalLinearOverlap] 
-  6.83e-06s  0.00e+00d  [MergeClauses] 
-  2.27e-04s  0.00e+00d  [DetectDominanceRelations] 
-  1.26e-03s  0.00e+00d  [PresolveToFixPoint] #num_loops=1 #num_dual_strengthening=1 
-  2.22e-04s  0.00e+00d  [DetectDominanceRelations] 
-  1.25e-03s  0.00e+00d  [PresolveToFixPoint] #num_loops=1 #num_dual_strengthening=1 
+  4.58e-03s  2.37e-03d  [Probe] #probed=1'218 #new_binary_clauses=1'387
+  4.36e-04s  0.00e+00d  [MaxClique] Merged 532(1064 literals) into 532(1235 literals) at_most_ones.
+  1.99e-04s  0.00e+00d  [DetectDominanceRelations]
+  1.21e-03s  0.00e+00d  [PresolveToFixPoint] #num_loops=1 #num_dual_strengthening=1
+  5.58e-04s  0.00e+00d  [DetectDuplicateConstraints]
+  2.27e-04s  0.00e+00d  [DetectDifferentVariables]
+  1.40e-05s  1.74e-07d  [DetectDominatedLinearConstraints] #relevant_constraints=20
+  1.57e-04s  3.80e-06d  [ProcessSetPPC] #relevant_constraints=533
+  1.80e-05s  0.00e+00d  [FindAlmostIdenticalLinearConstraints]
+  6.11e-06s  1.00e-07d  [FindBigHorizontalLinearOverlap] #linears=1
+  1.37e-04s  1.01e-04d  [FindBigVerticalLinearOverlap]
+  6.83e-06s  0.00e+00d  [MergeClauses]
+  2.27e-04s  0.00e+00d  [DetectDominanceRelations]
+  1.26e-03s  0.00e+00d  [PresolveToFixPoint] #num_loops=1 #num_dual_strengthening=1
+  2.22e-04s  0.00e+00d  [DetectDominanceRelations]
+  1.25e-03s  0.00e+00d  [PresolveToFixPoint] #num_loops=1 #num_dual_strengthening=1
 [SAT presolve] num removable Booleans: 0 / 590
 [SAT presolve] num trivial clauses: 0
 [SAT presolve] [0s] clauses:532 literals:1064 vars:551 one_side_vars:380 simple_definition:171 singleton_clauses:0
 [SAT presolve] [2.3254e-05s] clauses:532 literals:1064 vars:551 one_side_vars:380 simple_definition:171 singleton_clauses:0
 [SAT presolve] [3.3854e-05s] clauses:532 literals:1064 vars:551 one_side_vars:380 simple_definition:171 singleton_clauses:0
-  4.73e-03s  2.39e-03d  [Probe] #probed=1'218 #new_binary_clauses=1'387 
-  4.78e-04s  0.00e+00d  [MaxClique] Merged 703(1577 literals) into 532(1235 literals) at_most_ones. 
-  2.05e-04s  0.00e+00d  [DetectDominanceRelations] 
-  1.19e-03s  0.00e+00d  [PresolveToFixPoint] #num_loops=1 #num_dual_strengthening=1 
-  5.63e-04s  0.00e+00d  [DetectDuplicateConstraints] 
-  2.18e-04s  0.00e+00d  [DetectDifferentVariables] 
-  1.54e-05s  1.74e-07d  [DetectDominatedLinearConstraints] #relevant_constraints=20 
-  1.67e-04s  3.80e-06d  [ProcessSetPPC] #relevant_constraints=533 
-  1.20e-05s  0.00e+00d  [FindAlmostIdenticalLinearConstraints] 
-  8.69e-06s  1.00e-07d  [FindBigHorizontalLinearOverlap] #linears=1 
-  1.51e-04s  1.01e-04d  [FindBigVerticalLinearOverlap] 
-  9.29e-06s  0.00e+00d  [MergeClauses] 
-  2.36e-04s  0.00e+00d  [DetectDominanceRelations] 
-  1.29e-03s  0.00e+00d  [PresolveToFixPoint] #num_loops=1 #num_dual_strengthening=1 
-  5.60e-05s  0.00e+00d  [ExpandObjective] 
+  4.73e-03s  2.39e-03d  [Probe] #probed=1'218 #new_binary_clauses=1'387
+  4.78e-04s  0.00e+00d  [MaxClique] Merged 703(1577 literals) into 532(1235 literals) at_most_ones.
+  2.05e-04s  0.00e+00d  [DetectDominanceRelations]
+  1.19e-03s  0.00e+00d  [PresolveToFixPoint] #num_loops=1 #num_dual_strengthening=1
+  5.63e-04s  0.00e+00d  [DetectDuplicateConstraints]
+  2.18e-04s  0.00e+00d  [DetectDifferentVariables]
+  1.54e-05s  1.74e-07d  [DetectDominatedLinearConstraints] #relevant_constraints=20
+  1.67e-04s  3.80e-06d  [ProcessSetPPC] #relevant_constraints=533
+  1.20e-05s  0.00e+00d  [FindAlmostIdenticalLinearConstraints]
+  8.69e-06s  1.00e-07d  [FindBigHorizontalLinearOverlap] #linears=1
+  1.51e-04s  1.01e-04d  [FindBigVerticalLinearOverlap]
+  9.29e-06s  0.00e+00d  [MergeClauses]
+  2.36e-04s  0.00e+00d  [DetectDominanceRelations]
+  1.29e-03s  0.00e+00d  [PresolveToFixPoint] #num_loops=1 #num_dual_strengthening=1
+  5.60e-05s  0.00e+00d  [ExpandObjective]
 
 Presolve summary:
   - 0 affine relations were detected.
