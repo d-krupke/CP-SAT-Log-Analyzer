@@ -1,5 +1,5 @@
 import streamlit as st
-
+import os
 
 def get_data_from_url(url):
     import urllib.request
@@ -77,12 +77,11 @@ def input_log():
                     with open(example["file"]) as f:
                         data = f.read()
 
-    query_params = st.experimental_get_query_params()
-    if not data and "from_url" in query_params:
-        url = query_params["from_url"][0]
+    if not data and "from_url" in st.query_params:
+        url = st.query_params.get_all("from_url")[0]
         data = get_data_from_url(url)
-    if not data and "example" in query_params:
-        example = query_params["example"][0]
+    if not data and "example" in st.query_params:
+        example = st.query_params.get_all("example")[0]
         import urllib.request
         import urllib.parse
 
@@ -92,6 +91,16 @@ def input_log():
         st.info(
             f"Loading example log `{example}`. You can share it with others using [{url}]({url})."
         )
+        if "/" in example:
+            st.error(f"Invalid example log `{example}`.")
+            return None
+        example_path = f"example_logs/{example}.txt"
+        if not os.path.dirname(example_path).endswith("example_logs"):
+            st.error(f"Invalid example log `{example}`.")
+            return None
+        if not os.path.exists(example_path):
+            st.error(f"Example log `{example}` does not exist.")
+            return None
         with open(f"example_logs/{example}.txt") as f:
             data = f.read()
     return data
