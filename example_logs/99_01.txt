@@ -1,0 +1,150 @@
+// This model is a decision problem for a packing problem.
+// It uses a sequential search which does not have a progress log.
+
+Starting CP-SAT solver v9.9.3963
+Parameters: max_time_in_seconds: 30 log_search_progress: true log_to_stdout: true
+Setting number of workers to 1
+
+Initial satisfaction model '': (model_fingerprint: 0xbc34aec982cbd687)
+#Variables: 560
+  - 468 Booleans in [0,1]
+  - 39 in [0,20]
+  - 39 in [0,40]
+  - 14 constants in {2,3,4,5,6,7,8,9,10,11,12,14,15,16} 
+#kExactlyOne: 154 (#literals: 462)
+#kInterval: 38 (#enforced: 38)
+#kLinear2: 40
+#kLinear3: 500 (#enforced: 500)
+#kNoOverlap2D: 4 (#rectangles: 19, #optional: 19)
+
+Starting presolve at 0.00s
+  8.55e-04s  0.00e+00d  [PresolveToFixPoint] #num_loops=1 
+  7.44e-06s  0.00e+00d  [ExtractEncodingFromLinear] #potential_supersets=154 
+  1.64e-03s  4.12e-04d  [Probe] #probed=944 #new_binary_clauses=525 
+  3.14e-06s  0.00e+00d  [MaxClique] 
+  3.74e-04s  0.00e+00d  [PresolveToFixPoint] 
+  8.94e-05s  0.00e+00d  [ProcessAtMostOneAndLinear] 
+  2.16e-04s  0.00e+00d  [DetectDuplicateConstraints] 
+  2.30e-06s  0.00e+00d  [DetectDominatedLinearConstraints] 
+  6.61e-05s  0.00e+00d  [DetectDifferentVariables] 
+  3.61e-05s  1.39e-06d  [ProcessSetPPC] #relevant_constraints=154 
+  2.34e-06s  0.00e+00d  [FindAlmostIdenticalLinearConstraints] 
+  4.61e-05s  5.62e-05d  [FindBigAtMostOneAndLinearOverlap] 
+  6.27e-05s  4.39e-05d  [FindBigVerticalLinearOverlap] 
+  2.18e-06s  0.00e+00d  [FindBigHorizontalLinearOverlap] 
+  3.89e-06s  0.00e+00d  [MergeClauses] 
+  3.59e-04s  0.00e+00d  [PresolveToFixPoint] 
+  3.50e-04s  0.00e+00d  [PresolveToFixPoint] 
+  1.55e-03s  4.18e-04d  [Probe] #probed=944 #new_binary_clauses=525 
+  1.34e-04s  0.00e+00d  [MaxClique] Merged 153(306 literals) into 153(459 literals) at_most_ones. 
+  3.68e-04s  0.00e+00d  [PresolveToFixPoint] 
+  1.02e-04s  0.00e+00d  [ProcessAtMostOneAndLinear] 
+  2.61e-04s  0.00e+00d  [DetectDuplicateConstraints] 
+  3.48e-06s  0.00e+00d  [DetectDominatedLinearConstraints] 
+  7.73e-05s  0.00e+00d  [DetectDifferentVariables] 
+  1.12e-04s  4.14e-06d  [ProcessSetPPC] #relevant_constraints=307 #num_inclusions=153 
+  3.88e-06s  0.00e+00d  [FindAlmostIdenticalLinearConstraints] 
+  5.22e-05s  5.62e-05d  [FindBigAtMostOneAndLinearOverlap] 
+  6.03e-05s  4.39e-05d  [FindBigVerticalLinearOverlap] 
+  4.47e-06s  0.00e+00d  [FindBigHorizontalLinearOverlap] 
+  4.68e-06s  0.00e+00d  [MergeClauses] 
+  3.63e-04s  0.00e+00d  [PresolveToFixPoint] 
+  3.39e-04s  0.00e+00d  [PresolveToFixPoint] 
+  1.55e-03s  4.18e-04d  [Probe] #probed=944 #new_binary_clauses=525 
+  1.33e-04s  0.00e+00d  [MaxClique] Merged 153(306 literals) into 153(459 literals) at_most_ones. 
+  3.48e-04s  0.00e+00d  [PresolveToFixPoint] 
+  1.01e-04s  0.00e+00d  [ProcessAtMostOneAndLinear] 
+  2.58e-04s  0.00e+00d  [DetectDuplicateConstraints] 
+  3.94e-06s  0.00e+00d  [DetectDominatedLinearConstraints] 
+  6.95e-05s  0.00e+00d  [DetectDifferentVariables] 
+  1.06e-04s  4.14e-06d  [ProcessSetPPC] #relevant_constraints=307 #num_inclusions=153 
+  6.18e-06s  0.00e+00d  [FindAlmostIdenticalLinearConstraints] 
+  5.50e-05s  5.62e-05d  [FindBigAtMostOneAndLinearOverlap] 
+  6.04e-05s  4.39e-05d  [FindBigVerticalLinearOverlap] 
+  4.62e-06s  0.00e+00d  [FindBigHorizontalLinearOverlap] 
+  7.36e-06s  0.00e+00d  [MergeClauses] 
+  3.65e-04s  0.00e+00d  [PresolveToFixPoint] 
+
+Presolve summary:
+  - 0 affine relations were detected.
+  - rule 'deductions: 962 stored' was applied 1 time.
+  - rule 'incompatible linear: add implication' was applied 459 times.
+  - rule 'linear1: always true' was applied 40 times.
+  - rule 'linear2: implied ax + by = cte has only one solution' was applied 2 times.
+  - rule 'linear: fixed or dup variables' was applied 38 times.
+  - rule 'linear: reduced variable domains' was applied 40 times.
+  - rule 'linear: simplified rhs' was applied 502 times.
+  - rule 'presolve: 14 unused variables removed.' was applied 1 time.
+  - rule 'presolve: iteration' was applied 3 times.
+  - rule 'setppc: bool_or in at_most_one.' was applied 306 times.
+  - rule 'variables: detect half reified value encoding' was applied 4 times.
+
+Presolved satisfaction model '': (model_fingerprint: 0xb39b10203746ffe9)
+#Variables: 546
+  - 468 Booleans in [0,1]
+  - 1 in [0,9]
+  - 1 in [0,10]
+  - 1 in [0,11]
+  - 2 in [0,12]
+  - 1 in [0,14]
+  - 1 in [0,15]
+  - 3 in [0,16]
+  - 8 in [0,17]
+  - 2 in [0,18]
+  - 19 in [0,20]
+  - 1 in [0,24]
+  - 1 in [0,25]
+  - 2 in [0,26]
+  - 1 in [0,28]
+  - 1 in [0,29]
+  - 1 in [0,30]
+  - 3 in [0,32]
+  - 5 in [0,33]
+  - 3 in [0,34]
+  - 2 in [0,35]
+  - 19 in [0,40]
+#kBoolAnd: 153 (#enforced: 153) (#literals: 306)
+#kExactlyOne: 154 (#literals: 462)
+#kInterval: 38 (#enforced: 38)
+#kLinear1: 4 (#enforced: 4)
+#kLinear2: 498 (#enforced: 498)
+#kNoOverlap2D: 4 (#rectangles: 19, #optional: 19)
+
+Preloading model.
+[Symmetry] Graph for symmetry has 2'000 nodes and 3'216 arcs.
+[Symmetry] Symmetry computation done. time: 0.000282072 dtime: 0.00066322
+[Symmetry] #generators: 1, average support size: 98
+
+Starting to load the model at 0.01s
+[Encoding] 0 literals associated to VAR >= value, and 4 half-associations.
+[Encoding] num_partially_encoded_variables:2
+[Probing] deterministic_time: 0.00040457 (limit: 1) wall_time: 0.0011427 (472/472)
+[Probing]  - new binary clause: 525
+[EncodingLinearRelaxation] #tight_equality:0 #loose_equality:0 #inequality:2
+[LinearRelaxationBeforeCliqueExpansion] #linear:8 #at_most_ones:154
+Initial num_bool: 472
+
+Starting sequential search at 0.01s
+
+Search stats    Bools  Conflicts   Branches  Restarts  BoolPropag  IntegerPropag
+    'default':    642    918'873  1'780'404       944  65'749'379     36'871'867
+
+SAT stats     ClassicMinim  LitRemoved  LitLearned  LitForgotten  Subsumed  MClauses  MDecisions  MLitTrue  MSubsumed  MLitRemoved  MReused
+  'default':       751'131   7'041'274  20'790'373    20'257'738     2'123         0           0         0          0            0        0
+
+CpSolverResponse summary:
+status: UNKNOWN
+objective: NA
+best_bound: NA
+integers: 78
+booleans: 642
+conflicts: 918873
+branches: 1780404
+propagations: 65749379
+integer_propagations: 36871867
+restarts: 944
+lp_iterations: 0
+walltime: 30.0011
+usertime: 30.0011
+deterministic_time: 41.515
+gap_integral: 0
