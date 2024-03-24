@@ -18,6 +18,4 @@ class ObjectiveBoundsBlock(TableBlock):
 
     @staticmethod
     def matches(lines: typing.List[str]) -> bool:
-        if not lines:
-            return False
-        return lines[0].strip().startswith("Objective bounds")
+        return lines[0].strip().startswith("Objective bounds") if lines else False

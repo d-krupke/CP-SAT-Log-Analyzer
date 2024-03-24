@@ -70,9 +70,7 @@ class InitialModelBlock(LogBlock):
     def matches(lines: typing.List[str]) -> bool:
         if not lines:
             return False
-        if re.match(r"Initial (satisfaction|optimization) model", lines[0]):
-            return True
-        return False
+        return bool(re.match(r"Initial (satisfaction|optimization) model", lines[0]))
 
     def is_optimization(self) -> bool:
         if not self.lines:
@@ -95,13 +93,11 @@ class InitialModelBlock(LogBlock):
         )
 
     def get_num_constraints(self) -> int:
-        n = 0
-        for line in self.lines:
-            if line.startswith("#k"):
-                # "#kNoOverlap2D: 1 (#rectangles: 24)"
-                # "#kInterval: 48"
-                n += int(line.split(":")[1].strip().split(" ")[0].replace("'", ""))
-        return n
+        return sum(
+            int(line.split(":")[1].strip().split(" ")[0].replace("'", ""))
+            for line in self.lines
+            if line.startswith("#k")
+        )
 
     def get_help(self) -> typing.Optional[str]:
         return """

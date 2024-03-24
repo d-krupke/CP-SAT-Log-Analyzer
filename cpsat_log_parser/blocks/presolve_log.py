@@ -62,9 +62,7 @@ class PresolveLogBlock(LogBlock):
 
     @staticmethod
     def matches(lines: typing.List[str]) -> bool:
-        if not lines:
-            return False
-        return lines[0].strip().startswith("Starting presolve at")
+        return lines[0].strip().startswith("Starting presolve at") if lines else False
 
     def get_title(self) -> str:
         return "Presolve Log"

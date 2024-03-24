@@ -21,9 +21,7 @@ class PresolvedModelBlock(LogBlock):
     def matches(lines: typing.List[str]) -> bool:
         if not lines:
             return False
-        if re.match(r"Presolved (satisfaction|optimization) model", lines[0]):
-            return True
-        return False
+        return bool(re.match(r"Presolved (satisfaction|optimization) model", lines[0]))
 
     def get_title(self) -> str:
         return "Presolved Model"
@@ -41,11 +39,12 @@ class PresolvedModelBlock(LogBlock):
         )
 
     def get_num_constraints(self) -> int:
+        # "#kNoOverlap2D: 1 (#rectangles: 24)"
+        # "#kInterval: 48"
         n = 0
         for line in self.lines:
             if line.startswith("#k"):
-                # "#kNoOverlap2D: 1 (#rectangles: 24)"
-                # "#kInterval: 48"
+                
                 n += int(line.split(":")[1].strip().split(" ")[0].replace("'", ""))
         return n
 

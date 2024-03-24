@@ -26,11 +26,13 @@ from .clauses_shared import ClausesSharedBlock
 from .task_timing import TaskTimingBlock
 from .presolve_summary import PresolveSummaryBlock
 from .preloading_model import PreloadingModelBlock
+from .sequential_search_progress import SequentialSearchProgressBlock
 
 # The order of the following list is important.
 # The first matching block is used.
 ALL_BLOCKS = [
     SearchProgressBlock,
+        SequentialSearchProgressBlock,
     SearchStatsBlock,
     LnsStatsBlock,
     SolutionRepositoriesBlock,
@@ -52,7 +54,7 @@ ALL_BLOCKS = [
     TaskTimingBlock,
     PreloadingModelBlock,
     PresolveSummaryBlock,
-    TableBlock,
+    #TableBlock,  # Seems to be problematic
     LogBlock,
 ]
 

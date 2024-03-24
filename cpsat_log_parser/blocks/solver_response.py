@@ -9,9 +9,7 @@ class ResponseBlock(LogBlock):
 
     @staticmethod
     def matches(lines: typing.List[str]) -> bool:
-        if not lines:
-            return False
-        return lines[0].startswith("CpSolverResponse")
+        return lines[0].startswith("CpSolverResponse") if lines else False
 
     def get_title(self) -> str:
         return "CpSolverResponse"
@@ -34,9 +32,7 @@ class ResponseBlock(LogBlock):
         try:
             obj = float(vals["objective"])
             bound = float(vals["best_bound"])
-        except TypeError:
-            return None
-        except ValueError:
+        except (TypeError, ValueError):
             return None
         return 100 * (abs(obj - bound) / max(1, abs(obj)))
 

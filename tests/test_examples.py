@@ -5,6 +5,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from cpsat_log_parser import LogParser
 from cpsat_log_parser.blocks import (
     SearchProgressBlock,
+    SequentialSearchProgressBlock,
     SolverBlock,
     ResponseBlock,
 )
@@ -20,5 +21,8 @@ def test_all_examples():
                 data = f.read()
                 parser = LogParser(data)
                 parser.get_block_of_type(SolverBlock).get_parameters()
-                parser.get_block_of_type(SearchProgressBlock)
+                try:
+                    parser.get_block_of_type(SearchProgressBlock)
+                except KeyError:
+                    parser.get_block_of_type(SequentialSearchProgressBlock)
                 parser.get_block_of_type(ResponseBlock)

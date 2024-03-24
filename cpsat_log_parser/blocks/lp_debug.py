@@ -27,9 +27,7 @@ class LpDebugBlock(TableBlock):
 
     @staticmethod
     def matches(lines: typing.List[str]) -> bool:
-        if not lines:
-            return False
-        return lines[0].startswith("Lp debug")
+        return lines[0].startswith("Lp debug") if lines else False
 
     def get_title(self) -> str:
         return "Linear Programming: Debug Information"

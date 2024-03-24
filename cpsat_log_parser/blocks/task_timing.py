@@ -66,7 +66,7 @@ class TaskTimingBlock(LogBlock):
         lines = [line.replace(",", "  ") for line in lines]
         lines = [line.replace("\t", "  ") for line in lines]
         lines = [line.replace("s ", "s  ") for line in lines]
-        lines = [re.sub("\s\s+", "\t", line) for line in lines]
+        lines = [re.sub(r"\s\s+", "\t", line) for line in lines]
 
         def filter(line):
             split_line = line.split("\t")
@@ -82,7 +82,7 @@ class TaskTimingBlock(LogBlock):
 
         # Replace two or more spaces with a single tab
         log = "\n".join(lines)
-        log = re.sub("\s\s+", "\t", log)
+        log = re.sub(r"\s\s+", "\t", log)
 
         # Use StringIO to convert the string to a file-like object for read_csv
         log_file = StringIO(log)

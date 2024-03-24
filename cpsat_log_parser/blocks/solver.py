@@ -14,15 +14,14 @@ class SolverBlock(LogBlock):
 
     def _parse_parameters(self, line: str) -> typing.Dict:
         """
-
         The parameters line can look like this:
         "Parameters: log_search_progress: true use_timetabling_in_no_overlap_2d: true use_energetic_reasoning_in_no_overlap_2d: true use_pairwise_reasoning_in_no_overlap_2d: true"
         """
-        parameters = {}
         line = line[len("Parameters:") :]
-        for match in re.finditer(r"(?P<key>\w+): (?P<value>[^ ]+)", line):
-            parameters[match.group("key")] = match.group("value")
-        return parameters
+        return {
+            match.group("key"): match.group("value")
+            for match in re.finditer(r"(?P<key>\w+): (?P<value>[^ ]+)", line)
+        }
 
     def get_title(self) -> str:
         return "Solver Information"

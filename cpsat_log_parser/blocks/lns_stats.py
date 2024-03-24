@@ -10,9 +10,7 @@ class LnsStatsBlock(TableBlock):
 
     @staticmethod
     def matches(lines: typing.List[str]) -> bool:
-        if not lines:
-            return False
-        return lines[0].strip().startswith("LNS stats")
+        return lines[0].strip().startswith("LNS stats") if lines else False
 
     def get_title(self) -> str:
         return "Large Neighborhood Search: Statistics"

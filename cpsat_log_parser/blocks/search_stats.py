@@ -10,9 +10,7 @@ class SearchStatsBlock(TableBlock):
 
     @staticmethod
     def matches(lines: typing.List[str]) -> bool:
-        if not lines:
-            return False
-        return lines[0].strip().startswith("Search stats")
+        return lines[0].strip().startswith("Search stats") if lines else False
 
     def get_title(self) -> str:
         return "Search Strategies: Statistics"

@@ -26,9 +26,7 @@ class PresolveSummaryBlock(LogBlock):
 
     @staticmethod
     def matches(lines: typing.List[str]) -> bool:
-        if not lines:
-            return False
-        return lines[0].strip().startswith("Presolve summary:")
+        return lines[0].strip().startswith("Presolve summary:") if lines else False
 
     def get_title(self) -> str:
         return "Presolve Summary"

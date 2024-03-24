@@ -66,14 +66,10 @@ class BoundEvent:
         self.obj = obj
 
     def is_upper_bound(self):
-        if self.obj is None:
-            return None  # unknown
-        return self.bound > self.obj
+        return None if self.obj is None else self.bound > self.obj
 
     def is_lower_bound(self):
-        if self.obj is None:
-            return None  # unknown
-        return self.bound < self.obj
+        return None if self.obj is None else self.bound < self.obj
 
     def get_gap(self):
         if self.obj is None:
@@ -85,17 +81,15 @@ class BoundEvent:
         # bound events start with #Bound
         # TODO: Allow more than just seconds
         bound_pattern = r"#Bound\s+(?P<time>\d+\.\d+s)\s+(best:(?P<obj>[-+]?([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?|inf)))\s+next:\[(?P<next_lb>[-+]?([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?|inf)),(?P<next_ub>[-+]?([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?|inf))\]\s+(?P<msg>.*)"
-        m = re.match(bound_pattern, line)
-        if m:
-            obj = float(m.group("obj")) if m.group("obj") != "inf" else None
-            return BoundEvent(
-                time=parse_time(m.group("time")),
-                obj=obj,
-                bound=_get_bound(m),
-                msg=m.group("msg"),
-            )
-        else:
+        if not (m := re.match(bound_pattern, line)):
             return None
+        obj = float(m["obj"]) if m["obj"] != "inf" else None
+        return BoundEvent(
+            time=parse_time(m["time"]),
+            obj=obj,
+            bound=_get_bound(m),
+            msg=m["msg"],
+        )
 
 
 class ObjEvent:
@@ -115,13 +109,12 @@ class ObjEvent:
         # obj events start with # and a number
         # TODO: Allow more than just seconds
         obj_pattern = r"#(-?\d+)\s+(?P<time>\d+\.\d+s)\s+(best:(?P<obj>[-+]?([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?|inf)))\s+next:\[((?P<next_lb>[-+]?([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?|inf)),(?P<next_ub>[-+]?([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?|inf)))?\]\s+(?P<msg>.*)"
-        m = re.match(obj_pattern, line)
-        if m:
+        if m := re.match(obj_pattern, line):
             return ObjEvent(
-                time=parse_time(m.group("time")),
-                obj=float(m.group("obj")),
+                time=parse_time(m["time"]),
+                obj=float(m["obj"]),
                 bound=_get_bound(m),
-                msg=m.group("msg"),
+                msg=m["msg"],
             )
         else:
             return None
@@ -155,14 +148,13 @@ class ModelEvent:
     def parse(line: str) -> typing.Optional["ModelEvent"]:
         # Model events start with #Model
         model_pattern = r"#Model\s+(?P<time>\d+\.\d+s)\s+var:(?P<vars_remaining>\d+)/(?P<vars>\d+)\s+constraints:(?P<constr_remaining>\d+)/(?P<constr>\d+)\s*(\[(?P<msg>.*)\])?"
-        m = re.match(model_pattern, line)
-        if m:
+        if m := re.match(model_pattern, line):
             return ModelEvent(
-                time=parse_time(m.group("time")),
-                vars_remaining=int(m.group("vars_remaining")),
-                vars=int(m.group("vars")),
-                constr_remaining=int(m.group("constr_remaining")),
-                constr=int(m.group("constr")),
+                time=parse_time(m["time"]),
+                vars_remaining=int(m["vars_remaining"]),
+                vars=int(m["vars"]),
+                constr_remaining=int(m["constr_remaining"]),
+                constr=int(m["constr"]),
                 msg=line,
             )
         else:
@@ -170,11 +162,11 @@ class ModelEvent:
 
 
 class SearchProgressBlock(LogBlock):
-    def __init__(self, lines: typing.List[str]) -> None:
+    def __init__(self, lines: typing.List[str], check: bool=True) -> None:
         lines = [line.strip() for line in lines if line.strip()]
         if not lines:
             raise ValueError("No lines to parse")
-        if not self.matches(lines):
+        if check and not self.matches(lines):
             raise ValueError("Lines do not match SearchProgressBlock")
         self.lines = lines
 
@@ -192,28 +184,23 @@ class SearchProgressBlock(LogBlock):
         """
         events = []
         for line in self.lines:
-            obj_event = ObjEvent.parse(line)
-            if obj_event:
+            if obj_event := ObjEvent.parse(line):
                 events.append(obj_event)
                 continue
-            bound_event = BoundEvent.parse(line)
-            if bound_event:
+            if bound_event := BoundEvent.parse(line):
                 events.append(bound_event)
                 continue
-            model_event = ModelEvent.parse(line)
-            if model_event:
+            if model_event := ModelEvent.parse(line):
                 events.append(model_event)
                 continue
         return events
 
     def get_presolve_time(self) -> float:
-        # first line looks like this "Starting search at 16.74s with 24 workers."
-        m = re.match(
+        if m := re.match(
             r"Starting [Ss]earch at (?P<time>\d+\.\d+s) with \d+ workers.",
             self.lines[0],
-        )
-        if m:
-            return parse_time(m.group("time"))
+        ):
+            return parse_time(m["time"])
         raise ValueError(f"Could not parse presolve time from '{self.lines[0]}'")
 
     def get_title(self) -> str:
