@@ -20,6 +20,7 @@ Interleaved subsolvers: [feasibility_pump, rnd_var_lns_default, rnd_cst_lns_defa
 import math
 import re
 import typing
+from typing import Optional
 import plotly.graph_objects as go
 from .log_block import LogBlock
 
@@ -43,17 +44,20 @@ def _get_bound(match: re.Match) -> float:
     Needs to differ between upper and lower bound.
     """
     if "next_lb" not in match.groupdict():
-        return float(match.group("obj"))
-    next_lb = match.group("next_lb")
-    next_ub = match.group("next_ub")
+        return float(match["obj"])
+    next_lb = match["next_lb"]
+    next_ub = match["next_ub"]
     if next_lb is None or next_ub is None:
-        return float(match.group("obj"))
+        return float(match["obj"])
     bound_lb, bound_ub = float(next_lb), float(next_ub)
-    obj = float(match.group("obj"))
-    if obj < bound_lb:
-        return bound_ub  # upper bound
-    else:
-        return bound_lb  # lower bound
+    obj = float(match["obj"])
+    return bound_ub if obj < bound_lb else bound_lb
+
+
+def calculate_gap(obj: Optional[float], bound: Optional[float]) -> Optional[float]:
+    if obj is None or bound is None:
+        return None
+    return 100 * (abs(obj - bound) / max(1, abs(obj)))
 
 
 class BoundEvent:
@@ -72,9 +76,7 @@ class BoundEvent:
         return None if self.obj is None else self.bound < self.obj
 
     def get_gap(self):
-        if self.obj is None:
-            return None
-        return 100 * (abs(self.obj - self.bound) / max(1, abs(self.obj)))
+        return calculate_gap(self.obj, self.bound)
 
     @staticmethod
     def parse(line: str) -> typing.Optional["BoundEvent"]:
@@ -162,7 +164,7 @@ class ModelEvent:
 
 
 class SearchProgressBlock(LogBlock):
-    def __init__(self, lines: typing.List[str], check: bool=True) -> None:
+    def __init__(self, lines: typing.List[str], check: bool = True) -> None:
         lines = [line.strip() for line in lines if line.strip()]
         if not lines:
             raise ValueError("No lines to parse")
@@ -227,22 +229,18 @@ To fully grasp the nuances, zooming into the plot is necessary, especially since
 
     def gap_as_plotly(self) -> typing.Optional[go.Figure]:
         gap_events = [
-            e
-            for e in self._parse_events()
-            if isinstance(e, BoundEvent) or isinstance(e, ObjEvent)
+            e for e in self._parse_events() if isinstance(e, (BoundEvent, ObjEvent))
         ]
 
         def is_valid_gap(gap):
-            if gap is None:
-                return False
-            if not math.isfinite(gap):
-                return False
-            return True
+            return False if gap is None else bool(math.isfinite(gap))
 
         gaps = [(e.time, e.get_gap()) for e in gap_events if is_valid_gap(e.get_gap())]
+
         fig = go.Figure()
         if not gap_events:
             return None
+
         # add gaps
         fig.add_trace(
             go.Scatter(
@@ -250,10 +248,24 @@ To fully grasp the nuances, zooming into the plot is necessary, especially since
                 y=[gap for _, gap in gaps],
                 mode="lines+markers",
                 line=dict(color="purple"),
-                name="Gap",
+                name="Relative Gap",
                 hovertext=[e.msg for e in gap_events],
             )
         )
+
+        last_bound = max(gap_events, key=lambda e: e.time).bound
+        final_gaps = [calculate_gap(e.obj, last_bound) for e in gap_events]
+        fig.add_trace(
+            go.Scatter(
+                x=[e.time for e in gap_events],
+                y=final_gaps,
+                mode="lines+markers",
+                line=dict(color="orange"),
+                name="Final Gap",
+                hovertext=[e.msg for e in gap_events],
+            )
+        )
+
         # make the x-axis start at 0
         fig.update_xaxes(range=[0, 1.01 * gaps[-1][0]])
         max_gap = max(gap for _, gap in gaps if gap is not None)
@@ -321,7 +333,7 @@ To fully grasp the nuances, zooming into the plot is necessary, especially since
         fig = go.Figure()
         if not obj_events and not bound_events:
             return None
-        max_time = max([e.time for e in bound_events + obj_events])
+        max_time = max(e.time for e in bound_events + obj_events)
 
         # make sure that both bounds and objs have a value at max_time
         if obj_events and obj_events[-1].time < max_time:

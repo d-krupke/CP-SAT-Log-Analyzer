@@ -25,7 +25,7 @@ def show_overview(parser):
         response_block = parser.get_block_of_type(ResponseBlock)
         col1, col2 = st.columns(2)
         major, minor, patch = solver_block.get_parsed_version()
-        if major < 9 or (major == 9 and minor < 9):
+        if major < 9 or (major == 9 and minor < 10):
             col1.metric(
                 label="CP-SAT Version",
                 value=solver_block.get_version(),

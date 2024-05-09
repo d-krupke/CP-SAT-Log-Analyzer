@@ -12,6 +12,7 @@ import re
 import typing
 from .search_progress import SearchProgressBlock, parse_time
 
+
 class SequentialSearchProgressBlock(SearchProgressBlock):
     def __init__(self, lines: List[str]) -> None:
         super().__init__(lines, check=False)
@@ -26,11 +27,10 @@ class SequentialSearchProgressBlock(SearchProgressBlock):
         ):
             return parse_time(m["time"])
         raise ValueError(f"Could not parse presolve time from '{self.lines[0]}'")
-    
+
     def get_help(self) -> typing.Optional[str]:
         return """
         This block indicates the start of the search phase. It is only present in satisfaction models and unfortunately gives not much information.
 
         You will get significantly more information in optimization models, in which case, this sections will actually contain some plots.
         """
-    

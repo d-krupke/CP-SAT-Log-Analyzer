@@ -1,6 +1,7 @@
 import streamlit as st
 import os
 
+
 def get_data_from_url(url):
     import urllib.request
     import urllib.parse

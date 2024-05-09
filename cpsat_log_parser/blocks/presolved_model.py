@@ -39,14 +39,11 @@ class PresolvedModelBlock(LogBlock):
         )
 
     def get_num_constraints(self) -> int:
-        # "#kNoOverlap2D: 1 (#rectangles: 24)"
-        # "#kInterval: 48"
-        n = 0
-        for line in self.lines:
-            if line.startswith("#k"):
-                
-                n += int(line.split(":")[1].strip().split(" ")[0].replace("'", ""))
-        return n
+        return sum(
+            int(line.split(":")[1].strip().split(" ")[0].replace("'", ""))
+            for line in self.lines
+            if line.startswith("#k")
+        )
 
     def get_help(self) -> typing.Optional[str]:
         return """
@@ -54,6 +51,8 @@ class PresolvedModelBlock(LogBlock):
         It contains the number of variables and constraints, as well as coefficients and domains.
 
         `- 200 in [0,199]` will indicate that there are 200 variables with domain `[0,199]`, i.e., values between 0 and 199.
+
+        `- 6 in [0,1][34][67][100]` will indicate that there are 6 variables with domain `[0,1][34][67][100]`, i.e., values 0, 1, 34, 67, and 100.
 
         `#kLinearN: 3'000 (#terms: 980'948)` indicates that there are 3000 linear constraints with 980'948 coefficients.
 

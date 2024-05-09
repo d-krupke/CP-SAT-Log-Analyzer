@@ -56,7 +56,7 @@ if data:
                     if fig_3:
                         st.plotly_chart(fig_3, use_container_width=True)
                         st.info(
-                            "This plot shows you how the gap between the objective and the bound changes over time. If it quickly reaches a small value but then does not improve for a long time, you could set the `relative_gap_limit` parameter to allow to stop the search as soon as a specific solution quality is reached."
+                            "This plot shows you how the gap between the objective and the bound changes over time. If it quickly reaches a small value but then does not improve for a long time, you could set the `relative_gap_limit` parameter to allow to stop the search as soon as a specific solution quality is reached.\n\n The Final Gap is comparing the objective to the final bound, only known at the end. If it falls significantly faster than the Relative Gap, you could think about stopping the search earlier via a time limit, as the solution quality seems to improve quickly but proving the quality is slow."
                         )
                     fig_2 = block.model_changes_as_plotly()
                     if fig_2:
