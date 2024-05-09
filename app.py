@@ -4,6 +4,10 @@ Further parts of the app are in the `_app` folder.
 The logic for parsing the log is in the `cpsat_log_parser` folder.
 """
 
+
+
+
+
 import streamlit as st
 from cpsat_log_parser import LogParser
 
@@ -21,9 +25,7 @@ from cpsat_log_parser.blocks import (
 from _app import print_header, input_log, show_overview
 
 print_header()
-data = input_log()
-
-if data:
+if data := input_log():
     st.header("Log Analysis")
     st.warning(
         "This is just a prototype and may crash or show wrong results. Please report any issues [here](https://github.com/d-krupke/CP-SAT-Log-Analyzer). I welcome any feedback and complex logs to test this on."
@@ -46,20 +48,17 @@ if data:
                     if block.get_help():
                         st.info(block.get_help())
                     st.text(str(block))
-                    fig = block.as_plotly()
-                    if fig:
+                    if fig := block.as_plotly():
                         st.plotly_chart(fig, use_container_width=True)
                         st.info(
                             "This plot shows you how the quality of the solution (objective), and the proved quality (bound) converge over time. It allows you to estimate if finding good solutions or proving optimality is the bottleneck."
                         )
-                    fig_3 = block.gap_as_plotly()
-                    if fig_3:
+                    if fig_3 := block.gap_as_plotly():
                         st.plotly_chart(fig_3, use_container_width=True)
                         st.info(
                             "This plot shows you how the gap between the objective and the bound changes over time. If it quickly reaches a small value but then does not improve for a long time, you could set the `relative_gap_limit` parameter to allow to stop the search as soon as a specific solution quality is reached.\n\n The Final Gap is comparing the objective to the final bound, only known at the end. If it falls significantly faster than the Relative Gap, you could think about stopping the search earlier via a time limit, as the solution quality seems to improve quickly but proving the quality is slow."
                         )
-                    fig_2 = block.model_changes_as_plotly()
-                    if fig_2:
+                    if fig_2 := block.model_changes_as_plotly():
                         st.plotly_chart(fig_2, use_container_width=True)
                         st.info(
                             "This plot shows you how the size of the model changes over time."
@@ -135,6 +134,7 @@ if data:
                     if block.get_help():
                         st.info(block.get_help())
                     tab1, tab2 = st.tabs(["Table", "Raw"])
+                    assert isinstance(block, TableBlock), "Should be a TableBlock."
                     df = block.to_pandas()
                     tab1.dataframe(df, use_container_width=True)
                     tab2.text(str(block))

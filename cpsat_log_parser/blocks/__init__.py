@@ -27,6 +27,7 @@ from .task_timing import TaskTimingBlock
 from .presolve_summary import PresolveSummaryBlock
 from .preloading_model import PreloadingModelBlock
 from .sequential_search_progress import SequentialSearchProgressBlock
+from .tables import TableBlock
 
 # The order of the following list is important.
 # The first matching block is used.
@@ -82,5 +83,6 @@ __all__ = [
     "PreloadingModelBlock",
     "PresolveSummaryBlock",
     "SequentialSearchProgressBlock",
+    "TableBlock",
     "LogBlock",
 ]
