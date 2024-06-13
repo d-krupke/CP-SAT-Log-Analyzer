@@ -56,7 +56,8 @@ class SolverBlock(LogBlock):
         # If `num_workers` is set, the number of workers is not shown in the log.
         if "num_workers" in self.get_parameters():
             return int(self.get_parameters()["num_workers"])
-        # If `num_search_workers` is set, the number of workers is not shown in the log.
+        # `num_search_workers` is deprecated in favor `num_workers`, but if the
+        # latter is not set, `num_search_workers` is still used.
         if "num_search_workers" in self.get_parameters():
             return int(self.get_parameters()["num_search_workers"])
         raise ValueError("No number of workers found")
