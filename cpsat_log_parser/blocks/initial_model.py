@@ -110,4 +110,11 @@ class InitialModelBlock(LogBlock):
 
         It is useful to compare this to the model after presolve and also if this matches your expectations.
         The presolve-phase may reformulate your model extensively to make it more efficient.
+
+        Since most optimization models are created dynamically in code, reviewing this
+        section can help identify bugs or inefficiencies. Take the time to verify that
+        the numbers match your expectations and ensure you do not have too many or too
+        few variables or constraints of a certain type. This step is crucial as it also
+        provides insight into the number of auxiliary variables in your model, helping
+        you better understand its structure and complexity.
         """

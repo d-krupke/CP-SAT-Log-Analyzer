@@ -24,5 +24,5 @@ class PreloadingModelBlock(LogBlock):
         return "Preloading Model"
 
     def get_help(self) -> str:
-        return """This block is a prelude to the search phase and gives an overview of the model at the start of the search phase.
+        return """This block serves as a prelude to the search phase and provides an overview of the model at the beginning of the search. Typically, this information is not very interesting unless the presolve phase was highly effective, essentially solving the model before the search phase begins. This can lead to entries that look very similar to that of the actual search phase, which comes next.
         """

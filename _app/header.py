@@ -1,6 +1,5 @@
 import streamlit as st
 
-
 def print_header():
     st.title("CP-SAT Log Analyzer")
     st.markdown(
@@ -31,3 +30,4 @@ def print_header():
     Only complete and properly formatted logs are supported for now.
     """
     )
+    

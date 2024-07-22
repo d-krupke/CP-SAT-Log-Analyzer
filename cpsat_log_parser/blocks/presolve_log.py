@@ -69,16 +69,21 @@ class PresolveLogBlock(LogBlock):
 
     def get_help(self) -> typing.Optional[str]:
         return """
-        This block contains the presolve log.
-        It contains information about the presolve steps and the time they took.
+        The next block represents the presolve phase, an essential component of CP-SAT.
+        During this phase, the solver reformulates your model for greater efficiency.
+        For instance, it may detect an affine relationship between variables, such as
+        `x=2y-1`, and replace `x` with `2y-1` in all constraints. It can also identify
+        and remove redundant constraints or unnecessary variables. For example, the log
+        entry `rule 'presolve: 33 unused variables removed.' was applied 1 time` may
+        indicate that some variables created by your code were unnecessary or became
+        redundant due to the reformulation. Multiple rounds of applying various rules
+        for domain reduction, expansion, equivalence checking, substitution, and probing
+        are performed during presolve. These rules can significantly enhance the
+        efficiency of your model, though they may take some time to run. However, this
+        time investment usually pays off during the search phase.
 
-        There are multiple rounds of domain reduction, expansion, equivalence
-        checking, substitution, and probing performed during presolve.
-        These steps can take some time, but they can also significantly reduce
-        the model size and the search space and thus the time it takes to find
-        a solution. Usually, the summary is sufficient to look at to see what happened.
-
-        However, you may still want to scroll over the log for messages like
-          `removed duplicate constraint`, indicating redundancies (and possibly bugs)
-          in you model building.
+        The presolve log can be challenging to read, but it provides vital information
+        on the simplifications and optimizations made by CP-SAT. Reviewing this log
+        can help you understand the transformations applied to your model, allowing you
+        to identify and address any unnecessary variables or constraints in your code.
         """
