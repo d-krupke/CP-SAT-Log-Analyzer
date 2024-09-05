@@ -29,7 +29,7 @@ def _convert_value(value):
         return value  # If it cannot be converted to a number, keep as is
 
 
-def _parse_block(tokens) -> dict:
+def _parse_block(tokens) -> typing.Dict:
     block_dict = {}
     while tokens:
         key = tokens.pop(0).strip()
@@ -49,7 +49,7 @@ def _parse_block(tokens) -> dict:
             block_dict[key] = value
     return block_dict
 
-def parse_parameters_line(line: str) -> dict[str, str|int|float|bool|list|dict]:
+def parse_parameters_line(line: str) -> typing.Dict:
     """Parse the 'Parameters: ' line and return a dictionary of parameters."""
     if not line.startswith('Parameters: '):
         raise ValueError('The line must begin with "Parameters: "')
