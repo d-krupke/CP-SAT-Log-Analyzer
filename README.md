@@ -122,3 +122,8 @@ contributing or contacting me for other ways to support it.
 3. [gurobi-logtools](https://github.com/Gurobi/gurobi-logtools): Gurobi's log
    analyzer which is the inspiration for this project. However, this project is
    still very different from Gurobi's log analyzer.
+
+## Changes
+
+- 2024-09-05: Improved the parsing of the parameters.
+- 2024-09-05: No longer warn if status is `OPTIMAL`, but there is a gap, as CP-SAT considers everything as optimal if you specified a tolerance. This is different to other solvers. Don't want to confuse users.
