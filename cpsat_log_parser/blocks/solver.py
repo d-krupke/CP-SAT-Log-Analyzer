@@ -32,9 +32,11 @@ def _convert_value(value):
 def _parse_block(tokens) -> dict:
     block_dict = {}
     while tokens:
-        key = tokens.pop(0)
+        key = tokens.pop(0).strip()
         if key == '}':
             return block_dict
+        if key.endswith(":"):
+            key = key[:-1]
         value = tokens.pop(0)
         if value == '{':
             value = _parse_block(tokens)
