@@ -7,6 +7,56 @@ from .log_block import LogBlock
 import typing
 import re
 
+import re
+
+def _convert_value(value):
+    """Convert the token value to its appropriate type."""
+    if isinstance(value, list):
+        return [_convert_value(v) for v in value]
+    if isinstance(value, dict):
+        return value
+    if value.startswith('"') and value.endswith('"'):
+        return value.strip('"')  # Strip quotes if it's a quoted string
+    elif value == 'true':
+        return True
+    elif value == 'false':
+        return False
+    elif value.isdigit():
+        return int(value)
+    try:
+        return float(value)
+    except ValueError:
+        return value  # If it cannot be converted to a number, keep as is
+
+
+def _parse_block(tokens) -> dict:
+    block_dict = {}
+    while tokens:
+        key = tokens.pop(0)
+        if key == '}':
+            return block_dict
+        value = tokens.pop(0)
+        if value == '{':
+            value = _parse_block(tokens)
+        value = _convert_value(value)
+        if key in block_dict:
+            if not isinstance(block_dict[key], list):
+                block_dict[key] = [block_dict[key]]
+            block_dict[key].append(value)
+        else:
+            block_dict[key] = value
+    return block_dict
+
+def parse_parameters_line(line: str) -> dict[str, str|int|float|bool|list|dict]:
+    """Parse the 'Parameters: ' line and return a dictionary of parameters."""
+    if not line.startswith('Parameters: '):
+        raise ValueError('The line must begin with "Parameters: "')
+    
+    tokens = re.split(r' (?=(?:[^"]*"[^"]*")*[^"]*$)', line)
+    tokens.pop(0)  # remove "Parameters:" token
+
+    return _parse_block(tokens)
+
 
 class SolverBlock(LogBlock):
     def __init__(self, lines: typing.List[str]) -> None:
@@ -17,11 +67,7 @@ class SolverBlock(LogBlock):
         The parameters line can look like this:
         "Parameters: log_search_progress: true use_timetabling_in_no_overlap_2d: true use_energetic_reasoning_in_no_overlap_2d: true use_pairwise_reasoning_in_no_overlap_2d: true"
         """
-        line = line[len("Parameters:") :]
-        return {
-            match.group("key"): match.group("value")
-            for match in re.finditer(r"(?P<key>\w+): (?P<value>[^ ]+)", line)
-        }
+        return parse_parameters_line(line)
 
     def get_title(self) -> str:
         return "Solver Information"
