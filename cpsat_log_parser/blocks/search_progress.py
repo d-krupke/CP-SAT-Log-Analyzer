@@ -178,7 +178,7 @@ class ModelEvent:
         else:
             return None
 
-def _parse_version(lines: list[str]) -> tuple[int, int, int]:
+def _parse_version(lines: typing.List[str]) -> typing.Tuple[int, int, int]:
     """
     Parse the version of OR-Tools from log lines.
 
@@ -200,7 +200,7 @@ def _parse_version(lines: list[str]) -> tuple[int, int, int]:
     
     raise ValueError("Could not parse version from log")
 
-def apply_ortools911_workaround(lines: list[str]) -> list[str]:
+def apply_ortools911_workaround(lines: typing.List[str]) -> typing.List[str]:
     """
     Workaround for OR-Tools 9.11 to remove empty lines before the search progress block.
 
