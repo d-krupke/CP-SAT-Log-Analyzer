@@ -1,4 +1,6 @@
 import typing
+
+from .blocks.search_progress import apply_ortools911_workaround
 from .blocks import ALL_BLOCKS, LogBlock
 
 
@@ -10,6 +12,7 @@ def _split_log(
     """
     if isinstance(log, str):
         log = log.split("\n")
+    log = apply_ortools911_workaround(log)
     if not isinstance(log, list):
         raise TypeError("log must be a list or a string")
     # split into elements

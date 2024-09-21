@@ -15,8 +15,24 @@ Interleaved subsolvers: [feasibility_pump, rnd_var_lns_default, rnd_cst_lns_defa
 #Done    3.40s probing
 ```
 
+Since OR-Tools 9.11 it looks like
+```
+Starting search at 16.85s with 14 workers.
+10 full problem subsolvers: [core, default_lp, lb_tree_search, max_lp, no_lp, probing, pseudo_costs, quick_restart, quick_restart_no_lp, reduced_costs]
+4 first solution subsolvers: [fj(2), fs_random, fs_random_no_lp]
+10 interleaved subsolvers: [feasibility_pump, graph_arc_lns, graph_cst_lns, graph_dec_lns, graph_var_lns, ls(2), rins/rens, rnd_cst_lns, rnd_var_lns]
+3 helper subsolvers: [neighborhood_helper, synchronization_agent, update_gap_integral]
+
+#1      16.87s best:-0    next:[1,456769] fj_restart(batch:1 lin{mvs:0 evals:0} #w_updates:0 #perturb:0)
+#Bound  16.89s best:-0    next:[1,456714] fs_random (initial_propagation)
+#Bound  16.94s best:-0    next:[1,456294] core (initial_propagation)
+#Bound  16.94s best:-0    next:[1,456180] am1_presolve (num_literals=8767 num_am1=1 increase=114 work_done=416330)
+#2      16.95s best:28917 next:[28918,456180] core (fixed_bools=11/8779)
+```
+
 """
 
+import logging
 import math
 import re
 import typing
@@ -161,6 +177,72 @@ class ModelEvent:
             )
         else:
             return None
+
+def _parse_version(lines: list[str]) -> tuple[int, int, int]:
+    """
+    Parse the version of OR-Tools from log lines.
+
+    Args:
+        lines (list[str]): List of log lines containing version information.
+
+    Returns:
+        tuple[int, int, int]: Version number as (major, minor, build).
+
+    Raises:
+        ValueError: If the version cannot be parsed from the lines.
+    """
+    version_pattern = r"Starting CP-SAT solver v(?P<version>\d+)\.(?P<subversion>\d+)\.(?P<build>\d+)"
+    
+    for line in lines:
+        match = re.match(version_pattern, line)
+        if match:
+            return int(match["version"]), int(match["subversion"]), int(match["build"])
+    
+    raise ValueError("Could not parse version from log")
+
+def apply_ortools911_workaround(lines: list[str]) -> list[str]:
+    """
+    Workaround for OR-Tools 9.11 to remove empty lines before the search progress block.
+
+    Args:
+        lines (list[str]): List of log lines to process.
+
+    Returns:
+        list[str]: Modified log lines without empty lines before the search progress.
+
+    This is a temporary fix. In future versions, the parser should be adapted properly.
+    """
+    try:
+        version = _parse_version(lines)
+        if version < (9, 11, 0):
+            return lines  # No changes needed for older versions
+        
+        # Initialize variables
+        search_block_start_seen = False
+        empty_line_index = None
+
+        # Process log lines
+        for i, line in enumerate(lines):
+            if "Starting search" in line:
+                search_block_start_seen = True
+                continue
+
+            if not search_block_start_seen:
+                continue
+
+            # Check if the current line is part of a search event block
+            if BoundEvent.parse(line) is None and ObjEvent.parse(line) is None and ModelEvent.parse(line) is None:
+                if line.strip():  # If the line is not empty, reset empty line index
+                    empty_line_index = i + 1
+                continue
+
+            # If search block is detected, remove empty lines before the block
+            if empty_line_index is not None:
+                return lines[:empty_line_index] + lines[i:]
+    except ValueError as e:
+        logging.warning(f"Version parsing failed: {e}")
+    
+    return lines  # Return original lines if no modifications are made
 
 
 class SearchProgressBlock(LogBlock):
