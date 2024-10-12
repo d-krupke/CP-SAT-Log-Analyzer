@@ -133,7 +133,8 @@ def show_overview(parser):
         ):
             fig = search_progress_block.as_plotly()
             if fig:
-                st.plotly_chart(fig, use_container_width=True)
+                # because we display this figure twice, we need to give it a unique key
+                st.plotly_chart(fig, use_container_width=True, key="search_progress_overview")
     except KeyError as ke:
         st.error(
             f"Error parsing information. Log seems to be incomplete: {ke}. Make sure you enter the full log without any modifications. The parser is sensitive to new lines."
