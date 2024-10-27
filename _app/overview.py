@@ -5,6 +5,8 @@ from cpsat_log_parser.blocks import (
     SolverBlock,
     ResponseBlock,
     InitialModelBlock,
+    SolutionsBlock,
+    PresolvedModelBlock,
 )
 
 
@@ -21,6 +23,8 @@ def show_overview(parser):
     try:
         solver_block = parser.get_block_of_type(SolverBlock)
         initial_model_block = parser.get_block_of_type(InitialModelBlock)
+        presolved_model_block = parser.get_block_of_type(PresolvedModelBlock)
+        solution_block = parser.get_block_of_type(SolutionsBlock)
         search_progress_block = parser.get_block_of_type(SearchProgressBlock)
         response_block = parser.get_block_of_type(ResponseBlock)
         col1, col2 = st.columns(2)
@@ -135,6 +139,23 @@ def show_overview(parser):
             if fig:
                 # because we display this figure twice, we need to give it a unique key
                 st.plotly_chart(fig, use_container_width=True, key="search_progress_overview")
+
+        initial_fingerprint = initial_model_block.get_model_fingerprint()
+        presolved_fingerprint = presolved_model_block.get_model_fingerprint()
+        num_solutions = solution_block.get_num_solutions()
+
+        st.markdown("The following section displays the fingerprints of the initial model, the presolved model, and the solution. Hover over the truncated values to see the full fingerprint or number.")
+        markdown_content = f"""
+        > **Initial Model Fingerprint**: <div title="{initial_fingerprint}">{initial_fingerprint[:100]}</div>
+        >
+        > **Presolved Model Fingerprint**: <div title="{presolved_fingerprint}">{presolved_fingerprint[:100]}</div>
+        >
+        > **Solution Model Fingerprint**: <div title="{num_solutions}">{num_solutions}</div>
+        """
+
+        # 使用 st.markdown 渲染 Markdown 内容
+        st.markdown(markdown_content, unsafe_allow_html=True)
+
     except KeyError as ke:
         st.error(
             f"Error parsing information. Log seems to be incomplete: {ke}. Make sure you enter the full log without any modifications. The parser is sensitive to new lines."
