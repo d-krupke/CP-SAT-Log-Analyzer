@@ -24,7 +24,6 @@ def show_overview(parser):
         solver_block = parser.get_block_of_type(SolverBlock)
         initial_model_block = parser.get_block_of_type(InitialModelBlock)
         presolved_model_block = parser.get_block_of_type(PresolvedModelBlock)
-        solution_block = parser.get_block_of_type(SolutionsBlock)
         search_progress_block = parser.get_block_of_type(SearchProgressBlock)
         response_block = parser.get_block_of_type(ResponseBlock)
         col1, col2 = st.columns(2)
@@ -142,15 +141,15 @@ def show_overview(parser):
 
         initial_fingerprint = initial_model_block.get_model_fingerprint()
         presolved_fingerprint = presolved_model_block.get_model_fingerprint()
-        num_solutions = solution_block.get_num_solutions()
+        solution_fingerprint = response_block.get_solution_fingerprint()
 
-        st.markdown("The following section displays the fingerprints of the initial model, the presolved model, and the solution. Hover over the truncated values to see the full fingerprint or number.")
+        st.markdown("The following section displays the fingerprints of the initial model, the presolved model, and the solution.")
         markdown_content = f"""
         > **Initial Model Fingerprint**: <div title="{initial_fingerprint}">{initial_fingerprint[:100]}</div>
         >
         > **Presolved Model Fingerprint**: <div title="{presolved_fingerprint}">{presolved_fingerprint[:100]}</div>
         >
-        > **Solution Model Fingerprint**: <div title="{num_solutions}">{num_solutions}</div>
+        > **Solution Fingerprint**: <div title="{solution_fingerprint}">{solution_fingerprint}</div>
         """
 
         st.markdown(markdown_content, unsafe_allow_html=True)
