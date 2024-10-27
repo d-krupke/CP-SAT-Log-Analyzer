@@ -153,7 +153,6 @@ def show_overview(parser):
         > **Solution Model Fingerprint**: <div title="{num_solutions}">{num_solutions}</div>
         """
 
-        # 使用 st.markdown 渲染 Markdown 内容
         st.markdown(markdown_content, unsafe_allow_html=True)
 
     except KeyError as ke:
