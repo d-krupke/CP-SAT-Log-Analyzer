@@ -10,8 +10,10 @@ def _split_log(
     """
     Split the log into its elements. Two elements are separated by a blank line.
     """
-    if isinstance(log, str):
-        log = log.split("\n")
+    if isinstance(log, list):
+        log = "\n".join(log)
+    log = log.replace("Problem closed by presolve.", "Problem closed by presolve.\n")
+    log = log.split("\n")
     log = apply_ortools911_workaround(log)
     if not isinstance(log, list):
         raise TypeError("log must be a list or a string")
