@@ -4,7 +4,8 @@ from typing import TypeVar
 from .blocks.search_progress import apply_ortools911_workaround
 from .blocks import ALL_BLOCKS, LogBlock
 
-T = TypeVar('T', bound=LogBlock)
+T = TypeVar("T", bound=LogBlock)
+
 
 def _split_log(
     log: typing.Union[typing.List[str], str],
@@ -76,13 +77,13 @@ class LogParser:
             else:
                 data.append(line)
         return comments, data
-    
-    def get_block_of_type_or_none(self, block_type: typing.Type[T]) -> T|None:
+
+    def get_block_of_type_or_none(self, block_type: typing.Type[T]) -> T | None:
         for block in self.blocks:
             if isinstance(block, block_type):
                 return block
         return None
-    
+
     def get_block_of_type(self, block_type: typing.Type[T]) -> T:
         for block in self.blocks:
             if isinstance(block, block_type):
