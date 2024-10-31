@@ -5,7 +5,7 @@ from .blocks import ALL_BLOCKS, LogBlock
 
 
 def _split_log(
-    log: typing.Union[typing.List[str], str]
+    log: typing.Union[typing.List[str], str],
 ) -> typing.List[typing.List[str]]:
     """
     Split the log into its elements. Two elements are separated by a blank line.

@@ -2,12 +2,10 @@
 The solver block is the first part of the log.
 """
 
-
 from .log_block import LogBlock
 import typing
 import re
 
-import re
 
 def _convert_value(value):
     """Convert the token value to its appropriate type."""
@@ -17,9 +15,9 @@ def _convert_value(value):
         return value
     if value.startswith('"') and value.endswith('"'):
         return value.strip('"')  # Strip quotes if it's a quoted string
-    elif value == 'true':
+    elif value == "true":
         return True
-    elif value == 'false':
+    elif value == "false":
         return False
     elif value.isdigit():
         return int(value)
@@ -33,12 +31,12 @@ def _parse_block(tokens) -> typing.Dict:
     block_dict = {}
     while tokens:
         key = tokens.pop(0).strip()
-        if key == '}':
+        if key == "}":
             return block_dict
         if key.endswith(":"):
             key = key[:-1]
         value = tokens.pop(0)
-        if value == '{':
+        if value == "{":
             value = _parse_block(tokens)
         value = _convert_value(value)
         if key in block_dict:
@@ -49,11 +47,12 @@ def _parse_block(tokens) -> typing.Dict:
             block_dict[key] = value
     return block_dict
 
+
 def parse_parameters_line(line: str) -> typing.Dict:
     """Parse the 'Parameters: ' line and return a dictionary of parameters."""
-    if not line.startswith('Parameters: '):
+    if not line.startswith("Parameters: "):
         raise ValueError('The line must begin with "Parameters: "')
-    
+
     tokens = re.split(r' (?=(?:[^"]*"[^"]*")*[^"]*$)', line)
     tokens.pop(0)  # remove "Parameters:" token
 

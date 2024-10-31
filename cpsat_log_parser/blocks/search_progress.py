@@ -178,6 +178,7 @@ class ModelEvent:
         else:
             return None
 
+
 def _parse_version(lines: typing.List[str]) -> typing.Tuple[int, int, int]:
     """
     Parse the version of OR-Tools from log lines.
@@ -191,14 +192,17 @@ def _parse_version(lines: typing.List[str]) -> typing.Tuple[int, int, int]:
     Raises:
         ValueError: If the version cannot be parsed from the lines.
     """
-    version_pattern = r"Starting CP-SAT solver v(?P<version>\d+)\.(?P<subversion>\d+)\.(?P<build>\d+)"
-    
+    version_pattern = (
+        r"Starting CP-SAT solver v(?P<version>\d+)\.(?P<subversion>\d+)\.(?P<build>\d+)"
+    )
+
     for line in lines:
         match = re.match(version_pattern, line)
         if match:
             return int(match["version"]), int(match["subversion"]), int(match["build"])
-    
+
     raise ValueError("Could not parse version from log")
+
 
 def apply_ortools911_workaround(lines: typing.List[str]) -> typing.List[str]:
     """
@@ -216,7 +220,7 @@ def apply_ortools911_workaround(lines: typing.List[str]) -> typing.List[str]:
         version = _parse_version(lines)
         if version < (9, 11, 0):
             return lines  # No changes needed for older versions
-        
+
         # Initialize variables
         search_block_start_seen = False
         empty_line_index = None
@@ -231,7 +235,11 @@ def apply_ortools911_workaround(lines: typing.List[str]) -> typing.List[str]:
                 continue
 
             # Check if the current line is part of a search event block
-            if BoundEvent.parse(line) is None and ObjEvent.parse(line) is None and ModelEvent.parse(line) is None:
+            if (
+                BoundEvent.parse(line) is None
+                and ObjEvent.parse(line) is None
+                and ModelEvent.parse(line) is None
+            ):
                 if line.strip():  # If the line is not empty, reset empty line index
                     empty_line_index = i + 1
                 continue
@@ -241,7 +249,7 @@ def apply_ortools911_workaround(lines: typing.List[str]) -> typing.List[str]:
                 return lines[:empty_line_index] + lines[i:]
     except ValueError as e:
         logging.warning(f"Version parsing failed: {e}")
-    
+
     return lines  # Return original lines if no modifications are made
 
 

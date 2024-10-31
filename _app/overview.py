@@ -5,7 +5,7 @@ from cpsat_log_parser.blocks import (
     SolverBlock,
     ResponseBlock,
     InitialModelBlock,
-    PresolveSummaryBlock
+    PresolveSummaryBlock,
 )
 from cpsat_log_parser import LogParser
 
@@ -22,7 +22,7 @@ def show_overview(parser: LogParser):
             st.write(comment)
     try:
         try:
-            solver_block: SolverBlock|None = parser.get_block_of_type(SolverBlock) # type: ignore
+            solver_block: SolverBlock | None = parser.get_block_of_type(SolverBlock)  # type: ignore
         except KeyError:
             solver_block = None
         try:
@@ -61,7 +61,7 @@ def show_overview(parser: LogParser):
                     value=solver_block.get_version(),
                     help="CP-SAT has seen significant performance improvements over the last years. Make sure to use the latest version.",
                 )
-        
+
         col2.metric(
             label="Number of workers",
             value=solver_block.get_number_of_workers() if solver_block else None,
@@ -95,31 +95,43 @@ def show_overview(parser: LogParser):
         )
         col2.metric(
             label="Time",
-            value=f"{float(response['walltime']):.3f}s" if "walltime" in response else None,
+            value=f"{float(response['walltime']):.3f}s"
+            if "walltime" in response
+            else None,
             help="The total time spent by the solver. This includes the time spent in presolve and the time spent in the search.",
         )
         col3.metric(
             label="Presolve",
-            value=f"{search_progress_block.get_presolve_time():.3f}s" if search_progress_block else None,
+            value=f"{search_progress_block.get_presolve_time():.3f}s"
+            if search_progress_block
+            else None,
             help="The time spent in presolve. This is usually a small fraction of the total time.",
         )
 
         col1, col2, col3 = st.columns(3)
         col1.metric(
             label="Variables",
-            value=initial_model_block.get_num_variables() if initial_model_block else None,
+            value=initial_model_block.get_num_variables()
+            if initial_model_block
+            else None,
             help="CP-SAT can handle (hundreds of) thousands of variables. This just gives a rough estimate of the size of the problem. Check *Initial Optimization Model* for more information. Many variables may also be removed during presolve, check *Presolve Summary*.",
         )
         col2.metric(
             label="Constraints",
-            value=initial_model_block.get_num_constraints() if initial_model_block else None,
+            value=initial_model_block.get_num_constraints()
+            if initial_model_block
+            else None,
             help="CP-SAT can handle (hundreds of) thousands of constraints. More important than the number is the type of constraints. Some constraints are more expensive than others. Check *Initial Optimization Model* for more information.",
         )
         col3.metric(
             label="Type",
-            value=("Optimization"
-            if initial_model_block.is_optimization()
-            else "Satisfaction") if initial_model_block else None,
+            value=(
+                "Optimization"
+                if initial_model_block.is_optimization()
+                else "Satisfaction"
+            )
+            if initial_model_block
+            else None,
             help="Is the model an optimization or satisfaction model?",
         )
         # col3.metric("Model Fingerprint", value=initial_model_block.get_model_fingerprint())
@@ -154,15 +166,17 @@ def show_overview(parser: LogParser):
             col3.metric(label="Gap", value=f"{gap:.2f}%", help=gap_help)
 
         if (
-            "status" in response and
-            response["status"] in ("OPTIMAL", "FEASIBLE")
+            "status" in response
+            and response["status"] in ("OPTIMAL", "FEASIBLE")
             and initial_model_block
             and initial_model_block.is_optimization()
         ):
             fig = search_progress_block.as_plotly()
             if fig:
                 # because we display this figure twice, we need to give it a unique key
-                st.plotly_chart(fig, use_container_width=True, key="search_progress_overview")
+                st.plotly_chart(
+                    fig, use_container_width=True, key="search_progress_overview"
+                )
         try:
             presolve = parser.get_block_of_type(PresolveSummaryBlock)
             if presolve.is_solved_by_presolve():

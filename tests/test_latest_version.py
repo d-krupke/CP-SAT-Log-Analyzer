@@ -18,7 +18,7 @@ def test_latest_cpsat():
     n = 5_000
     weights = [random.randint(1, 1000) for _ in range(n)]
     values = [random.randint(1, 100) for _ in range(n)]
-    capacity = 20*n
+    capacity = 20 * n
 
     # Now we solve the problem
     model = cp_model.CpModel()
