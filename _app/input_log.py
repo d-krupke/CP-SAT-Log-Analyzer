@@ -76,7 +76,7 @@ def input_log():
         for i in range(0, len(examples), row_length):
             cols = st.columns(min(len(examples) - i, row_length))
             for j, example in enumerate(examples[i : i + row_length]):
-                if cols[j].button(f"Example {i+j+1}", help=example.get("origin", None)):
+                if cols[j].button(f"Example {i+j+1}", help=example.get("origin", None), use_container_width=True):
                     with open(example["file"]) as f:
                         data = f.read()
                         save_to_history = False
