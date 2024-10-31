@@ -21,22 +21,10 @@ def show_overview(parser: LogParser):
             comment = comment.replace("]", "*\\]")
             st.write(comment)
     try:
-        try:
-            solver_block: SolverBlock | None = parser.get_block_of_type(SolverBlock)  # type: ignore
-        except KeyError:
-            solver_block = None
-        try:
-            initial_model_block = parser.get_block_of_type(InitialModelBlock)
-        except KeyError:
-            initial_model_block = None
-        try:
-            search_progress_block = parser.get_block_of_type(SearchProgressBlock)
-        except KeyError:
-            search_progress_block = None
-        try:
-            response_block = parser.get_block_of_type(ResponseBlock)
-        except KeyError:
-            response_block = None
+        solver_block = parser.get_block_of_type_or_none(SolverBlock)
+        initial_model_block = parser.get_block_of_type_or_none(InitialModelBlock)
+        search_progress_block = parser.get_block_of_type_or_none(SearchProgressBlock)
+        response_block = parser.get_block_of_type_or_none(ResponseBlock)
         col1, col2 = st.columns(2)
         if solver_block is None:
             col1.metric(
