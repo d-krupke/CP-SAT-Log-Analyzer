@@ -144,7 +144,7 @@ def show_overview(parser: LogParser):
             help="Bound on how good the best solution can be. If it matches the objective, the solution is optimal.",
         )
         try:
-            gap = response_block.get_gap()
+            gap = response_block.get_gap() if response_block else None
         except ValueError:
             gap = None
         gap_help = "The gap is the difference between the objective and the best bound. The smaller the better. A gap of 0% means that the solution is optimal."
@@ -156,6 +156,7 @@ def show_overview(parser: LogParser):
         if (
             "status" in response
             and response["status"] in ("OPTIMAL", "FEASIBLE")
+            and search_progress_block
             and initial_model_block
             and initial_model_block.is_optimization()
         ):
