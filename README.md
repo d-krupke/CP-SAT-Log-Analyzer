@@ -125,6 +125,7 @@ contributing or contacting me for other ways to support it.
 
 ## Changes
 
+- 2024-10-31: Added a log history to quickly switch back to previous logs.
 - 2024-10-31: Fixed parsing when the model was solved in presolve.
 - 2024-09-05: Improved the parsing of the parameters.
 - 2024-09-05: No longer warn if status is `OPTIMAL`, but there is a gap, as

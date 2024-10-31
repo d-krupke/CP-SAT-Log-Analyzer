@@ -1,3 +1,4 @@
+import datetime
 import streamlit as st
 import os
 
@@ -23,8 +24,7 @@ def get_data_from_url(url):
 def input_log():
     # accept log via file upload or text input
     data = None
-    if "cpsat_log_input" in st.session_state:
-        data = st.session_state["cpsat_log_input"]
+    save_to_history = True
     log_file = st.file_uploader("Upload a log file", type="txt")
     if log_file is not None:
         data = log_file.read().decode("utf-8")
@@ -79,6 +79,7 @@ def input_log():
                 if cols[j].button(f"Example {i+j+1}", help=example.get("origin", None)):
                     with open(example["file"]) as f:
                         data = f.read()
+                        save_to_history = False
 
     if not data and "from_url" in st.query_params:
         url = st.query_params.get_all("from_url")[0]
@@ -106,8 +107,32 @@ def input_log():
             return None
         with open(f"example_logs/{example}.txt") as f:
             data = f.read()
+    # show a history of the previous logs in the sidebar and allow to select them again
+    if "cpsat_log_history" not in st.session_state:
+        st.session_state["cpsat_log_history"] = {}
+    history = st.session_state["cpsat_log_history"]
+    if save_to_history and data:
+        # use current time/date as key
+        key = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        if "cpsat_log_history" not in st.session_state:
+            st.session_state["cpsat_log_history"] = {}
+        if "cpsat_log_history_hashes" not in st.session_state:
+            st.session_state["cpsat_log_history_hashes"] = []
+        history_hash = hash(data)
+        if history_hash not in st.session_state["cpsat_log_history_hashes"]:
+            st.session_state["cpsat_log_history_hashes"].append(history_hash)
+            history[key] = data
+            st.session_state["cpsat_log_history"] = history
+    if history:
+        with st.sidebar:
+            st.markdown("### Previous Logs")
+            reversed_keys = list(history.keys())[::-1]
+            for key in reversed_keys:
+                if st.button(f"{key}"):
+                    data = history.get(key, None)
+                    save_to_history = False
+
     # delete log button
     if st.button("Clear", use_container_width=True, help="Delete the current log."):
         data = None
-    st.session_state["cpsat_log_input"] = data
     return data
