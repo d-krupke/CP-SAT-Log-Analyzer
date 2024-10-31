@@ -23,6 +23,8 @@ def get_data_from_url(url):
 def input_log():
     # accept log via file upload or text input
     data = None
+    if "cpsat_log_input" in st.session_state:
+        data = st.session_state["cpsat_log_input"]
     log_file = st.file_uploader("Upload a log file", type="txt")
     if log_file is not None:
         data = log_file.read().decode("utf-8")
@@ -104,4 +106,8 @@ def input_log():
             return None
         with open(f"example_logs/{example}.txt") as f:
             data = f.read()
+    # delete log button
+    if st.button("Clear", use_container_width=True, help="Delete the current log."):
+        data = None
+    st.session_state["cpsat_log_input"] = data
     return data
