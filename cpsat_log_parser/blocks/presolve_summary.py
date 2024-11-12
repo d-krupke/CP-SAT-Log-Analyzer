@@ -33,3 +33,6 @@ class PresolveSummaryBlock(LogBlock):
 
     def get_help(self) -> str:
         return """This block gives an overview of the presolve phase and how often which rule was applied."""
+
+    def is_solved_by_presolve(self) -> bool:
+        return any("Problem closed by presolve." in line for line in self.lines)

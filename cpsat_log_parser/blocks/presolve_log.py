@@ -51,7 +51,6 @@ Starting presolve at 0.03s
 [ExpandObjective] #propagations=0 #entries=0 #tight_variables=0 #tight_constraints=0 #expands=0 #issues=0 time=0.0363259s
 """
 
-
 from .log_block import LogBlock
 import typing
 

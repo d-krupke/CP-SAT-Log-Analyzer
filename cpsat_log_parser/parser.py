@@ -1,17 +1,22 @@
 import typing
+from typing import TypeVar
 
 from .blocks.search_progress import apply_ortools911_workaround
 from .blocks import ALL_BLOCKS, LogBlock
 
+T = TypeVar("T", bound=LogBlock)
+
 
 def _split_log(
-    log: typing.Union[typing.List[str], str]
+    log: typing.Union[typing.List[str], str],
 ) -> typing.List[typing.List[str]]:
     """
     Split the log into its elements. Two elements are separated by a blank line.
     """
-    if isinstance(log, str):
-        log = log.split("\n")
+    if isinstance(log, list):
+        log = "\n".join(log)
+    log = log.replace("Problem closed by presolve.", "Problem closed by presolve.\n")
+    log = log.split("\n")
     log = apply_ortools911_workaround(log)
     if not isinstance(log, list):
         raise TypeError("log must be a list or a string")
@@ -73,7 +78,13 @@ class LogParser:
                 data.append(line)
         return comments, data
 
-    def get_block_of_type(self, block_type: typing.Type[LogBlock]) -> LogBlock:
+    def get_block_of_type_or_none(self, block_type: typing.Type[T]) -> T | None:
+        for block in self.blocks:
+            if isinstance(block, block_type):
+                return block
+        return None
+
+    def get_block_of_type(self, block_type: typing.Type[T]) -> T:
         for block in self.blocks:
             if isinstance(block, block_type):
                 return block

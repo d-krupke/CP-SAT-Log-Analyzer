@@ -17,7 +17,6 @@ Lp stats                      Component  Iterations  AddedCuts  OPTIMAL  DUAL_F.
 ```
 """
 
-
 from .tables import TableBlock
 import typing
 
