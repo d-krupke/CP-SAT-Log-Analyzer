@@ -84,8 +84,9 @@ class InitialModelBlock(LogBlock):
         return self.lines[0].split("model_fingerprint: ")[1].strip(")")
 
     def get_num_variables(self) -> int:
+        variablesDefinition = next((item for item in self.lines if item.startswith("#Variables: ")), None)
         return int(
-            self.lines[1]
+            variablesDefinition
             .split("#Variables: ")[1]
             .strip()
             .split(" ")[0]
