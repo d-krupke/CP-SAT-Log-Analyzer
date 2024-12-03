@@ -35,7 +35,10 @@ def _parse_block(tokens) -> typing.Dict:
             return block_dict
         if key.endswith(":"):
             key = key[:-1]
-        value = tokens.pop(0)
+        if tokens:
+            value = tokens.pop(0)
+        else:
+            value = ""
         if value == "{":
             value = _parse_block(tokens)
         value = _convert_value(value)

@@ -83,15 +83,14 @@ class InitialModelBlock(LogBlock):
     def get_model_fingerprint(self) -> str:
         return self.lines[0].split("model_fingerprint: ")[1].strip(")")
 
-    def get_num_variables(self) -> int:
-        variablesDefinition = next((item for item in self.lines if item.startswith("#Variables: ")), None)
-        return int(
-            variablesDefinition
-            .split("#Variables: ")[1]
-            .strip()
-            .split(" ")[0]
-            .replace("'", "")
-        )
+    def get_num_variables(self) -> int|None:
+        var_def_line = next((item for item in self.lines if item.startswith("#Variables: ")), None)
+        if var_def_line is None:
+            return None
+        var_def_line = var_def_line.split("#Variables: ")[1].strip()
+        var_def_line = var_def_line.split(" ")[0]
+        return int(var_def_line.replace("'", ""))
+
 
     def get_num_constraints(self) -> int:
         return sum(
