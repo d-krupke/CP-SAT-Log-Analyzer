@@ -11,6 +11,12 @@ class ResponseBlock(LogBlock):
     def matches(lines: typing.List[str]) -> bool:
         return lines[0].startswith("CpSolverResponse") if lines else False
 
+    def get_solution_fingerprint(self) -> str:
+        for line in self.lines:
+            if "solution_fingerprint" in line:
+                return line.split("solution_fingerprint:")[1].strip(")")
+        return "None"
+
     def get_title(self) -> str:
         return "CpSolverResponse"
 

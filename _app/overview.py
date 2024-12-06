@@ -5,6 +5,8 @@ from cpsat_log_parser.blocks import (
     SolverBlock,
     ResponseBlock,
     InitialModelBlock,
+    SolutionsBlock,
+    PresolvedModelBlock,
     PresolveSummaryBlock,
 )
 from cpsat_log_parser import LogParser
