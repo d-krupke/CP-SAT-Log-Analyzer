@@ -1,0 +1,78 @@
+// A log with infeasibility detected in presolve. Such a log has little to analyze.
+
+Starting CP-SAT solver v9.9.3963
+Parameters: max_time_in_seconds: 60 log_search_progress: true num_search_workers: 4 log_to_stdout: false
+
+Initial optimization model '': (model_fingerprint: 0x7b9b5fdec7699737)
+#Variables: 79'004 (#ints: 103 in objective)
+  - 78'660 Booleans in [0,1]
+  - 132 different domains in [0,12864] with a largest complexity of 1.
+  - 37 constants in {-975,-700,-675,-629,-601,-355 ... 3,591,639,669,793,1582,1765,1979,2281,2383,3449} 
+#kBoolOr: 1 (#literals: 1)
+#kLinear1: 3'036 (#enforced: 2'980)
+#kLinear2: 370'440 (#enforced: 109'032)
+#kLinear3: 61'325
+#kLinearN: 20'633 (#terms: 132'914)
+
+Starting presolve at 0.58s
+INFEASIBLE: 'var #274 as empty domain after intersecting with [0]'
+Unsat after presolving constraint #2298 (warning, dump might be inconsistent): bool_and { literals: -275 }
+  2.16e-01s  0.00e+00d  [operations_research::sat::CpModelPresolver::PresolveToFixPoint] 
+
+Presolve summary:
+  - 274 affine relations were detected.
+  - rule 'TODO linear2: contains a Boolean.' was applied 3'267 times.
+  - rule 'affine: new relation' was applied 274 times.
+  - rule 'bool_and: always false' was applied 7 times.
+  - rule 'bool_and: non-reified.' was applied 4 times.
+  - rule 'bool_or: always true' was applied 2'870 times.
+  - rule 'bool_or: implications' was applied 579 times.
+  - rule 'bool_or: only one literal' was applied 49'273 times.
+  - rule 'bool_or: removed enforcement literal' was applied 59 times.
+  - rule 'bool_or: singleton' was applied 12'958 times.
+  - rule 'enforcement: false literal' was applied 1'649 times.
+  - rule 'enforcement: literal not used' was applied 2'124 times.
+  - rule 'enforcement: true literal' was applied 4 times.
+  - rule 'exactly_one: removed literals' was applied 46 times.
+  - rule 'exactly_one: size one' was applied 9 times.
+  - rule 'exactly_one: size two' was applied 21 times.
+  - rule 'linear1: always true' was applied 633 times.
+  - rule 'linear2: contains a Boolean.' was applied 62 times.
+  - rule 'linear2: implied ax + by = cte has only one solution' was applied 14 times.
+  - rule 'linear: all booleans and trivially true' was applied 394 times.
+  - rule 'linear: always true' was applied 381'068 times.
+  - rule 'linear: empty' was applied 377 times.
+  - rule 'linear: fixed or dup variables' was applied 5'700 times.
+  - rule 'linear: infeasible' was applied 3'973 times.
+  - rule 'linear: negative clause' was applied 2'585 times.
+  - rule 'linear: positive at most one' was applied 34 times.
+  - rule 'linear: positive clause' was applied 248 times.
+  - rule 'linear: positive equal one' was applied 82 times.
+  - rule 'linear: reduced variable domains' was applied 364 times.
+  - rule 'linear: remapped using affine relations' was applied 6'678 times.
+  - rule 'linear: simplified rhs' was applied 5'260 times.
+  - rule 'linear: singleton column' was applied 2'425 times.
+  - rule 'linear: small Boolean expression' was applied 12 times.
+  - rule 'linear: tightened into equality' was applied 88 times.
+  - rule 'objective: variable not used elsewhere' was applied 26 times.
+  - rule 'presolve: iteration' was applied 1 time.
+  - rule 'variables with 2 values: create encoding literal' was applied 126 times.
+  - rule 'variables with 2 values: new affine relation' was applied 126 times.
+  - rule 'variables: detect half reified value encoding' was applied 179 times.
+Problem closed by presolve.
+CpSolverResponse summary:
+status: INFEASIBLE
+objective: NA
+best_bound: NA
+integers: 0
+booleans: 0
+conflicts: 0
+branches: 0
+propagations: 0
+integer_propagations: 0
+restarts: 0
+lp_iterations: 0
+walltime: 3.04408
+usertime: 3.04408
+deterministic_time: 0
+gap_integral: 0
