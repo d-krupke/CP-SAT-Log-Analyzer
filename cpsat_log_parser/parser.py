@@ -16,6 +16,7 @@ def _split_log(
     if isinstance(log, list):
         log = "\n".join(log)
     log = log.replace("Problem closed by presolve.", "Problem closed by presolve.\n")
+    log = log.replace("\nCpSolverResponse", "\n\nCpSolverResponse")
     log = log.split("\n")
     log = apply_ortools911_workaround(log)
     if not isinstance(log, list):
