@@ -1,0 +1,9 @@
+# Keeps the docker build context (repo root, used by v2/docker-compose.yml) small.
+.git
+**/.venv
+**/node_modules
+**/dist
+**/__pycache__
+**/.pytest_cache
+**/.ruff_cache
+*.tar.gz

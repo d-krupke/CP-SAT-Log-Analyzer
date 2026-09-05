@@ -1,0 +1,38 @@
+[project]
+name = "cpsat-log-analyzer-backend"
+version = "2.0.0"
+description = "FastAPI backend of the CP-SAT Log Analyzer: parses logs with cpsatlog and adds explanations."
+requires-python = ">=3.12"
+dependencies = [
+    "cpsatlog",
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+    "httpx>=0.27",
+    "ruff>=0.6",
+    "ty",
+]
+
+[tool.uv.sources]
+cpsatlog = { path = "../cpsatlog", editable = true }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

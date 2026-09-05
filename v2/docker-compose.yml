@@ -1,0 +1,22 @@
+# CP-SAT Log Analyzer v2: `docker compose up --build` then open http://localhost:8080
+services:
+  backend:
+    build:
+      context: ..
+      dockerfile: v2/backend/Dockerfile
+    environment:
+      CORS_ORIGINS: "*"
+    expose:
+      - "8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend

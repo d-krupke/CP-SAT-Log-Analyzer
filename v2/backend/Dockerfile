@@ -1,0 +1,20 @@
+# Backend image: FastAPI app + cpsatlog library, managed with uv.
+# Build context is the repository root (see v2/docker-compose.yml) so that the
+# parser library (../cpsatlog, referenced from pyproject.toml) and the example
+# logs can be copied in with the same relative layout as in the repository.
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim AS builder
+ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy
+WORKDIR /src/v2/backend
+COPY v2/cpsatlog /src/v2/cpsatlog
+COPY v2/backend/pyproject.toml v2/backend/uv.lock ./
+RUN uv sync --no-dev --no-install-project --frozen
+COPY v2/backend/app ./app
+RUN uv sync --no-dev --frozen
+
+FROM python:3.12-slim-bookworm
+WORKDIR /src/v2/backend
+COPY --from=builder /src /src
+COPY example_logs /example_logs
+ENV PATH="/src/v2/backend/.venv/bin:$PATH" EXAMPLE_LOGS_DIR=/example_logs
+EXPOSE 8000
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
