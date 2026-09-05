@@ -1,0 +1,77 @@
+# Explanations of the log sections (one card per section in the UI).
+# Keys are the section kinds the parser emits; the text is Markdown.
+# See README.md in this directory for how to edit.
+
+[blocks]
+solver = '''
+**Solver header.** The OR-Tools version and the parameters that differ from their defaults.
+Only overridden parameters are printed, so an empty list means the defaults were used.
+`Setting number of workers to N` appears when `num_workers` was left at 0 and CP-SAT picked
+the value from the available cores.'''
+initial_model = '''
+**Initial model.** The model as handed to the solver: number of variables (with how many
+Booleans/integers appear in the objective), the variable domains, and a histogram of
+constraint types (`kLinear2`, `kNoOverlap`, ...). `#enforced` counts constraints with
+enforcement literals (reified constraints), `#terms` the total number of linear terms.
+Compare it with the presolved model to see how much presolve simplified.'''
+presolved_model = '''
+**Presolved model.** The model that is actually searched. Presolve removes fixed and
+dominated variables, merges constraints and expands high-level constraints into the
+lower-level ones the propagators understand. A much smaller presolved model is good news; a
+much larger one (e.g. `kAllDiff` expanded into thousands of Booleans) explains where the
+search effort goes. Domains like `[0][10][20]` mean a variable with holes.'''
+presolve = '''
+**Presolve log.** Each line is one presolve pass: wall time in seconds (`s`), deterministic
+time (`d`, a machine-independent effort measure) and the rule name in brackets, followed by
+counters. Lines tagged `[Symmetry]` report the automatic symmetry detection, `[SAT
+presolve]` the Boolean-level simplification (clause/literal counts), `[Probe]`/`[Probing]`
+the trial fixing of literals. Presolve runs to a fix point, so the same rules appear several
+times. If presolve dominates the walltime, consider `max_presolve_iterations` or a lower
+`cp_model_probing_level`.'''
+presolve_summary = '''
+**Presolve summary.** How often each presolve rule fired and how many affine relations (`x =
+a*y + b`) were detected and substituted away. Rules prefixed with `TODO` are diagnostics
+from the developers: situations recognised but not (yet) exploited. `Problem closed by
+presolve.` means the search never started: presolve alone proved optimality or
+infeasibility.'''
+search = '''
+**Search progress.** The stream of events during the parallel portfolio search. Each `#N`
+line is a new improving solution found by the tagged subsolver with its cost as `best:` and
+the still-open range as `next:[lb,ub]`; `#Bound` lines (throttled) report a worker improving
+the proven bound; `#Model` lines record how many variables/constraints of the presolved
+model are still active after sharing fixed variables; `#Done` closes the search when best
+meets the bound. Solutions and bounds are shared between all workers immediately, so a good
+incumbent from an LNS worker also speeds up the proof of the exact workers.'''
+response = '''
+**Response summary.** The final status and the counters CP-SAT returns to your program.
+Careful: `booleans`, `conflicts`, `branches`, `propagations`, `integer_propagations` and
+`restarts` are **not** portfolio totals. They are copied from the single worker whose model
+carries the returned solution, which is often a first-solution or LNS helper that barely
+searched. Read the per-worker tables (Search stats) to see how hard the search really
+worked.'''
+message = 'A free-form message from the solver.'
+comment = 'Lines starting with `//` are comments added by a human, not by CP-SAT.'
+unknown = '''
+This section was not recognised by the parser. It is kept verbatim; please report the log if
+you think it should be parsed.'''
+
+# Intro texts of the analysis cards that are not log sections.
+[cards]
+progress = '''
+Incumbent objective (`best:`) and proven bound (`next:[lb,ub]`) over time. A flat objective with
+a rising bound means the solver is proving; a flat bound with improving solutions means the
+relaxation is weak. Click a point to jump to its log line.'''
+parameters = '''
+CP-SAT prints only parameters that differ from their defaults. Each one is documented below (from
+`sat_parameters.proto`) with advice on typical pitfalls. Parameters that change the behaviour of
+*all* workers reduce the diversity of the portfolio and are the usual cause of unexpectedly slow
+solves.'''
+parameters_none = '''
+No parameter differs from its default. Usually a good sign: the default portfolio is hard to beat.'''
+subsolvers = '''
+Which configuration of the portfolio produced the improving solutions and the bound improvements,
+combined from the search log and the final `Solutions`/`Objective bounds` tables. LNS workers
+typically dominate the solutions on large models; exact workers (`default_lp`, `max_lp`, `core`,
+...) and the bound-focused workers dominate the bounds. Workers that contribute nothing are
+candidates for `ignore_subsolvers` only if you have many cores idle; otherwise they still share
+clauses and bounds.'''

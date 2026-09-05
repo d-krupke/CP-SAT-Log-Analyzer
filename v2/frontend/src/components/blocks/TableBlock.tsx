@@ -1,5 +1,6 @@
 /** Generic renderer for the final statistics tables and the task timing table. */
 import { Anchor, Card } from '../Card'
+import { subsolverDoc } from '../../knowledge'
 import { formatNumber, useSelection } from '../../state/selection'
 import type { BlockRef, Explanations, Table, TaskTimingTable } from '../../types'
 
@@ -30,7 +31,7 @@ export function TableBlock({ blockRef, data, explanations }: { blockRef: BlockRe
           </thead>
           <tbody>
             {data.rows.map((r, i) => (
-              <tr key={`${r.line}-${i}`} className={selection.line === r.line ? 'selected' : ''} onClick={() => select(r.line, 'panel')} title={explanations.subsolvers[r.name] ?? ''}>
+              <tr key={`${r.line}-${i}`} className={selection.line === r.line ? 'selected' : ''} onClick={() => select(r.line, 'panel')} title={subsolverDoc(explanations, r.name)?.summary ?? ''}>
                 <td>
                   <Anchor line={r.line}>{r.name}</Anchor>
                 </td>
@@ -86,7 +87,7 @@ export function TaskTimingBlock({ blockRef, data, explanations }: { blockRef: Bl
           </thead>
           <tbody>
             {data.rows.map((r) => (
-              <tr key={r.line} className={selection.line === r.line ? 'selected' : ''} onClick={() => select(r.line, 'panel')} title={explanations.subsolvers[r.name] ?? ''}>
+              <tr key={r.line} className={selection.line === r.line ? 'selected' : ''} onClick={() => select(r.line, 'panel')} title={subsolverDoc(explanations, r.name)?.summary ?? ''}>
                 <td>
                   <Anchor line={r.line}>{r.name}</Anchor>
                 </td>

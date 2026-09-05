@@ -9,12 +9,13 @@ COPY v2/cpsatlog /src/v2/cpsatlog
 COPY v2/backend/pyproject.toml v2/backend/uv.lock ./
 RUN uv sync --no-dev --no-install-project --frozen
 COPY v2/backend/app ./app
+COPY v2/knowledge /src/v2/knowledge
 RUN uv sync --no-dev --frozen
 
 FROM python:3.12-slim-bookworm
 WORKDIR /src/v2/backend
 COPY --from=builder /src /src
 COPY example_logs /example_logs
-ENV PATH="/src/v2/backend/.venv/bin:$PATH" EXAMPLE_LOGS_DIR=/example_logs
+ENV PATH="/src/v2/backend/.venv/bin:$PATH" EXAMPLE_LOGS_DIR=/example_logs KNOWLEDGE_DIR=/src/v2/knowledge
 EXPOSE 8000
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

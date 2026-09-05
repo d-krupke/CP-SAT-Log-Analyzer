@@ -607,3 +607,35 @@ details summary {
   margin-right: 4px;
   vertical-align: middle;
 }
+
+/* Portfolio list in the search card and expandable rows in the subsolver table. */
+ul.subsolvers {
+  list-style: none;
+  padding-left: 12px;
+  margin: 4px 0;
+}
+ul.subsolvers li {
+  margin: 2px 0;
+}
+ul.subsolvers summary {
+  cursor: pointer;
+}
+ul.subsolvers .details {
+  margin: 4px 0 8px 16px;
+  padding-left: 10px;
+  border-left: 2px solid var(--border);
+  font-size: 12.5px;
+}
+tr.details-row td {
+  background: var(--panel-2);
+  font-size: 12.5px;
+}
+button.link {
+  background: none;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  padding: 0;
+  font-size: 12px;
+  text-decoration: underline;
+}

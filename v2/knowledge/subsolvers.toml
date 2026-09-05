@@ -1,0 +1,531 @@
+# What each worker (subsolver) of the CP-SAT portfolio does.
+#
+# Sources: ortools/sat/cp_model_search.cc (GetNamedParameters, GetFullWorkerParameters,
+# GetFirstSolutionBaseParams), ortools/sat/cp_model_solver.cc (LNS and local-search
+# workers) and the CP-SAT primer chapter "The Search Core", section 6.4.
+#
+# Every entry has
+#   summary  one sentence, shown in tables and tooltips (plain text, keep it short)
+#   details  Markdown, shown when the user expands the worker (what it does, when it
+#            helps, which parameters define it)
+#   role     one of the keys in [roles] below
+#
+# How a name from the log is looked up: exact key first, then the longest key that the
+# name starts with (followed by `_`, e.g. `rins_lns_default` -> `rins`), then the
+# `[[patterns]]` at the end of this file (glob syntax, first match wins).
+
+[roles]
+exact = 'Full-problem worker: a complete search that can find solutions and prove optimality or infeasibility.'
+bound = 'Full-problem worker specialised in proving bounds; rarely finds solutions itself.'
+first_solution = 'First-solution heuristic; stopped as soon as an incumbent exists.'
+lns = 'Large Neighbourhood Search: fixes most of the incumbent and re-solves a small part.'
+local_search = 'Violation-based local search improving or finding solutions.'
+helper = 'Bookkeeping task, not a search.'
+
+# ---------------------------------------------------------------- exact workers
+
+[subsolvers.default_lp]
+role = 'exact'
+summary = 'Balanced default: CP propagation plus a light LP relaxation feeding bounds back.'
+details = '''
+The reference configuration: all parameters at their defaults, `linearization_level = 1`
+(only linear constraints and the objective enter the LP). Decisions follow the automatic
+heuristic (VSIDS on the Boolean skeleton, then integer completion). This is the only worker
+that runs with `num_workers = 1`, so a single-thread run is a `default_lp` run.'''
+
+[subsolvers.no_lp]
+role = 'exact'
+summary = 'Pure CP/SAT without LP relaxation; fast and lean when the LP does not pay off.'
+details = '''
+`linearization_level = 0`: no LP relaxation at all, so no LP bounds and no cuts, but also no
+simplex time. Wins on models whose difficulty is combinatorial (feasibility, scheduling with
+disjunctions) and loses on models with a strong linear relaxation.'''
+
+[subsolvers.max_lp]
+role = 'exact'
+summary = 'Heavy LP relaxation (linearization level 2) for models with strong linear bounds.'
+details = '''
+`linearization_level = 2` and all LP constraints added eagerly (`add_lp_constraints_lazily =
+false`): non-linear constraints are linearised too and cutting planes are generated. The LP
+becomes large and slow per node, which pays off when the relaxation is tight (knapsack-like,
+assignment, flow structures) and is wasted otherwise. If this worker dominates the
+`Objective bounds` table your model has a useful linear relaxation.'''
+
+[subsolvers.max_lp_sym]
+role = 'exact'
+summary = 'max_lp that additionally exploits detected symmetries inside the LP.'
+details = '''
+Same as `max_lp` plus `use_symmetry_in_lp = true`. CP-SAT schedules it instead of `max_lp`
+when the presolved model has symmetries (and then adds a plain `max_lp` at the end of the
+roster); without symmetries the two would be identical.'''
+
+[subsolvers.core]
+role = 'exact'
+summary = 'Core-guided optimisation: lifts the lower bound through unsat cores of objective assumptions.'
+details = '''
+`optimize_with_core = true`, no LP. Assumes every objective term at its best value and asks
+the SAT core for a solution; each *unsat core* (a set of assumptions that cannot hold
+together) is turned into a relaxed constraint that raises the lower bound. Strong on
+objectives that are sums of many small terms (soft constraints, penalties, weighted
+Booleans). It is scheduled only when the objective has several terms and dropped for
+single-term or satisfaction problems.'''
+
+[subsolvers.core_default_lp]
+role = 'exact'
+summary = 'core with a light LP relaxation (not in the default roster).'
+details = 'Like `core` but with `linearization_level = 1`. Available through `subsolvers`/`extra_subsolvers`.'
+
+[subsolvers.core_max_lp]
+role = 'exact'
+summary = 'core with a heavy LP relaxation (not in the default roster).'
+details = 'Like `core` but with `linearization_level = 2`. Available through `subsolvers`/`extra_subsolvers`.'
+
+[subsolvers.max_hs]
+role = 'exact'
+summary = 'Core-guided search with a maximum-hitting-set MIP over the cores (experimental).'
+details = '''
+`optimize_with_core` plus `optimize_with_max_hs`: the cores collected so far are combined by
+solving a hitting-set problem with a MIP solver. Not in the default roster; needs OR-Tools
+built with a MIP backend.'''
+
+[subsolvers.quick_restart]
+role = 'exact'
+summary = 'Restarts very aggressively and rotates through heuristics; helps when rapid re-descent pays.'
+details = '''
+`search_branching = PORTFOLIO_WITH_QUICK_RESTART_SEARCH`: a randomised rotation over
+several decision heuristics, reshuffled on each restart, with far more frequent restarts
+than the default. Its row in the `Search stats` table typically shows the most `Restarts`.
+Good on problems where the first decisions matter a lot and a bad early choice is
+expensive to undo.'''
+
+[subsolvers.quick_restart_no_lp]
+role = 'exact'
+summary = 'quick_restart without LP relaxation.'
+details = 'Same rotation and restart schedule as `quick_restart` with `linearization_level = 0`.'
+
+[subsolvers.quick_restart_max_lp]
+role = 'exact'
+summary = 'quick_restart with a heavy LP relaxation (not in the default roster).'
+details = 'Same as `quick_restart` with `linearization_level = 2`.'
+
+[subsolvers.reduced_costs]
+role = 'exact'
+summary = 'Branches on the reduced costs of the LP relaxation (MIP-style).'
+details = '''
+`search_branching = LP_SEARCH` with `linearization_level = 2`: variables whose LP reduced
+cost says they are expensive to move are decided first, the automatic heuristic settles the
+rest. Useful when the LP relaxation carries most of the objective information. Only
+scheduled for optimisation problems.'''
+
+[subsolvers.pseudo_costs]
+role = 'exact'
+summary = 'Branches on pseudo costs, i.e. the observed objective impact of past decisions (MIP-style).'
+details = '''
+`search_branching = PSEUDO_COST_SEARCH`, `linearization_level = 2`, and `exploit_best_solution`
+(prefers the values of the incumbent when branching). Pseudo costs estimate how much each
+variable moved the objective in earlier branches. Only scheduled for optimisation
+problems.'''
+
+[subsolvers.fixed]
+role = 'exact'
+summary = 'Follows the user-defined decision strategy (add_decision_strategy) instead of the learned heuristics.'
+details = '''
+`search_branching = FIXED_SEARCH`: decisions are taken in the order of the model's
+`search_strategy` (`add_decision_strategy` in Python), VSIDS only settles leftover Booleans.
+CP-SAT schedules it only when the model defines a strategy *or* contains scheduling
+constraints (then a built-in scheduling heuristic is used, which is good at finding first
+solutions). Dynamic precedence reasoning in disjunctive/cumulative constraints is switched
+off for this worker.'''
+
+[subsolvers.fixed_no_lp]
+role = 'exact'
+summary = 'fixed without LP relaxation.'
+details = 'Same as `fixed` with `linearization_level = 0`.'
+
+[subsolvers.fixed_max_lp]
+role = 'exact'
+summary = 'fixed with a heavy LP relaxation.'
+details = 'Same as `fixed` with `linearization_level = 2` and eager LP constraints.'
+
+[subsolvers.portfolio]
+role = 'exact'
+summary = 'Randomised rotation over decision heuristics without the quick restarts (not in the default roster).'
+details = '''
+`search_branching = PORTFOLIO_SEARCH`. Variants `portfolio_no_lp` and `portfolio_max_lp`
+change the linearisation level.'''
+
+[subsolvers.auto]
+role = 'exact'
+summary = 'The automatic search (VSIDS then integer completion) with otherwise default parameters.'
+details = 'Equivalent to `default_lp` unless you changed `search_branching` globally.'
+
+[subsolvers.less_encoding]
+role = 'exact'
+summary = 'Creates fewer Boolean encodings of integer variables (satisfaction problems only).'
+details = '''
+`boolean_encoding_level = 0`: integer variables are not eagerly encoded into `[x == v]`
+literals, so the Boolean skeleton stays small. Only scheduled for satisfaction problems.'''
+
+[subsolvers.shared_tree]
+role = 'exact'
+summary = 'Workers that split one shared search tree between them instead of running independent searches.'
+details = '''
+`use_shared_tree_search`: the only part of the portfolio that actually partitions the
+search tree. Enabled with `shared_tree_num_workers` (0 by default); each worker takes open
+subtrees from a shared manager. Core, LB-tree and max-HS optimisation are disabled in these
+workers.'''
+
+# ---------------------------------------------------------------- bound-focused workers
+
+[subsolvers.lb_tree_search]
+role = 'bound'
+summary = 'Explores the cheapest open nodes of a search tree to raise the lower bound; rarely finds solutions.'
+details = '''
+`optimize_with_lb_tree_search`: a best-first tree search on the objective bound with a heavy
+LP (`linearization_level = 2`, eager LP constraints, 100k root LP iterations). It does not
+import objective bounds from other workers (`share_objective_bounds = false`) because
+locally derived reasons work better for it. Expect it in the `Objective bounds` table, not in
+`Solutions`. Not run in deterministic (interleaved) mode.'''
+
+[subsolvers.lb_tree_search_no_lp]
+role = 'bound'
+summary = 'lb_tree_search without LP relaxation (not in the default roster).'
+details = 'Same best-first bound search with `linearization_level = 0`.'
+
+[subsolvers.objective_lb_search]
+role = 'bound'
+summary = 'Ignores the incumbent and searches at the current lower bound to prove it infeasible and raise it.'
+details = '''
+`use_objective_lb_search`: instead of looking for better solutions, the worker constrains
+the objective to its current lower bound and searches; when that fails the bound moves up.
+Effective when the gap is closed from below step by step. Variants `_no_lp` and `_max_lp`
+change the linearisation level (0 / 2); the `_max_lp` variant also adds the extra scheduling
+propagators when `use_dual_scheduling_heuristics` is on.'''
+
+[subsolvers.objective_lb_search_no_lp]
+role = 'bound'
+summary = 'objective_lb_search without LP relaxation.'
+details = 'See `objective_lb_search`; `linearization_level = 0`.'
+
+[subsolvers.objective_lb_search_max_lp]
+role = 'bound'
+summary = 'objective_lb_search with a heavy LP relaxation.'
+details = 'See `objective_lb_search`; `linearization_level = 2` plus extra scheduling propagators.'
+
+[subsolvers.objective_shaving]
+role = 'bound'
+summary = 'Shaving on the objective: tries to prove that values near the bound are impossible.'
+details = '''
+`use_objective_shaving_search`: repeatedly solves the model with the objective restricted to
+a window just above the current bound using a dedicated, freshly presolved sub-model
+(probing and symmetry off in that sub-model). Each failed window raises the bound. Older
+logs name it `objective_shaving_search`. Variants `_no_lp` / `_max_lp` set the
+linearisation level to 0 / 2. Not run in deterministic (interleaved) mode.'''
+
+[subsolvers.objective_shaving_no_lp]
+role = 'bound'
+summary = 'objective_shaving without LP relaxation.'
+details = 'See `objective_shaving`; `linearization_level = 0`.'
+
+[subsolvers.objective_shaving_max_lp]
+role = 'bound'
+summary = 'objective_shaving with a heavy LP relaxation.'
+details = 'See `objective_shaving`; `linearization_level = 2`.'
+
+[subsolvers.variables_shaving]
+role = 'bound'
+summary = 'Shaving on variable bounds: tries to prove extreme values of variables impossible (not in the default roster).'
+details = '''
+Like `objective_shaving` but on the domains of individual variables; the derived bounds are
+shared with the other workers. Available as `variables_shaving`, `variables_shaving_no_lp`
+and `variables_shaving_max_lp`.'''
+
+[subsolvers.probing]
+role = 'bound'
+summary = 'Continuous probing: fixes literals experimentally at the root to derive bounds and implications.'
+details = '''
+`use_probing_search`: instead of a tree search the worker keeps probing literals (`x = v`
+and `x != v`) at level zero, propagating each and recording the bounds and equivalences
+that follow. Everything it derives is exported through the shared-bounds channel, so it is a
+service to the portfolio more than a search on its own. It starts with a tiny per-probe
+deterministic time budget that it raises as needed. Variants `_no_lp` / `_max_lp` set the
+linearisation level to 0 / 2 (`_max_lp` also spends 100k root LP iterations).'''
+
+[subsolvers.probing_no_lp]
+role = 'bound'
+summary = 'probing without LP relaxation.'
+details = 'See `probing`; `linearization_level = 0`.'
+
+[subsolvers.probing_max_lp]
+role = 'bound'
+summary = 'probing with a heavy LP relaxation.'
+details = 'See `probing`; `linearization_level = 2` with eager LP constraints.'
+
+# ---------------------------------------------------------------- first-solution heuristics
+
+[subsolvers.fj]
+role = 'first_solution'
+summary = 'Feasibility jump: local search minimising constraint violation to find a first solution.'
+details = '''
+A weighted local search over complete (infeasible) assignments: every move picks the
+variable/value change that reduces the total weighted violation the most, and the weights of
+violated constraints grow over time to escape local minima. `fj` works on the original
+constraints (`feasibility_jump_linearization_level = 0`), `fj_lin` on their linearisation
+(level 2). Older versions print variants such as `fj_short_default`, `fj_long_lin_default`
+(short/long restart schedules, `lin` = linearised). Disable with `use_feasibility_jump`.'''
+
+[subsolvers.fj_lin]
+role = 'first_solution'
+summary = 'Feasibility jump on the linearised constraints.'
+details = 'See `fj`; uses `feasibility_jump_linearization_level = 2`.'
+
+[subsolvers.fs_random]
+role = 'first_solution'
+summary = 'First-solution tree search with randomised decisions.'
+details = '''
+`search_branching = RANDOMIZED_SEARCH` with a random variable pool of size 5: a complete
+search whose decisions are randomised, run only until the first solution exists.
+`fs_random_no_lp` is the same without LP.'''
+
+[subsolvers.fs_random_no_lp]
+role = 'first_solution'
+summary = 'fs_random without LP relaxation.'
+details = 'See `fs_random`.'
+
+[subsolvers.fs_random_quick_restart]
+role = 'first_solution'
+summary = 'First-solution search rotating through heuristics with quick restarts.'
+details = '''
+`search_branching = PORTFOLIO_WITH_QUICK_RESTART_SEARCH` with a random variable pool, run
+only until the first solution exists. `fs_random_quick_restart_no_lp` is the variant
+without LP.'''
+
+[subsolvers.fs_random_quick_restart_no_lp]
+role = 'first_solution'
+summary = 'fs_random_quick_restart without LP relaxation.'
+details = 'See `fs_random_quick_restart`.'
+
+[subsolvers.feasibility_pump]
+role = 'first_solution'
+summary = 'Feasibility pump: alternates LP solves and roundings to reach an integer-feasible point.'
+details = '''
+Classic MIP heuristic: solve the LP, round the solution, solve the LP again with an
+objective that minimises the distance to the rounded point, and repeat. Needs an LP
+relaxation; controlled by `use_feasibility_pump`.'''
+
+# ---------------------------------------------------------------- LNS workers
+
+[subsolvers.rins]
+role = 'lns'
+summary = 'RINS neighbourhood: keeps the variables on which the LP solution and the incumbent agree.'
+details = '''
+Relaxation Induced Neighbourhood Search: variables with the same value in the LP relaxation
+and in the best solution are fixed, the rest is re-optimised. Needs LP solutions from an
+LP-enabled worker. Logged as `rins`, `rins_lns` or `rins_lns_default` depending on the
+version; enabled with `use_rins_lns`.'''
+
+[subsolvers.rens]
+role = 'lns'
+summary = 'RENS neighbourhood: fixes integral LP values and restricts the others to their rounding.'
+details = '''
+Relaxation Enforced Neighbourhood Search: works from an LP solution alone, so it can run
+before a first solution exists. Variables that are integral in the LP are fixed, fractional
+ones restricted to floor/ceil. Shares the `use_rins_lns` switch with `rins`.'''
+
+[subsolvers."rins/rens"]
+role = 'lns'
+summary = 'The RINS and RENS neighbourhoods share one slot of the portfolio (see rins and rens).'
+details = 'Listed as one entry in the portfolio line; the search log and the tables show `rins` and `rens` separately.'
+
+[subsolvers.rnd_var_lns]
+role = 'lns'
+summary = 'LNS: frees a random subset of variables.'
+details = '''
+The simplest neighbourhood: a random fraction of the variables (the adaptive `Difficulty`)
+is released, the rest stays at the incumbent. Cheap and unbiased; a good baseline in the
+`LNS stats` table.'''
+
+[subsolvers.rnd_cst_lns]
+role = 'lns'
+summary = 'LNS: frees all variables of a random subset of constraints.'
+details = 'Releases the variables appearing in randomly chosen constraints, so freed variables are related to each other.'
+
+[subsolvers.graph_var_lns]
+role = 'lns'
+summary = 'LNS: frees a connected region of the variable graph (breadth-first from a random variable).'
+details = '''
+Variables are nodes, constraints connect them. Starting from a random variable, a
+breadth-first expansion collects neighbours until the target size is reached; those are
+freed. Produces neighbourhoods that are structurally coherent.'''
+
+[subsolvers.graph_arc_lns]
+role = 'lns'
+summary = 'LNS: frees variables along random arcs (variable pairs sharing a constraint).'
+details = 'Expands over arcs of the variable graph instead of nodes, giving different neighbourhood shapes than `graph_var_lns`.'
+
+[subsolvers.graph_cst_lns]
+role = 'lns'
+summary = 'LNS: frees a connected region of the constraint graph.'
+details = 'Breadth-first expansion over constraints (two constraints are adjacent when they share a variable); all variables of the visited constraints are freed.'
+
+[subsolvers.graph_dec_lns]
+role = 'lns'
+summary = 'LNS: frees a region derived from a decomposition of the constraint graph.'
+details = 'Uses a graph decomposition to pick blocks of variables that interact strongly with each other and weakly with the rest.'
+
+[subsolvers.lb_relax_lns]
+role = 'lns'
+summary = 'LNS: local-branching neighbourhood chosen with the help of an LP (only with many workers).'
+details = '''
+Solves an LP with a local-branching constraint around the incumbent to decide which
+variables to free. Enabled with `use_lb_relax_lns` and only when `num_workers` reaches
+`lb_relax_num_workers_threshold`.'''
+
+[subsolvers.scheduling_intervals_lns]
+role = 'lns'
+summary = 'Scheduling LNS: frees a random set of intervals (their start/size/end variables).'
+details = 'Only created when the model contains NoOverlap or Cumulative constraints. Everything else keeps the incumbent schedule.'
+
+[subsolvers.scheduling_time_window_lns]
+role = 'lns'
+summary = 'Scheduling LNS: frees all intervals inside a random time window.'
+details = 'Picks a window of the incumbent schedule and releases the intervals overlapping it; good at repairing local congestion.'
+
+[subsolvers.scheduling_resource_windows_lns]
+role = 'lns'
+summary = 'Scheduling LNS: frees a time window on a subset of the resources (NoOverlap/Cumulative constraints).'
+details = 'Only created when there are more than two distinct interval sets (resources).'
+
+[subsolvers.scheduling_precedences_lns]
+role = 'lns'
+summary = 'Scheduling LNS: keeps the precedence order of the incumbent and relaxes the exact times.'
+details = 'Fixes the relative order of intervals as in the incumbent and lets the solver re-time them.'
+
+[subsolvers.packing_random_lns]
+role = 'lns'
+summary = 'Packing LNS: frees a random set of rectangles of a NoOverlap2D constraint.'
+details = 'Only created when the model has NoOverlap2D constraints. Older versions call it `packing_rectangles_lns`.'
+
+[subsolvers.packing_rectangles_lns]
+role = 'lns'
+summary = 'Packing LNS (older name): frees a random set of rectangles.'
+details = 'See `packing_random_lns`.'
+
+[subsolvers.packing_square_lns]
+role = 'lns'
+summary = 'Packing LNS: frees all rectangles inside one random square region.'
+details = 'Releases the rectangles intersecting a random square of the container; repairs local arrangements.'
+
+[subsolvers.packing_swap_lns]
+role = 'lns'
+summary = 'Packing LNS: frees the rectangles of two random regions so they can be exchanged.'
+details = 'Two disjoint regions are released at once, allowing rectangles to move between them.'
+
+[subsolvers.packing_precedences_lns]
+role = 'lns'
+summary = 'Packing LNS: keeps the left/right and above/below relations of the incumbent and relaxes positions.'
+details = 'Analogue of `scheduling_precedences_lns` in two dimensions.'
+
+[subsolvers.packing_slice_lns]
+role = 'lns'
+summary = 'Packing LNS: frees all rectangles in a horizontal or vertical slice of the container.'
+details = 'Releases a strip of the packing; complements the square neighbourhood.'
+
+[subsolvers.routing_random_lns]
+role = 'lns'
+summary = 'Routing LNS: frees random arcs of the circuit/route constraints.'
+details = 'Only created for models with Circuit or Routes constraints.'
+
+[subsolvers.routing_path_lns]
+role = 'lns'
+summary = 'Routing LNS: frees a contiguous path segment of the incumbent tour(s).'
+details = 'Keeps the rest of the tour and re-optimises the freed segment.'
+
+[subsolvers.routing_full_path_lns]
+role = 'lns'
+summary = 'Routing LNS: frees one complete route (vehicle) of the incumbent.'
+details = 'Useful for multi-vehicle models where one route can be rebuilt while the others stay fixed.'
+
+# ---------------------------------------------------------------- local search
+
+[subsolvers.ls]
+role = 'local_search'
+summary = 'Violation-based local search improving the incumbent (feasibility-jump machinery with an objective).'
+details = '''
+Runs the feasibility-jump local search as an *improvement* heuristic: starting from the
+incumbent (or a shared hint), it moves through assignments that reduce weighted constraint
+violation and objective. Several copies run interleaved; `ls_lin` works on the linearised
+constraints. Their counters are in the `LS stats` table. Older versions call it
+`violation_ls`. The number of copies follows `num_violation_ls`.'''
+
+[subsolvers.ls_lin]
+role = 'local_search'
+summary = 'Violation-based local search on the linearised constraints.'
+details = 'See `ls`; `feasibility_jump_linearization_level = 2`.'
+
+[subsolvers.violation_ls]
+role = 'local_search'
+summary = 'Violation-based local search (older name of ls).'
+details = 'See `ls`.'
+
+# ---------------------------------------------------------------- helpers
+
+[subsolvers.initial_domain]
+role = 'helper'
+summary = 'Not a worker: the trivial bound from the domain of the objective.'
+details = 'Appears in the `Objective bounds` table as the source of the very first bound.'
+
+[subsolvers.neighborhood_helper]
+role = 'helper'
+summary = 'Builds the LNS neighbourhoods from the current incumbent for the LNS workers.'
+details = 'Synchronised before every LNS round; its time shows in the `Task timing` table.'
+
+[subsolvers.synchronization_agent]
+role = 'helper'
+summary = 'Synchronises shared solutions, bounds and clauses between the workers.'
+details = 'Bookkeeping only; its wall time is negligible.'
+
+[subsolvers.update_gap_integral]
+role = 'helper'
+summary = 'Integrates the relative gap over time to compute gap_integral in the response.'
+details = 'Bookkeeping only.'
+
+# ---------------------------------------------------------------- fallbacks for unknown names
+
+[[patterns]]
+pattern = 'fj_*'
+role = 'first_solution'
+summary = 'Feasibility jump variant (local search minimising constraint violation).'
+details = 'See `fj`; the suffix names the restart schedule (`short`/`long`) and whether the linearised constraints are used (`lin`).'
+
+[[patterns]]
+pattern = 'jump*'
+role = 'first_solution'
+summary = 'Feasibility jump variant of an older OR-Tools version.'
+details = 'See `fj`.'
+
+[[patterns]]
+pattern = 'fs_*'
+role = 'first_solution'
+summary = 'First-solution worker.'
+details = 'Runs only until the first solution exists.'
+
+[[patterns]]
+pattern = '*_lns*'
+role = 'lns'
+summary = 'A Large Neighbourhood Search worker.'
+details = 'Fixes most of the incumbent and re-optimises a small neighbourhood; see the `LNS stats` table.'
+
+[[patterns]]
+pattern = '*_ls*'
+role = 'local_search'
+summary = 'A local search worker.'
+details = 'See `ls`.'
+
+# Explanations of the groups in the "N full subsolvers: [...]" lines of the search log.
+[categories]
+full = 'Full-problem workers: complete searches that can prove optimality/infeasibility.'
+first_solution = 'First-solution heuristics run until an incumbent exists, then hand their threads to the improvement heuristics.'
+interleaved = 'Incomplete/interleaved workers: LNS and local search rounds sharing the remaining threads.'
+helper = 'Helper tasks (synchronisation, neighbourhood generation); not searches.'
+ignored = 'Configurations excluded via parameters or not applicable to this model.'

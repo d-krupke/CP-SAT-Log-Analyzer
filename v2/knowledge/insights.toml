@@ -1,0 +1,104 @@
+# Insights: the coloured boxes in the Overview card. The *logic* that decides
+# whether an insight fires lives in v2/backend/app/insights.py; this file holds
+# everything a CP-SAT expert may want to tune: the thresholds, the level
+# (info | good | warn | bad), the title and the text.
+#
+# Texts are Markdown. Values computed by the rule are inserted with Python
+# format fields, e.g. {gap:.2f}; the available fields are listed per rule.
+
+[solved_by_presolve]
+level = 'good'
+title = 'Solved by presolve'
+text = '''
+Presolve alone settled the model; no search was needed. The search statistics are therefore
+empty.'''
+
+[not_proven_optimal]      # fields: gap (percent)
+level = 'warn'
+title = 'Not proven optimal'
+text = '''
+The solver stopped with a gap of {gap:.2f}%. Either the incumbent is not optimal or the bound
+could not be raised. Check whether solutions or bounds stalled last (progress plot) to decide
+between more time, better hints/LNS, or a stronger formulation for the relaxation.'''
+
+[no_solution]
+level = 'bad'
+title = 'No solution found'
+text = '''
+The solver found no feasible solution within the limits. Try a hint, a longer time limit, or
+check the model for very tight constraints.'''
+
+[infeasible]
+level = 'info'
+title = 'Model proven infeasible'
+text = '''
+Infeasibility was proven. Check the presolve log: often a fixed variable or a domain that
+presolve emptied reveals the conflicting constraints.'''
+
+[solutions_stalled]       # fields: last_time, wall
+fraction_of_walltime = 0.5   # fires when the last improving solution came before this share of the wall time
+level = 'info'
+title = 'Solutions stalled early'
+text = '''
+The last improving solution was found at {last_time:.1f}s of {wall:.1f}s. The remaining time
+went into (unsuccessful) proving. If the bound also stalled, the solution may well be optimal
+but hard to prove.'''
+
+[bound_stalled]           # fields: last_time, wall
+fraction_of_walltime = 0.5
+level = 'info'
+title = 'Bound stalled early'
+text = '''
+The proven bound last improved at {last_time:.1f}s. Weak relaxations are typical for big-M
+formulations; tighter constraints or redundant constraints for the LP can help.'''
+
+[conflict_heavy]          # fields: worker, conflicts, branches
+min_ratio = 0.5              # conflicts / branches of the worker with most conflicts
+level = 'info'
+title = 'Conflict-heavy search'
+text = '''
+Worker `{worker}` had {conflicts:,} conflicts for {branches:,} branches: it learned from most
+decisions, a sign of a tightly constrained combinatorial core.'''
+
+[feasible_descent]        # fields: worker, conflicts, branches
+max_ratio = 0.05
+level = 'info'
+title = 'Mostly feasible descent'
+text = '''
+Worker `{worker}` had only {conflicts:,} conflicts for {branches:,} branches: the search
+descends feasibly most of the time; difficulty lies in the optimisation, not feasibility.'''
+
+[per_worker_counters]     # fields: response_conflicts, max_conflicts
+max_ratio = 0.1              # response conflicts / busiest worker's conflicts
+level = 'info'
+title = 'Summary counters are per worker'
+text = '''
+The summary reports {response_conflicts:,} conflicts while the busiest worker had
+{max_conflicts:,}. The summary counters come from the worker that returned the solution, not
+from the whole portfolio. Use the Search stats table to judge the effort.'''
+
+[lns_closed_quickly]      # fields: count, total
+closed_percent = 80          # a neighbourhood counts as "closed quickly" above this Closed value
+min_rows = 3                 # at least this many rows, and at least half of all rows
+level = 'info'
+title = 'LNS neighbourhoods closed quickly'
+text = '''
+Most LNS neighbourhoods ({count} of {total}) were solved to completion; the sub-problems are
+easy, so the difficulty is raised adaptively. Consider whether the solutions came mostly from
+LNS (Solutions table) or from the exact workers.'''
+
+[presolve_expanded]       # fields: initial, presolved
+growth_factor = 2            # presolved variables > factor * initial variables ...
+min_variables = 1000         # ... and more than this many presolved variables
+level = 'info'
+title = 'Presolve expanded the model'
+text = '''
+The presolved model has {presolved:,} variables versus {initial:,} initially. Presolve
+expanded high-level constraints (e.g. AllDifferent, element, tables) into Booleans the
+propagators understand; this is normal but shows where the search effort goes.'''
+
+[presolve_shrank]         # fields: initial, presolved
+shrink_factor = 0.5          # presolved variables < factor * initial variables
+level = 'good'
+title = 'Presolve shrank the model'
+text = 'Presolve reduced the model from {initial:,} to {presolved:,} variables.'

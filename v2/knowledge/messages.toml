@@ -1,0 +1,15 @@
+# Explanations of free-form solver messages. Keys are the message kinds the
+# parser assigns (see v2/cpsatlog/src/cpsatlog/parsers/messages.py).
+
+[messages]
+closed_by_presolve = 'Presolve proved optimality or infeasibility, so no search ran.'
+gap_limit_reached = '''
+The solver stopped because the objective/bound gap fell below `relative_gap_limit` /
+`absolute_gap_limit`; the status is still FEASIBLE.'''
+loading_model = 'The presolved model is being loaded into the workers.'
+hint = '''
+Information about the solution hint (whether it was complete/feasible and which objective it
+had).'''
+infeasible = 'The model was proven infeasible.'
+legacy_subsolver_stats = '''
+Per-worker statistics dump of an old OR-Tools version (newer versions print tables instead).'''

@@ -2,34 +2,6 @@ import { Anchor, Card } from '../Card'
 import { formatNumber, useSelection } from '../../state/selection'
 import type { BlockRef, Explanations, ModelDescription } from '../../types'
 
-const CONSTRAINT_DOCS: Record<string, string> = {
-  kLinear1: 'linear constraint with one variable (a bound, often reified)',
-  kLinear2: 'linear constraint with two variables',
-  kLinear3: 'linear constraint with three variables',
-  kLinearN: 'linear constraint with many variables',
-  kBoolOr: 'clause (at least one literal true)',
-  kBoolAnd: 'conjunction (enforcement implies all literals)',
-  kAtMostOne: 'at most one literal true',
-  kExactlyOne: 'exactly one literal true',
-  kBoolXor: 'XOR of literals',
-  kIntDiv: 'integer division',
-  kIntMod: 'modulo',
-  kIntProd: 'product',
-  kLinMax: 'maximum of linear expressions',
-  kAllDiff: 'all different',
-  kElement: 'element / array indexing',
-  kTable: 'table (allowed tuples)',
-  kAutomaton: 'automaton / regular constraint',
-  kInverse: 'inverse permutation',
-  kReservoir: 'reservoir constraint',
-  kCircuit: 'Hamiltonian circuit',
-  kRoutes: 'multiple vehicle routes',
-  kInterval: 'interval variable (start, size, end)',
-  kNoOverlap: 'disjunctive scheduling (no overlap in 1D)',
-  kNoOverlap2D: 'rectangle packing (no overlap in 2D)',
-  kCumulative: 'cumulative resource constraint',
-  kDummyConstraint: 'placeholder keeping variables alive',
-}
 
 export function ModelBlock({ blockRef, data, explanations }: { blockRef: BlockRef; data: ModelDescription; explanations: Explanations }) {
   const { selection, select } = useSelection()
@@ -99,7 +71,7 @@ export function ModelBlock({ blockRef, data, explanations }: { blockRef: BlockRe
               </thead>
               <tbody>
                 {data.constraints.map((c) => (
-                  <tr key={c.line} className={selection.line === c.line ? 'selected' : ''} onClick={() => select(c.line, 'panel')} title={CONSTRAINT_DOCS[c.name] ?? ''}>
+                  <tr key={c.line} className={selection.line === c.line ? 'selected' : ''} onClick={() => select(c.line, 'panel')} title={explanations.constraints[c.name] ?? ''}>
                     <td>
                       <Anchor line={c.line}>{c.name}</Anchor>
                     </td>
@@ -107,7 +79,7 @@ export function ModelBlock({ blockRef, data, explanations }: { blockRef: BlockRe
                       <Anchor line={c.line}>{formatNumber(c.count)}</Anchor>
                     </td>
                     <td style={{ textAlign: 'left' }} className="muted">
-                      {CONSTRAINT_DOCS[c.name] ?? ''}
+                      {explanations.constraints[c.name] ?? ''}
                       {Object.entries(c.details).length > 0 && (
                         <> · {Object.entries(c.details).map(([k, v]) => `#${k}: ${formatNumber(v)}`).join(', ')}</>
                       )}

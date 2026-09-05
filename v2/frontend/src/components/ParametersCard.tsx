@@ -1,14 +1,14 @@
 /** Explains every parameter the user overrode (the Parameters: line). */
 import { Card } from './Card'
 import { Md } from './Md'
-import type { ParameterInfo, SolverInfo } from '../types'
+import type { Explanations, ParameterInfo, SolverInfo } from '../types'
 
 function fmtValue(v: unknown): string {
   if (typeof v === 'string') return v
   return JSON.stringify(v)
 }
 
-export function ParametersCard({ params, solver }: { params: ParameterInfo[]; solver: SolverInfo | null }) {
+export function ParametersCard({ params, solver, explanations }: { params: ParameterInfo[]; solver: SolverInfo | null; explanations: Explanations }) {
   const line = solver?.parameters?.line
   return (
     <Card
@@ -16,11 +16,7 @@ export function ParametersCard({ params, solver }: { params: ParameterInfo[]; so
       title={`Overridden parameters (${params.length})`}
       span={line ? { start: line, end: line } : undefined}
       path="/parameters"
-      explanation={
-        params.length === 0
-          ? 'No parameter differs from its default. Usually a good sign: the default portfolio is hard to beat.'
-          : 'CP-SAT prints only parameters that differ from their defaults. Each one is documented below (from `sat_parameters.proto`) with advice on typical pitfalls. Parameters that change the behaviour of *all* workers reduce the diversity of the portfolio and are the usual cause of unexpectedly slow solves.'
-      }
+      explanation={params.length === 0 ? explanations.cards.parameters_none : explanations.cards.parameters}
     >
       {params.map((p) => (
         <div className="param" key={p.name}>

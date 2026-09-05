@@ -23,12 +23,12 @@ export function AnalysisPanel({ result, explanations }: { result: ParseResult; e
           kind="search"
           title="Search progress"
           path="/progress"
-          explanation="Incumbent objective (`best:`) and proven bound (`next:[lb,ub]`) over time. A flat objective with a rising bound means the solver is proving; a flat bound with improving solutions means the relaxation is weak. Click a point to jump to its log line."
+          explanation={explanations.cards.progress}
         >
           <ProgressPlot progress={analysis.progress} />
         </Card>
       )}
-      <ParametersCard params={analysis.parameters} solver={log.solver} />
+      <ParametersCard params={analysis.parameters} solver={log.solver} explanations={explanations} />
       {log.warnings.length > 0 && (
         <Card kind="message" title="Parser warnings" path="/warnings">
           <ul>
@@ -44,7 +44,7 @@ export function AnalysisPanel({ result, explanations }: { result: ParseResult; e
         return (
           <Fragment key={ref.path}>
             <BlockCard blockRef={ref} log={log} explanations={explanations} />
-            {ref.path === '/search' && <SubsolversCard items={analysis.subsolvers} />}
+            {ref.path === '/search' && <SubsolversCard items={analysis.subsolvers} explanations={explanations} />}
           </Fragment>
         )
       })}

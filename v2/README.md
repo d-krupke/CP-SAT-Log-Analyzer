@@ -7,6 +7,7 @@ Rewrite of the analyzer as three parts:
 | Parser library | `cpsatlog/` | Standalone Python library (`pip install`-able, pydantic models, every value carries its log line). See its README. |
 | Backend | `backend/` | FastAPI app: parses logs with `cpsatlog`, adds derived analysis, explanations and parameter docs. |
 | Frontend | `frontend/` | React + Vite + Plotly UI: analysis on the left, raw log on the right, linked both ways. |
+| Knowledge | `knowledge/` | Plain TOML files with every explanation, parameter advice, subsolver description and insight threshold. Editable without programming; see `knowledge/README.md`. |
 
 The old Streamlit app in the repository root is untouched.
 
@@ -53,13 +54,21 @@ uv run pytest && uv run ruff check . && uv run ty check
 
 - `POST /api/parse` `{"text": "<log>"}` → `{"log": <CpSatLog JSON>, "analysis": {...}}`
 - `GET /api/examples`, `GET /api/examples/{name}` (from `example_logs/` or `EXAMPLE_LOGS_DIR`)
-- `GET /api/explanations` static explanation texts (blocks, tables, columns, response fields, subsolvers)
+- `GET /api/explanations` explanation texts from `knowledge/` (blocks, cards, tables, columns, response fields, subsolvers, constraints, messages)
 - `GET /api/parameters/{name}` documentation of a solver parameter (generated from `sat_parameters.proto`)
 - Set `STATIC_DIR` to a built frontend to serve everything from the backend alone.
+
+## Editing explanations, advice and thresholds
+
+All CP-SAT domain knowledge is data, not code: `knowledge/*.toml`. A CP-SAT expert can
+edit texts, add subsolver descriptions, tune insight thresholds or add parameter warnings
+there; `knowledge/README.md` maps each kind of text to its file and explains the format.
+Check an edit with `uv run python -m app.knowledge` (in `backend/`); the dev server picks up
+saved files on the next request.
 
 ## Updating for a new OR-Tools version
 
 1. Add a fresh log to `example_logs/` (the parser test suite parses every file there).
 2. Run the parser tests; unrecognised sections show up in `log.unparsed` / as test failures.
-3. Extend the parser (`cpsatlog/src/cpsatlog/parsers/`), add explanations for new tables/columns in `backend/app/explanations.py`.
+3. Extend the parser (`cpsatlog/src/cpsatlog/parsers/`), add explanations for new tables/columns/subsolvers in `knowledge/*.toml` (see `knowledge/README.md`).
 4. Regenerate the parameter docs: `uv run python tools/extract_sat_parameters.py /path/to/or-tools/ortools/sat/sat_parameters.proto` (in `backend/`).

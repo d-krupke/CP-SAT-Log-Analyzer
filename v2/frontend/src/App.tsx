@@ -12,7 +12,18 @@ import { Splitter } from './components/Splitter'
 import { blockForLine, SelectionContext, type Selection, type Source } from './state/selection'
 import type { Explanations, ParseResult } from './types'
 
-const EMPTY_EXPLANATIONS: Explanations = { blocks: {}, tables: {}, response_fields: {}, subsolvers: {} }
+const EMPTY_EXPLANATIONS: Explanations = {
+  blocks: {},
+  cards: {},
+  tables: {},
+  response_fields: {},
+  subsolvers: {},
+  subsolver_patterns: [],
+  subsolver_roles: {},
+  subsolver_categories: {},
+  constraints: {},
+  messages: {},
+}
 
 function useTheme(): [string, () => void] {
   const [theme, setTheme] = useState<string>(() => {

@@ -1,0 +1,238 @@
+# Explanations of the statistics tables at the end of the log.
+# The key after `tables.` is the table id the parser derives from the table
+# title (lower-case, spaces -> underscores, e.g. "Search stats" -> search_stats).
+# Column keys must match the column header printed by CP-SAT exactly.
+
+
+[tables.task_timing]
+summary = '''
+**Task timing.** How often each subsolver (task) ran and how long. The left group is wall
+time, the right group deterministic time (`dtime`, a hardware-independent measure of work).
+Full-problem workers run once for the whole search; LNS and first-solution tasks run many
+short rounds, so `n` is large and `avg` small. A full worker with far less `time` than the
+others was stopped early or started late.'''
+
+[tables.task_timing.columns]
+n = 'Number of times the task ran.'
+min = 'Shortest run.'
+max = 'Longest run.'
+avg = 'Average run time.'
+dev = 'Standard deviation of the run time.'
+time = 'Total wall time / total deterministic time over all runs.'
+
+[tables.search_stats]
+summary = '''
+**Search stats.** One row per full-problem worker, straight from its SAT core. Because the
+portfolio runs differently configured copies of the same search loop, comparing rows shows
+which configuration actually searched. `Conflicts` stays at or below `Branches`; the ratio
+tells you whether a worker learns from nearly every decision (hard combinatorial core) or
+mostly descends feasibly. The two propagation columns are usually the largest by far:
+propagation does most of the work, branching only a little.'''
+
+[tables.search_stats.columns]
+Bools = '''
+Size of the lazily minted Boolean skeleton of this worker: Boolean variables plus the bound
+literals `[x <= v]` created on demand for integer variables. Each worker mints its own, so
+the counts differ across rows.'''
+Conflicts = '''
+Number of conflicts analysed; each one produced a learned clause (nogood). A large fraction
+of `Branches` means the worker learns from nearly every decision.'''
+Branches = '''
+Number of decisions taken over the whole search (including after restarts). No fixed
+relation to the variable count.'''
+Restarts = '''
+How often the worker jumped back to decision level 0 while keeping learned clauses and
+heuristic weights. `quick_restart` configurations restart far more than steadier ones.'''
+BacktrackToRoot = 'Backtracks all the way to level 0 (includes restarts).'
+Backtrack = 'Total number of backtracks (undoing decisions).'
+BoolPropag = '''
+Propagations on the Boolean trail (binary implications and clauses), read from the SAT
+solver's counter.'''
+IntegerPropag = '''
+Bound tightenings pushed onto the integer trail. Which of the two propagation columns leads
+is model dependent.'''
+
+[tables.sat_formula]
+summary = '''
+**SAT formula.** The state of each worker's clause database at the end: how many Boolean
+variables got fixed or merged with an equivalent literal, how many are left, and how many
+binary, permanent (problem) and temporary (learned, deletable) clauses the worker holds.'''
+
+[tables.sat_formula.columns]
+Fixed = 'Boolean variables fixed at level 0.'
+Equiv = 'Variables replaced by an equivalent literal.'
+Total = 'Total Boolean variables of the worker.'
+VarLeft = 'Total minus fixed minus equivalent: what the search still decides on.'
+BinaryClauses = 'Clauses of size two, stored in the implication graph.'
+PermanentClauses = 'Problem clauses and learned clauses that are kept for good.'
+TemporaryClauses = 'Learned clauses that may be deleted during clause cleanup.'
+
+[tables.sat_stats]
+summary = '''
+**SAT stats.** Effort spent on keeping learned clauses short and the database small:
+conflict-clause minimisation, literals removed via the binary implication graph, literals
+learned/forgotten, and clauses subsumed during conflict analysis.'''
+
+[tables.sat_stats.columns]
+ClassicMinim = 'Learned clauses shortened by (recursive) clause minimisation.'
+LitRemoved = 'Literals removed from learned clauses by minimisation.'
+LitRemovedBinary = 'Literals removed using binary implications.'
+LitLearned = 'Total literals in learned clauses.'
+LitForgotten = 'Literals of learned clauses that were deleted again.'
+Subsumed = 'Clauses found redundant (subsumed) during conflict analysis.'
+
+[tables.vivification]
+summary = '''
+**Vivification.** An inprocessing technique: the solver re-asserts the literals of a clause
+one by one to shorten it or prove it redundant. Counters per worker.'''
+
+[tables.vivification.columns]
+Clauses = 'Clauses vivified.'
+Decisions = 'Decisions made while vivifying.'
+LitTrue = 'Clauses found already satisfied.'
+Subsumed = 'Clauses removed because a shorter one subsumes them.'
+LitRemoved = 'Literals removed from clauses.'
+DecisionReused = 'Decision prefixes reused between consecutive clauses.'
+Conflicts = 'Conflicts encountered during vivification.'
+
+[tables.clause_deletion]
+summary = '''
+**Clause deletion.** Why learned/problem clauses were removed from each worker's database
+(fixed at true, tautologies, promoted to binary, subsumption in various phases,
+blocked/eliminated by inprocessing, garbage collected). `promoted` counts clauses whose LBD
+improved so they became permanent; `conflicts` repeats the conflict count for reference.'''
+
+[tables.lp_stats]
+summary = '''
+**Lp stats.** One row per worker that carries an LP relaxation. The LP is used as a
+propagator: solved with dual simplex from a warm start after each bound change, its dual
+values justify bound tightenings and infeasible relaxations become conflicts. Workers
+without a row (e.g. `no_lp`, `core`) run without linearisation.'''
+
+[tables.lp_stats.columns]
+Component = 'Number of independent LP components (the linear part may split).'
+Iterations = 'Cumulative simplex pivots, kept low by dual-simplex warm starts.'
+AddedCuts = 'Cutting planes added to the relaxation (see the Lp Cut table).'
+OPTIMAL = 'LP solves that ended optimal (bound information available).'
+"DUAL_F." = 'Solves that stopped dual feasible (iteration limit hit; bound still valid).'
+"DUAL_U." = '''
+Dual unbounded = primal infeasible relaxation; produces a dual-ray conflict that the SAT
+core learns from.'''
+
+[tables.lp_dimension]
+summary = '''
+**Lp dimension.** Final size of the (first) LP component per worker: rows, columns and
+non-zeros. Larger linearisation levels give larger LPs (`max_lp`).'''
+
+[tables.lp_debug]
+summary = '''
+**Lp debug.** Internal diagnostics of the LP propagator: propagations obtained from cuts and
+equalities, coefficient adjustments, and numerical problems (overflow, bad cuts, bad
+scaling). Non-zero `Bad`/`BadScaling` hint at numerically difficult coefficients in your
+model.'''
+
+[tables.lp_pool]
+summary = '''
+**Lp pool.** Bookkeeping of the constraint manager that decides which linear constraints and
+cuts are in the LP: how many are managed, how often the set was updated, and how many were
+simplified, merged, shortened, split or strengthened.'''
+
+[tables.lp_pool.columns]
+Constraints = 'Linear constraints/cuts managed for this worker.'
+Updates = 'Times the active LP constraint set was changed.'
+Simplif = 'Constraints simplified using current bounds.'
+Merged = 'Parallel constraints merged into one.'
+Shortened = 'Constraints with fixed variables removed.'
+Split = 'Constraints split into independent parts.'
+Strengthened = '''
+Coefficient strengthening: coefficients tightened using the integrality of the variables,
+which makes the relaxation stronger.'''
+Strenghtened = 'Same as Strengthened (typo in older OR-Tools versions).'
+"Cuts/Call" = 'Cuts actually added / calls to the cut generators.'
+
+[tables.lp_cut]
+summary = '''
+**Lp Cut.** Cuts added per generator (rows) and worker (columns): `CG` (Chvatal-Gomory),
+`MIR_k` (mixed-integer rounding of k combined rows), `ZERO_HALF`, `IB` (implied bounds),
+`Clique`, knapsack cover, `LinMax`, and structure-specific families for scheduling/routing.
+Many cuts of one family indicate that this structure carries the relaxation.'''
+
+[tables.lns_stats]
+summary = '''
+**LNS stats.** Large Neighbourhood Search workers fix most of the incumbent and let the full
+solver re-optimise a small neighbourhood. `Improv/Calls` is how often a round found a better
+solution versus how often it ran, `Closed` the share of rounds that solved their sub-problem
+completely (too high means the neighbourhoods are too easy, so the difficulty is raised),
+`Difficulty` the adaptive fraction of variables left free, `TimeLimit` the deterministic
+time budget per round.'''
+
+[tables.lns_stats.columns]
+"Improv/Calls" = 'Improving rounds / total rounds of this neighbourhood.'
+Closed = 'Percentage of rounds whose sub-problem was solved to completion.'
+Difficulty = 'Adaptive relaxation ratio (fraction of the model left free).'
+TimeLimit = 'Adaptive deterministic time limit per round.'
+
+[tables.ls_stats]
+summary = '''
+**LS stats.** Counters of the violation-based local search workers (`violation_ls`, `ls`):
+batches of moves, restarts/perturbations, linear and general moves, compound moves,
+backtracks, constraint-weight updates and score computations.'''
+
+[tables.solutions]
+summary = '''
+**Solutions.** Which subsolver found how many improving solutions and how good they were:
+`Rank` is the range of ranks among all solutions (1 = best). Often first solutions come from
+feasibility jump/LNS and the last ones from exact workers or LNS. It is often more telling
+which subsolvers do *not* appear.'''
+
+[tables.solutions.columns]
+Num = 'Number of improving solutions reported by this subsolver.'
+Rank = '[best rank, worst rank] of those solutions (1 = best solution).'
+
+[tables.objective_bounds]
+summary = '''
+**Objective bounds.** Which subsolver improved the proven bound how often. `initial_domain`
+is the trivial bound from the objective domain; bound-focused workers
+(`objective_lb_search`, `objective_shaving`, `lb_tree_search`, `core`) or LP-heavy workers
+(`max_lp`) usually dominate here.'''
+
+[tables.objective_bounds.columns]
+Num = 'Number of bound improvements by this subsolver.'
+
+[tables.solution_repositories]
+summary = '''
+**Solution repositories.** Shared pools that workers add solutions to and query from:
+feasible solutions (used by LNS as starting points), LP solutions and feasibility-pump
+solutions. `Synchro` counts synchronisation rounds.'''
+
+[tables.solution_repositories.columns]
+Added = 'Solutions added to the pool.'
+Queried = 'Times a worker took a solution from the pool.'
+Ignored = 'Added solutions that were discarded (duplicates/worse).'
+Synchro = 'Number of synchronisations of the pool.'
+
+[tables.improving_bounds_shared]
+summary = '''
+**Improving bounds shared.** Variable bound tightenings that each worker exported to the
+others through the shared-bounds channel. A worker with many shared bounds contributes to
+everyone's propagation.'''
+
+[tables.improving_bounds_shared.columns]
+Num = 'Number of exported bound improvements.'
+Sym = 'Bound improvements derived from symmetry.'
+
+[tables.clauses_shared]
+summary = '''
+**Clauses shared.** Learned clauses (short, low-LBD nogoods and binary clauses) broadcast
+between workers. A dead end that one configuration discovers becomes a permanent constraint
+for all others: the portfolio learns collectively.'''
+
+[tables.clauses_shared.columns]
+Num = 'Clauses exported by this worker.'
+"#Exported" = 'Clauses exported by this worker.'
+"#Imported" = 'Clauses imported from other workers.'
+"#BinaryRead" = 'Binary clauses read from the shared pool.'
+"#BinaryTotal" = 'Binary clauses in the shared pool.'
+
+[tables.linear2_shared]
+summary = '**Linear2 shared.** Two-variable linear relations shared between workers.'

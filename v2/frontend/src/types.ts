@@ -277,6 +277,7 @@ export interface SubsolverContribution {
   first_solution_time: number | null
   best_solution_line: number | null
   description: string | null
+  role: string | null
 }
 export interface Insight {
   level: Level
@@ -300,11 +301,26 @@ export interface TableDoc {
   summary: string
   columns: Record<string, string>
 }
+export interface SubsolverDoc {
+  summary: string
+  details: string
+  role: string
+}
+export interface SubsolverPattern extends SubsolverDoc {
+  pattern: string
+}
+/** Mirror of app/explanations.py; every section is a TOML file in v2/knowledge/. */
 export interface Explanations {
   blocks: Record<string, string>
+  cards: Record<string, string>
   tables: Record<string, TableDoc>
   response_fields: Record<string, string>
-  subsolvers: Record<string, string>
+  subsolvers: Record<string, SubsolverDoc>
+  subsolver_patterns: SubsolverPattern[]
+  subsolver_roles: Record<string, string>
+  subsolver_categories: Record<string, string>
+  constraints: Record<string, string>
+  messages: Record<string, string>
 }
 export interface ExampleInfo {
   name: string

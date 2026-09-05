@@ -2,7 +2,7 @@
 
 The directory is resolved from ``EXAMPLE_LOGS_DIR`` (set in Docker) or, for
 local development, from the repository layout ``v2/backend/app`` -> ``../../../example_logs``.
-Descriptions come from the old Streamlit app so users know where a log stems from.
+Curated descriptions come from ``v2/knowledge/examples.toml``.
 """
 
 from __future__ import annotations
@@ -14,20 +14,7 @@ from pathlib import Path
 from cpsatlog import parse_log
 from pydantic import BaseModel, Field
 
-DESCRIPTIONS: dict[str, str] = {
-    "98_02": "TSP with MTZ constraints, not solved to optimality within the time limit.",
-    "98_03": "TSP with AddCircuit constraint, easily solved to optimality.",
-    "98_04": "Multi-Knapsack: solved to optimality after a longer search.",
-    "98_05": "Rectangle packing (NoOverlap2D) satisfaction problem; a packing is found quickly.",
-    "98_06": "Rectangle packing satisfaction problem that is proven infeasible.",
-    "98_07": "Knapsack problem, mostly solved by presolve (old MacBook).",
-    "98_08": "One iteration of the SampLNS algorithm.",
-    "97_01": "Small teaching example.",
-    "93_01": "Log of an old OR-Tools version (9.3) with the legacy log format.",
-    "915_01": (
-        "OR-Tools 9.15: knapsack with integer quantities and an AllDifferent side constraint."
-    ),
-}
+from .knowledge import load
 
 
 class ExampleInfo(BaseModel):
@@ -62,7 +49,7 @@ def list_examples() -> list[ExampleInfo]:
             ExampleInfo(
                 name=name,
                 version_hint=_version_hint(name),
-                description=DESCRIPTIONS.get(name, ""),
+                description=load("examples")["examples"].get(name, ""),
                 summary=_auto_description(path),
             )
         )

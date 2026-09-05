@@ -1,16 +1,10 @@
 import { useState } from 'react'
 import { Anchor, Card } from '../Card'
+import { Md } from '../Md'
+import { subsolverDoc } from '../../knowledge'
 import { formatNumber, useSelection } from '../../state/selection'
 import type { BlockRef, Explanations, SearchEvent, SearchProgress } from '../../types'
 
-const CATEGORY_DOC: Record<string, string> = {
-  full: 'Full-problem workers: complete searches that can prove optimality/infeasibility.',
-  first_solution: 'First-solution heuristics run until an incumbent exists, then hand their threads to the improvement heuristics.',
-  interleaved: 'Incomplete/interleaved workers: LNS and local search rounds sharing the remaining threads.',
-  helper: 'Helper tasks (synchronisation, neighbourhood generation); not searches.',
-  ignored: 'Configurations excluded via parameters or not applicable to this model.',
-  unknown: '',
-}
 
 function eventText(ev: SearchEvent, sense: string | null): string {
   if (ev.kind === 'solution') {
@@ -58,15 +52,32 @@ export function SearchBlock({ blockRef, data, explanations }: { blockRef: BlockR
               <Anchor line={g.line}>
                 <b>{g.label}</b>
               </Anchor>{' '}
-              <span className="small">{CATEGORY_DOC[g.category] ?? ''}</span>
-              <div>
-                {g.subsolvers.map((s) => (
-                  <span key={s.name} className="tag" title={explanations.subsolvers[s.name] ?? ''}>
-                    {s.name}
-                    {s.count > 1 ? ` ×${s.count}` : ''}
-                  </span>
-                ))}
-              </div>
+              <span className="small">{explanations.subsolver_categories[g.category] ?? ''}</span>
+              <ul className="subsolvers">
+                {g.subsolvers.map((s) => {
+                  const doc = subsolverDoc(explanations, s.name)
+                  return (
+                    <li key={s.name}>
+                      {doc?.details ? (
+                        <details>
+                          <summary>
+                            <code>{s.name}</code>
+                            {s.count > 1 ? ` ×${s.count}` : ''}
+                            <span className="muted"> {doc.summary}</span>
+                          </summary>
+                          <Md className="details" text={doc.details} />
+                        </details>
+                      ) : (
+                        <>
+                          <code>{s.name}</code>
+                          {s.count > 1 ? ` ×${s.count}` : ''}
+                          {doc && <span className="muted"> {doc.summary}</span>}
+                        </>
+                      )}
+                    </li>
+                  )
+                })}
+              </ul>
             </div>
           ))}
         </details>
@@ -99,7 +110,7 @@ export function SearchBlock({ blockRef, data, explanations }: { blockRef: BlockR
                 <td className="num">
                   <Anchor line={ev.line}>{ev.time.toFixed(2)}</Anchor>
                 </td>
-                <td style={{ textAlign: 'left' }} title={ev.subsolver ? explanations.subsolvers[ev.subsolver] ?? '' : ''}>
+                <td style={{ textAlign: 'left' }} title={subsolverDoc(explanations, ev.subsolver)?.summary ?? ''}>
                   <Anchor line={ev.line}>{ev.subsolver ?? ''}</Anchor>
                 </td>
                 <td style={{ textAlign: 'left', whiteSpace: 'normal' }}>

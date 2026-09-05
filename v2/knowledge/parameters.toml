@@ -1,0 +1,159 @@
+# Advice and warnings for overridden solver parameters (the `Parameters:` line).
+# The official documentation of every parameter comes from
+# v2/backend/app/data/sat_parameters.json (generated from sat_parameters.proto);
+# this file only adds the practical guidance.
+
+# Parameters that never get a warning, whatever their value.
+safe = [
+  'absolute_gap_limit',
+  'enumerate_all_solutions',
+  'fill_additional_solutions_in_response',
+  'fill_tightened_domains_in_response',
+  'keep_all_feasible_solutions_in_presolve',
+  'log_search_progress',
+  'log_to_response',
+  'log_to_stdout',
+  'max_deterministic_time',
+  'max_memory_in_mb',
+  'max_number_of_conflicts',
+  'max_time_in_seconds',
+  'name',
+  'num_search_workers',
+  'num_workers',
+  'random_seed',
+  'relative_gap_limit',
+  'solution_pool_size',
+  'stop_after_first_solution',
+]
+
+unknown = '''
+Not a parameter of the OR-Tools version these docs were generated from (renamed or removed
+since, or a newer addition).'''
+
+# Curated advice shown for a parameter (Markdown). The generated documentation
+# from sat_parameters.proto is shown in addition, so keep this to the practical part.
+[advice]
+num_workers = '''
+Number of parallel workers. With 1 worker only `default_lp` runs; from 2 on the interleaved
+LNS/first-solution heuristics join, and the full portfolio (core, no_lp, max_lp,
+quick_restart, bound-focused workers, ...) needs 8-16+. Matching the number of *physical*
+cores often beats hyper-threads.'''
+num_search_workers = 'Deprecated alias of `num_workers`; still honoured when `num_workers` is 0.'
+max_time_in_seconds = '''
+Wall-clock limit. On hitting it the status is FEASIBLE (or UNKNOWN) and the gap in the
+response tells you how far the solution may be from optimal.'''
+relative_gap_limit = '''
+Stop once |objective - bound| / max(1, |objective|) drops below this value. The log then
+prints `Relative gap limit of X reached.`'''
+absolute_gap_limit = 'Stop once the absolute difference between objective and bound is below this.'
+search_branching = '''
+Controls the decision heuristic of the workers. `FIXED_SEARCH` forces your
+`add_decision_strategy` order on *every* worker and disables CP-SAT's learned heuristics,
+which is almost always slower unless the strategy encodes real insight;
+`PORTFOLIO_SEARCH`/`AUTOMATIC_SEARCH` keep the diversity of the portfolio.'''
+linearization_level = '''
+0 = no LP relaxation (like `no_lp`), 1 = only linear constraints/objective (default), 2 =
+also linearise other constraints (like `max_lp`). Setting it at the top level changes *all*
+workers and removes the LP diversity of the portfolio.'''
+cp_model_presolve = '''
+Disabling presolve keeps the model as is. Only worth it for tiny models or when presolve
+time dominates a fast search; it usually hurts.'''
+max_presolve_iterations = 'Caps the presolve fix-point loop; lower it if presolve dominates.'
+cp_model_probing_level = '0 disables probing in presolve; probing is powerful but can be slow.'
+symmetry_level = '''
+0 disables symmetry detection/breaking. Symmetric models (identical machines, bins,
+vehicles) profit a lot from the default.'''
+subsolvers = '''
+Replaces the default full-problem portfolio with the listed configurations. Dropping workers
+removes diversity; only do this based on the Solutions/Objective bounds tables.'''
+extra_subsolvers = 'Adds configurations (e.g. your own `subsolver_params`) to the portfolio.'
+ignore_subsolvers = 'Removes configurations from the portfolio by glob pattern.'
+subsolver_params = '''
+Named parameter overrides for individual workers. This is the safe way to try expensive
+propagation settings: only that worker pays for them.'''
+use_lns_only = '''
+Runs only the LNS/first-solution heuristics; needs a time limit and never proves optimality.'''
+use_lns = 'Disabling LNS removes the main improvement heuristics of the portfolio.'
+use_feasibility_jump = '''
+Feasibility jump is the main first-solution heuristic; disabling it delays first solutions.'''
+interleave_search = 'Runs the workers interleaved in one thread (deterministic).'
+random_seed = 'Changes the random choices; run several seeds to judge variance.'
+enumerate_all_solutions = '''
+Enumerates all solutions with a single worker and disabled presolve reductions that would
+drop solutions; much slower than optimisation.'''
+fix_variables_to_their_hinted_value = 'Fixes hinted variables; useful to test if a hint is feasible.'
+keep_all_feasible_solutions_in_presolve = '''
+Prevents presolve from removing equivalent solutions (hints stay feasible) at a cost.'''
+debug_crash_on_bad_hint = '''
+Crashes if the hint cannot be completed; unreliable, prefer
+fix_variables_to_their_hinted_value.'''
+stop_after_first_solution = 'Stops at the first feasible solution.'
+max_deterministic_time = 'Hardware-independent limit; results are reproducible across machines.'
+share_objective_bounds = 'Disabling stops workers from exchanging objective bounds.'
+share_level_zero_bounds = 'Disabling stops workers from exchanging variable bounds.'
+share_binary_clauses = 'Disabling stops workers from exchanging learned binary clauses.'
+optimize_with_core = 'Forces core-based optimisation on the default worker.'
+use_absl_random = 'Uses a non-deterministic random generator.'
+log_search_progress = 'Enables this log.'
+log_to_stdout = 'Whether the log also goes to stdout (besides the log callback).'
+
+# Warning rules, checked top to bottom; the first matching rule wins.
+# Each rule needs `text` and one of:
+#   parameter = 'name'            exact parameter name (optionally with `value = ...`)
+#   pattern = 'use_*_in_no_overlap_2d'   glob on the name
+#   prefix = ['use_', 'share_']   any of the prefixes
+# Parameters listed in `safe` above never warn.
+
+[[warning]]
+parameter = 'search_branching'
+value = 'FIXED_SEARCH'
+text = '''
+FIXED_SEARCH disables the learned heuristics on all workers; expect slower solves unless your
+strategy is essential.'''
+
+[[warning]]
+parameter = 'linearization_level'
+text = '''
+Applied to all workers: the portfolio loses its LP diversity (no_lp/default_lp/max_lp all behave
+alike).'''
+
+[[warning]]
+parameter = 'cp_model_presolve'
+value = false
+text = 'Presolve is disabled; this usually makes the search much harder.'
+
+[[warning]]
+parameter = 'subsolvers'
+text = '''
+The default portfolio was changed; check the Solutions and Objective bounds tables to verify it
+helps.'''
+
+[[warning]]
+parameter = 'ignore_subsolvers'
+text = '''
+The default portfolio was changed; check the Solutions and Objective bounds tables to verify it
+helps.'''
+
+[[warning]]
+parameter = 'use_lns_only'
+text = 'No exact worker runs: the solver cannot prove optimality or infeasibility.'
+
+[[warning]]
+pattern = [
+  'use_*_in_no_overlap_2d',
+  'use_energetic_reasoning*',
+  'use_timetable_edge_finding*',
+  'use_overload_checker*',
+  'use_pairwise_reasoning*',
+  'max_pairs_pairwise_reasoning*',
+  'use_dual_scheduling_heuristics',
+  'use_hard_precedences_in_cumulative',
+  'exploit_all_precedences',
+]
+text = '''
+Expensive propagation set at the top level applies to every worker including the LNS helpers;
+consider a dedicated subsolver via subsolver_params/extra_subsolvers.'''
+
+[[warning]]
+prefix = ['use_', 'presolve_', 'share_', 'cp_model_', 'symmetry_', 'max_', 'min_']
+text = 'Advanced parameter; changing it at the top level affects all workers of the portfolio.'
