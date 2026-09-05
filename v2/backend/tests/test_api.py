@@ -83,3 +83,17 @@ def test_explanations_and_parameters() -> None:
     assert p["known"] is True
     assert "Deprecated" in p["advice"]
     assert client.get("/api/parameters/does_not_exist").json()["known"] is False
+
+
+def test_progress_ends_with_response_bound() -> None:
+    """93_01 proves optimality without a final bound line; the response bound closes the curve."""
+    body = client.post("/api/parse", json={"text": (EXAMPLES / "93_01.txt").read_text()}).json()
+    bounds = body["analysis"]["progress"]["bounds"]
+    assert bounds[-1]["value"] == 15
+    assert bounds[-1]["time"] > bounds[-2]["time"]
+
+
+def test_satisfaction_problem_has_no_bound_curve() -> None:
+    """98_05 is a satisfaction problem: the response's 'best_bound: 0' must not create a curve."""
+    body = client.post("/api/parse", json={"text": (EXAMPLES / "98_05.txt").read_text()}).json()
+    assert body["analysis"]["progress"]["bounds"] == []

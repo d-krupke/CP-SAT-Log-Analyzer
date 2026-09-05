@@ -60,7 +60,8 @@ export function Landing({ onAnalyze, onExample, busy, initialText }: Props) {
                 <b>
                   {ex.name} <span>· OR-Tools {ex.version_hint}</span>
                 </b>
-                <span>{ex.description}</span>
+                {ex.description && <span>{ex.description}</span>}
+                <span className="small">{ex.summary}</span>
               </button>
             ))}
           </div>

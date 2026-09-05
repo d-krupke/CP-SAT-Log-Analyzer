@@ -24,11 +24,11 @@ export function Card({ kind, title, span, path, explanation, children, collapsed
   const [manualOpen, setOpen] = useState(!collapsed)
   const ref = useRef<HTMLElement>(null)
   const active = path !== undefined && block !== null && block.path === path
-  // A selection made in the log always reveals the card; the toggle wins otherwise.
-  const open = manualOpen || (active && selection.source === 'log')
+  const open = manualOpen
 
   useEffect(() => {
     if (active && selection.source === 'log') {
+      setOpen(true)
       // Scroll to the exact row/value if one is highlighted, else to the card itself.
       const target = ref.current?.querySelector<HTMLElement>('.selected') ?? ref.current
       target?.scrollIntoView({ block: 'center', behavior: 'smooth' })
@@ -38,9 +38,10 @@ export function Card({ kind, title, span, path, explanation, children, collapsed
   return (
     <section className={`card ${kindClass(kind)}${active ? ' active' : ''}`} ref={ref}>
       <header
+        title={span ? 'Click to show this section in the log' : undefined}
         onClick={() => {
-          setOpen((o) => !o || !active)
           if (span) select(span.start, 'panel')
+          if (!open) setOpen(true)
         }}
       >
         <h2>{title}</h2>
@@ -49,7 +50,16 @@ export function Card({ kind, title, span, path, explanation, children, collapsed
             {span.start === span.end ? `L${span.start}` : `L${span.start}–${span.end}`}
           </span>
         )}
-        <span className="toggle">{open ? '▾' : '▸'}</span>
+        <button
+          className="toggle"
+          title={open ? 'Collapse' : 'Expand'}
+          onClick={(e) => {
+            e.stopPropagation()
+            setOpen(!open)
+          }}
+        >
+          {open ? '▾' : '▸'}
+        </button>
       </header>
       {open && (
         <div className="body">

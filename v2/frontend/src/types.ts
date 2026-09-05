@@ -256,6 +256,7 @@ export interface ProgressSeries {
   bounds: SeriesPoint[]
   done_time: number | null
   done_line: number | null
+  end_time: number | null
 }
 export interface ParameterInfo {
   name: string
@@ -309,4 +310,5 @@ export interface ExampleInfo {
   name: string
   version_hint: string
   description: string
+  summary: string
 }

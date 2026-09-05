@@ -23,7 +23,8 @@ export function ProgressPlot({ progress }: { progress: ProgressSeries }) {
     const muted = cssVar('--muted')
     const border = cssVar('--border')
     // Extend both step curves to the end of the search so the flat tail is visible.
-    const end = progress.done_time ?? Math.max(...progress.solutions.map((p) => p.time), ...progress.bounds.map((p) => p.time))
+    const lastEvent = Math.max(...progress.solutions.map((p) => p.time), ...progress.bounds.map((p) => p.time))
+    const end = Math.max(progress.end_time ?? 0, progress.done_time ?? 0, lastEvent)
     const extend = (pts: SeriesPoint[]): SeriesPoint[] =>
       pts.length > 0 && pts[pts.length - 1].time < end ? [...pts, { ...pts[pts.length - 1], time: end }] : pts
     const sols = extend(progress.solutions)
@@ -36,6 +37,7 @@ export function ProgressPlot({ progress }: { progress: ProgressSeries }) {
         customdata: sols.map((p) => p.line),
         text: sols.map((p) => p.subsolver ?? ''),
         hovertemplate: 'objective %{y}<br>%{x:.2f}s · %{text}<br>line %{customdata}<extra></extra>',
+      cliponaxis: false,
         mode: 'lines+markers',
         line: { shape: 'hv', color: cssVar('--k-search') },
         marker: { size: 6 },
@@ -61,7 +63,7 @@ export function ProgressPlot({ progress }: { progress: ProgressSeries }) {
       paper_bgcolor: 'rgba(0,0,0,0)',
       plot_bgcolor: 'rgba(0,0,0,0)',
       font: { color: text, size: 12 },
-      xaxis: { title: { text: 'time [s]' }, gridcolor: border, zerolinecolor: border, color: muted },
+      xaxis: { title: { text: 'time [s]' }, gridcolor: border, zerolinecolor: border, color: muted, range: [0, end * 1.02] },
       yaxis: {
         title: { text: 'objective' },
         gridcolor: border,

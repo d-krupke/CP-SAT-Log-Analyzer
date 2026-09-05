@@ -14,6 +14,7 @@ const CATEGORY_DOC: Record<string, string> = {
 
 function eventText(ev: SearchEvent, sense: string | null): string {
   if (ev.kind === 'solution') {
+    if (ev.objective === null && ev.objective_infinite === null) return `solution found${ev.message ? ` · ${ev.message}` : ''}`
     const obj = ev.objective !== null ? formatNumber(ev.objective) : ev.objective_infinite ?? ''
     const range = ev.next_lb !== null && ev.next_ub !== null ? ` · next:[${formatNumber(ev.next_lb)},${formatNumber(ev.next_ub)}]` : ''
     return `best ${obj}${range}`
@@ -72,7 +73,7 @@ export function SearchBlock({ blockRef, data, explanations }: { blockRef: BlockR
       )}
       <div className="legend" style={{ margin: '8px 0' }}>
         <span>Events:</span>
-        {(['all', 'solution', 'bound', 'model', 'done', 'other'] as const).map((k) => (
+        {(['all', 'solution', 'bound', 'model', 'done', 'other'] as const).filter((k) => k === 'all' || counts[k] > 0).map((k) => (
           <button key={k} style={{ padding: '1px 8px', fontSize: 12, borderColor: filter === k ? 'var(--accent)' : undefined }} onClick={() => setFilter(k)}>
             {k}
             {k !== 'all' ? ` (${counts[k]})` : ''}

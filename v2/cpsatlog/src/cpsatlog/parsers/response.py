@@ -45,6 +45,8 @@ class ResponseParser(BlockParser):
     def parse(cls, chunk: Chunk) -> ResponseSummary:
         response = ResponseSummary(span=LineSpan(start=chunk.start, end=chunk.end))
         for no, line in chunk.numbered():
+            if line.startswith("CpSolverResponse summary:"):
+                continue
             m = _KV.match(line)
             if not m:
                 response.extra[f"line_{no}"] = Loc(value=line, line=no)

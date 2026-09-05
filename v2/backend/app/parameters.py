@@ -183,7 +183,10 @@ def describe_parameter(name: str, value: Any) -> ParameterInfo:
 
 def _warning(name: str, value: Any, info: ParameterInfo) -> str | None:
     if not info.known:
-        return "Unknown parameter for the OR-Tools version the docs were generated from."
+        return (
+            "Not a parameter of the OR-Tools version these docs were generated from "
+            "(renamed or removed since, or a newer addition)."
+        )
     if name in SAFE:
         return None
     if name == "search_branching" and value == "FIXED_SEARCH":

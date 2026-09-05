@@ -8,6 +8,7 @@ CP-SAT primer (search_core.md); keep them conservative and explain the evidence.
 
 from __future__ import annotations
 
+import math
 from typing import Any
 
 from cpsatlog import CpSatLog
@@ -42,6 +43,9 @@ class ProgressSeries(BaseModel):
     bounds: list[SeriesPoint]
     done_time: float | None = None
     done_line: int | None = None
+    end_time: float | None = Field(
+        default=None, description="Wall time of the run (response) or the #Done time"
+    )
 
 
 class SubsolverContribution(BaseModel):
@@ -326,13 +330,33 @@ def build_progress(log: CpSatLog) -> ProgressSeries:
             bounds.append(SeriesPoint(time=ev.time, value=b, line=ev.line, subsolver=ev.subsolver))
         if ev.kind == "done":
             done_time, done_line = ev.time, ev.line
+    end_time = _loc_val(log.response.walltime) if log.response else done_time
+    _append_final_bound(log, bounds, done_time or end_time)
     return ProgressSeries(
         objective_sense=sense,
         solutions=solutions,
         bounds=bounds,
         done_time=done_time,
+        end_time=end_time,
         done_line=done_line,
     )
+
+
+def _append_final_bound(log: CpSatLog, bounds: list[SeriesPoint], at: float | None) -> None:
+    """Add the response's ``best_bound`` as the last bound point.
+
+    The search log often stops printing bound lines before the search ends (e.g. the
+    optimality proof is only reflected in the response), so without this the bound
+    curve would end at a stale value.
+    """
+    if log.search is None or log.search.objective_sense is None:
+        return  # satisfaction problem: the response prints a meaningless 0 bound
+    if log.response is None or log.response.best_bound is None or at is None:
+        return
+    value = log.response.best_bound.value
+    if not math.isfinite(value) or (bounds and bounds[-1].value == value):
+        return
+    bounds.append(SeriesPoint(time=at, value=value, line=log.response.best_bound.line))
 
 
 def _bound_of(ev: SearchEvent, sense: str | None) -> float | None:

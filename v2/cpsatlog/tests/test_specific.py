@@ -149,3 +149,10 @@ def test_presolve_closes_problem() -> None:
             assert log.search is None or not log.search.events_of_kind("solution")
             return
     raise AssertionError("expected one example that is closed by presolve")
+
+
+def test_response_has_no_header_in_extra() -> None:
+    """The response header is not a key/value line and must not leak into ``extra``."""
+    log = parse_log(read_example("98_07.txt"))
+    assert log.response is not None
+    assert not [k for k in log.response.extra if k.startswith("line_")]

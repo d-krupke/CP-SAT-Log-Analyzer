@@ -17,8 +17,10 @@ export function Overview({ analysis }: { analysis: Analysis }) {
             onClick={() => m.line && select(m.line, 'panel')}
           >
             <div className="label">{m.label}</div>
-            <div className="value">{m.value}</div>
-            {m.hint && m.level !== 'info' && <div className="hint">{m.hint}</div>}
+            <div className="value" style={{ whiteSpace: 'pre-line' }}>
+              {m.value}
+            </div>
+            {m.hint && (m.level === 'warn' || m.level === 'bad') && m.key !== 'gap' && <div className="hint">{m.hint}</div>}
           </div>
         ))}
       </div>

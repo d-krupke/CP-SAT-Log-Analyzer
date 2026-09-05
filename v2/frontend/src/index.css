@@ -213,8 +213,12 @@ select {
   display: block;
 }
 .examples button span {
+  display: block;
   color: var(--muted);
   font-size: 12px;
+}
+.examples button b span {
+  display: inline;
 }
 
 /* ---- log view ---- */
@@ -347,6 +351,9 @@ select {
 .card > header .toggle {
   color: var(--muted);
   font-size: 12px;
+  padding: 0 6px;
+  border: none;
+  background: none;
 }
 .card .body {
   padding: 10px 12px;
@@ -371,7 +378,7 @@ select {
 /* metrics */
 .metrics {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
   gap: 8px;
 }
 .metric {
@@ -394,7 +401,12 @@ select {
   font-size: 15px;
   font-weight: 600;
   font-family: var(--mono);
-  word-break: break-all;
+  overflow-wrap: anywhere;
+}
+.metric .value small {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--muted);
 }
 .metric.good .value {
   color: var(--good);
@@ -438,7 +450,8 @@ select {
 
 /* tables */
 .tbl-wrap {
-  overflow-x: auto;
+  overflow: auto;
+  max-height: 520px;
 }
 table.tbl {
   border-collapse: collapse;
