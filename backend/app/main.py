@@ -99,11 +99,26 @@ def site() -> SiteConfig:
 
 STATIC_DIR = Path(os.environ.get("STATIC_DIR", "/nonexistent"))
 if STATIC_DIR.is_dir():
-    app.mount("/assets", StaticFiles(directory=STATIC_DIR / "assets"), name="assets")
+    #: Everything the SPA route may serve has to live under here. Resolved once so
+    #: that the per-request check compares two absolute, symlink-free paths.
+    STATIC_ROOT = STATIC_DIR.resolve()
+    app.mount("/assets", StaticFiles(directory=STATIC_ROOT / "assets"), name="assets")
 
     @app.get("/{path:path}", include_in_schema=False)
     def spa(path: str) -> FileResponse:
-        candidate = STATIC_DIR / path
-        if path and candidate.is_file():
+        """Serve a built file, or the SPA shell for a client-side route.
+
+        ``path`` is whatever the client sent, percent-decoding included, so it can
+        climb out of the static directory: ``/..%2F..%2Fetc/passwd`` arrives here
+        as a relative path with ``..`` segments intact, and a proxy that
+        normalizes ``/../`` does not touch the encoded form. Anything that does
+        not resolve to a file inside the root falls through to the shell, which
+        is also what an unknown route should return.
+        """
+        index = FileResponse(STATIC_ROOT / "index.html")
+        if not path:
+            return index
+        candidate = (STATIC_ROOT / path).resolve()
+        if candidate.is_file() and candidate.is_relative_to(STATIC_ROOT):
             return FileResponse(candidate)
-        return FileResponse(STATIC_DIR / "index.html")
+        return index

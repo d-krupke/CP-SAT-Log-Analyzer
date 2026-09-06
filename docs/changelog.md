@@ -7,6 +7,14 @@ Notable changes, newest first. Dates are the day the work landed on `main`.
 (Entries before the flatten name paths under the `v2/` directory the rewrite grew up in;
 drop that prefix to find the file today.)
 
+* **2026-09-07** - **Security fix.** The route that serves the built frontend joined the
+  request path onto `STATIC_DIR` and served whatever came out, so `/..%2Fsecret` read any file
+  the process could - on any deployment with `STATIC_DIR` set, which is the Docker image and
+  therefore the public instance. The path reaches the route percent-decoded, so a proxy that
+  normalizes `/../` never saw it. It is now resolved and required to stay under the static
+  root; anything else falls through to the SPA shell. `backend/tests/test_static.py` covers the
+  route, which nothing had exercised before.
+
 * **2026-09-06** - The phone layout, after a report from an iPhone. The raw log was rendering
   in several font sizes at once - mobile browsers inflate text per block when the block is much
   wider than the screen, and the log's lines are - so the page opts out of that with
