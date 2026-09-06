@@ -48,8 +48,8 @@ export function ModelBlock({ blockRef, data, explanations }: { blockRef: BlockRe
               <thead>
                 <tr>
                   <th>count</th>
-                  <th style={{ textAlign: 'left' }}>domain</th>
                   <th style={{ textAlign: 'left' }}>size</th>
+                  <th style={{ textAlign: 'left' }}>domain</th>
                 </tr>
               </thead>
               <tbody>
@@ -58,11 +58,11 @@ export function ModelBlock({ blockRef, data, explanations }: { blockRef: BlockRe
                     <td>
                       <Anchor line={d.line}>{formatNumber(d.count)}</Anchor>
                     </td>
-                    <td style={{ textAlign: 'left', whiteSpace: 'normal' }}>
-                      <Anchor line={d.line}>{d.description}</Anchor>
-                    </td>
                     <td style={{ textAlign: 'left' }}>
                       <DomainSize d={d} ex={explanations} />
+                    </td>
+                    <td style={{ textAlign: 'left', whiteSpace: 'normal' }}>
+                      <Anchor line={d.line}>{d.description}</Anchor>
                     </td>
                   </tr>
                 ))}

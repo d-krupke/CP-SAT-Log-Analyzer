@@ -705,12 +705,13 @@ button.link {
 }
 .domain-size {
   display: inline-flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
+  gap: 4px 6px;
 }
 .sizebar {
   display: inline-block;
-  width: 60px;
+  width: 44px;
   height: 7px;
   border-radius: 4px;
   background: var(--panel-2);
@@ -719,6 +720,4 @@ button.link {
 }
 .domain-size .num {
   font-family: var(--mono);
-  min-width: 5ch;
-  text-align: right;
 }

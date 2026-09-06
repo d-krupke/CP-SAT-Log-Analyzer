@@ -12,6 +12,7 @@ export interface MixSegment extends LevelDoc {
 }
 
 const OTHER: LevelDoc = { label: 'other', color: 'info', text: 'Not classified.' }
+const UNKNOWN: LevelDoc = { label: 'unknown size', color: 'info', text: 'Truncated domain line; the number of values is unknown.' }
 
 export function constraintMix(data: ModelDescription, ex: Explanations): MixSegment[] {
   const counts = new Map<string, number>()
@@ -27,11 +28,11 @@ export function domainMix(data: ModelDescription, ex: Explanations): MixSegment[
   const counts = new Map<string, number>()
   for (const d of data.domains) {
     if (d.kind === 'summary') continue // counts distinct domains, not variables
-    const key = d.kind === 'constant' ? 'constant' : (domainLevel(ex, d)?.level.id ?? 'other')
+    const key = d.kind === 'constant' ? 'constant' : (domainLevel(ex, d)?.id ?? 'unknown')
     counts.set(key, (counts.get(key) ?? 0) + d.count)
   }
   const levels: MixSegment[] = ex.domains.levels.map((l) => ({ key: l.id, count: counts.get(l.id) ?? 0, ...l }))
   levels.push({ key: 'constant', count: counts.get('constant') ?? 0, label: 'constant', color: 'info', text: ex.domains.constant })
-  levels.push({ key: 'other', count: counts.get('other') ?? 0, ...OTHER })
+  levels.push({ key: 'unknown', count: counts.get('unknown') ?? 0, ...UNKNOWN })
   return levels
 }
