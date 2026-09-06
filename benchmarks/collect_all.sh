@@ -4,7 +4,7 @@
 # Five batches, each resumable (existing logs are skipped unless --force):
 #   A baseline   every problem, 8 workers, 60 s, 6 instances spread over the sizes
 #   B 1 worker   the single `main` worker portfolio (no parallel subsolvers)
-#   C 24 workers full portfolio incl. shared-tree workers on this 24-core machine
+#   C 16 workers larger portfolio (24 was cut to 16: the peak memory got a run OOM-killed)
 #   D parameter variants (no LP, no presolve, LNS only, interleaved, enumeration)
 #   E MiniZinc Challenge families through the bundled MiniZinc + cp-sat backend
 #
@@ -17,7 +17,7 @@ run() { echo; echo "=== $* ==="; uv run python "$@"; }
 
 [[ $BATCHES == *A* ]] && run run.py solve --limit 60 --workers 8 --max-instances 6
 [[ $BATCHES == *B* ]] && run run.py solve $SUBSET --limit 30 --workers 1 --max-instances 3
-[[ $BATCHES == *C* ]] && run run.py solve $SUBSET --limit 30 --workers 24 --max-instances 3
+[[ $BATCHES == *C* ]] && run run.py solve $SUBSET --limit 30 --workers 16 --max-instances 3
 if [[ $BATCHES == *D* ]]; then
   run run.py solve tsp jobshop qap --limit 30 --workers 8 --max-instances 2 \
       --param linearization_level=0 --tag nolp

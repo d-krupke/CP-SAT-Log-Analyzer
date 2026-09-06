@@ -37,6 +37,7 @@ def main() -> int:
     s.add_argument("--instance", action="append", default=[], help="only these instance names")
     s.add_argument("--force", action="store_true")
     s.add_argument("--param", action="append", default=[], help="extra CP-SAT parameter key=value")
+    s.add_argument("--memory-mb", type=int, default=8000, help="max_memory_in_mb; 0 = unlimited")
     s.add_argument("--tag", default="", help="suffix for the log file name (use with --param)")
     args = ap.parse_args()
 
@@ -68,7 +69,8 @@ def main() -> int:
             try:
                 meta = solve_and_log(
                     problem, inst, LOGS, time_limit=args.limit, workers=args.workers,
-                    extra_params=extra, tag=args.tag, force=args.force
+                    extra_params=extra, memory_limit_mb=args.memory_mb, tag=args.tag,
+                    force=args.force
                 )
             except Exception:  # noqa: BLE001 - keep the batch going
                 print(f"{name}/{inst.name}: FAILED", file=sys.stderr)

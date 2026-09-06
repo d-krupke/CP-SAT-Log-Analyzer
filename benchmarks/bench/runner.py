@@ -3,6 +3,8 @@
 Created 2026-09-06. Logs land in ``logs/<problem>/<instance>__w<workers>_t<limit>.txt``
 with a sibling ``.json`` (problem, instance, parameters, status, objective, bound,
 wall time, model size). Existing logs are skipped so runs can be resumed.
+``memory_limit_mb`` maps to ``max_memory_in_mb`` so a big instance aborts itself instead of
+being OOM-killed on a shared machine.
 """
 
 from __future__ import annotations
@@ -32,6 +34,7 @@ def solve_and_log(
     time_limit: float,
     workers: int,
     extra_params: dict[str, Any] | None = None,
+    memory_limit_mb: int = 0,
     tag: str = "",
     force: bool = False,
 ) -> dict[str, Any] | None:
@@ -51,6 +54,9 @@ def solve_and_log(
     p.log_search_progress = True
     p.log_to_stdout = False
     p.log_subsolver_statistics = True
+    if memory_limit_mb:
+        # Guard against an OOM kill on a shared machine: CP-SAT aborts itself instead.
+        p.max_memory_in_mb = memory_limit_mb
     for key, value in (extra_params or {}).items():
         setattr(p, key, value)
     lines: list[str] = []
@@ -62,7 +68,12 @@ def solve_and_log(
         "instance": instance.name,
         "instance_meta": instance.meta,
         "source": problem.source,
-        "parameters": {"max_time_in_seconds": time_limit, "num_workers": workers, **(extra_params or {})},
+        "parameters": {
+            "max_time_in_seconds": time_limit,
+            "num_workers": workers,
+            **({"max_memory_in_mb": memory_limit_mb} if memory_limit_mb else {}),
+            **(extra_params or {}),
+        },
         "ortools_version": _ortools_version(),
         "status": solver.status_name(status),
         "objective": solver.objective_value if _has_objective(model) else None,

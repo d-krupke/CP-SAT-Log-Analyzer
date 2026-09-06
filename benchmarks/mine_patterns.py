@@ -57,7 +57,7 @@ def main() -> int:
     for path in files:
         try:
             log = parse_log(path.read_text())
-        except Exception:  # noqa: BLE001 - validate_logs.py reports parser failures
+        except Exception:  # noqa: BLE001,S112 - validate_logs.py is what reports failures
             continue
         if log.search:
             for ev in log.search.events:

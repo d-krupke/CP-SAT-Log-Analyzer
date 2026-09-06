@@ -44,8 +44,8 @@ instances spread over the file sizes, not the N smallest.
   Langford, Golomb ruler, Costas arrays).
 - 30 MiniZinc Challenge families, which show what compiler-generated models look
   like (`mznfile…` model names, FlatZinc search strategies, many Booleans).
-- Worker counts 1 / 8 / 24 (single `main` worker vs. full portfolio vs.
-  shared-tree workers) and parameter variants (`linearization_level=0`,
+- Worker counts 1 / 8 / 16 (single `main` worker vs. portfolio vs. large
+  portfolio) and parameter variants (`linearization_level=0`,
   `cp_model_presolve=false`, `use_lns_only`, `interleave_search`,
   `enumerate_all_solutions`).
 

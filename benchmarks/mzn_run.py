@@ -33,6 +33,7 @@ REPO = ROOT / "data" / "minizinc" / "repo"
 LOGS = ROOT / "logs" / "minizinc"
 BUNDLE = ROOT / "tools" / "MiniZincIDE-2.10.1-x86_64-linux-gnu" / "bin" / "minizinc"
 FLATTEN_GRACE = 300.0  # seconds granted on top of the solve limit for flattening
+MEMORY_LIMIT_MB = 8000  # CP-SAT aborts itself instead of being OOM-killed
 
 
 @dataclass(frozen=True)
@@ -117,6 +118,7 @@ def _params(time_limit: float, workers: int) -> str:
             f"num_workers:{workers}",
             "log_search_progress:true",
             "log_subsolver_statistics:true",
+            f"max_memory_in_mb:{MEMORY_LIMIT_MB}",
         ]
     )
 
