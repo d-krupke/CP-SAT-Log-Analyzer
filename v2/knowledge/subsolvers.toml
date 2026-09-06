@@ -480,7 +480,14 @@ incumbent (or a shared hint), it moves through assignments that reduce weighted 
 violation and objective. Several copies run interleaved; `ls_lin` works on the linearised
 constraints. Their counters are in the `LS stats` table. Older versions call it
 `violation_ls`. The number of copies follows `num_violation_ls`. Only created when the model
-has an objective; satisfaction problems get no `ls`/`ls_lin` workers.'''
+has an objective; satisfaction problems get no `ls`/`ls_lin` workers.
+
+The name in the log carries the options of that copy: `ls_restart`, `ls_restart_decay`,
+`ls_restart_compound_perturb`, ... where `restart` = restart from the incumbent, `decay` =
+decaying constraint weights, `compound` = compound (multi-variable) moves, `perturb` =
+random perturbation of the current assignment and `obj` = the objective is part of the
+violation. The same suffixes appear on the first-solution jump workers (`fj_restart`,
+`fj_restart_compound_obj`) and as the row names of the `LS stats` table.'''
 
 [subsolvers.ls_lin]
 role = 'local_search'
@@ -493,6 +500,28 @@ summary = 'Violation-based local search (older name of ls).'
 details = 'See `ls`.'
 
 # ---------------------------------------------------------------- helpers
+
+[subsolvers.bool_core]
+role = 'bound'
+summary = 'Bound label of the `core` worker: a new lower bound from its Boolean core encoding.'
+details = '''
+Not a worker of its own. When a core-based worker raises the lower bound it labels the
+`#Bound` line `bool_<worker>` (so `bool_core`, `bool_core_no_lp`, `bool_max_hs`, ...) and adds
+the state of its encoding: `num_cores` cores found so far, the last core in brackets
+(`size`, `mw` = minimum weight, `amo` = at-most-one literals, `lit`, `d` = depth), `a` =
+nodes of the encoder, `d` = maximum depth, `fixed=<fixed>/<Booleans>` and the clause count.
+Growing `num_cores` with a slowly rising bound is the normal picture; see `core`.'''
+
+[subsolvers.am1_presolve]
+role = 'bound'
+summary = 'Bound label of the core workers: at-most-one detection on the objective literals.'
+details = '''
+Not a worker. Before/between core iterations the core-based optimisation searches for
+at-most-one constraints among the objective literals; each one it finds lets it replace
+several literals by one and raise the lower bound. The line reports `num_literals`
+considered, `num_am1` constraints found, the `increase` of the inner objective bound and the
+`work_done`. Typical on models with large weighted-Boolean objectives (set covering,
+assignment).'''
 
 [subsolvers.initial_domain]
 role = 'helper'
@@ -515,6 +544,12 @@ summary = 'Integrates the relative gap over time to compute gap_integral in the 
 details = 'Bookkeeping only.'
 
 # ---------------------------------------------------------------- fallbacks for unknown names
+
+[[patterns]]
+pattern = 'bool_*'
+role = 'bound'
+summary = 'Bound from the Boolean core encoding of a core-based worker.'
+details = 'See `bool_core`; the suffix is the worker that raised the bound (`core`, `max_hs`, ...).'
 
 [[patterns]]
 pattern = 'fj_*'

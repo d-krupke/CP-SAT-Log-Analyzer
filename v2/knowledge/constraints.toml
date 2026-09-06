@@ -139,6 +139,13 @@ complexity = 'global'
 summary = 'cumulative resource constraint'
 complexity = 'global'
 
+[constraints.kEmpty]
+complexity = 'simple'
+summary = '''
+A constraint proto with nothing set (`CONSTRAINT_NOT_SET`), so it constrains nothing. Either
+the model added an empty constraint or presolve emptied it; it costs nothing and disappears in
+the presolved model.'''
+
 [constraints.kDummyConstraint]
 summary = 'placeholder keeping variables alive (presolve testing only; rejected by the solver)'
 complexity = 'simple'

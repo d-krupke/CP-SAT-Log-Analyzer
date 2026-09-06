@@ -81,6 +81,39 @@ def test_parameter_warning_rules() -> None:
     assert describe_parameter("num_workers", 8).advice
 
 
+def test_labels_from_the_benchmark_corpus_are_documented() -> None:
+    """Names harvested from the local benchmark corpus (``benchmarks/logs``) must resolve.
+
+    Solving ~450 classic instances (QAP, set covering, RCPSP, ...) turned up event labels the
+    example logs never showed: the bound labels of the core workers (``bool_<worker>``,
+    ``am1_presolve``), the option-suffixed local-search copies and the RINS/RENS neighbourhood
+    names. Each must reach a doc, otherwise the subsolver table shows a bare name.
+    """
+    for name in (
+        "bool_core",
+        "bool_max_hs",
+        "am1_presolve",
+        "ls_restart",
+        "ls_restart_decay_perturb",
+        "fj_restart_compound_obj",
+        "rins_lp_lns",
+        "rens_pump_lns",
+        "quick_restart_no_lp",
+        "graph_dec_lns",
+        "routing_full_path_lns",
+    ):
+        doc = describe_subsolver(name)
+        assert doc is not None, name
+        assert doc.summary
+
+
+def test_empty_constraint_kind_is_documented() -> None:
+    """``kEmpty`` (a proto with no constraint case set) occurs in real models, so explain it."""
+    kinds = all_explanations().constraints
+    assert "kEmpty" in kinds
+    assert kinds["kEmpty"].complexity == "simple"
+
+
 def test_worker_names_from_example_logs_are_documented() -> None:
     """Every worker name seen in the example logs' portfolio lines must resolve to a doc.
 
