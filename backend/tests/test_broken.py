@@ -12,7 +12,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-from cpsatlog import parse_log
+from cpsat_logutils import parse_log
 from fastapi.testclient import TestClient
 
 from app.analysis import analyze

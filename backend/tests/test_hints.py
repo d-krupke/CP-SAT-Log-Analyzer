@@ -9,7 +9,7 @@ only hint wording the 295 benchmark logs contain.
 
 from __future__ import annotations
 
-from cpsatlog import parse_log
+from cpsat_logutils import parse_log
 
 from app.analysis import analyze
 from app.hints import build_hint_report

@@ -12,8 +12,8 @@ solver header; keep it a pure read of the parsed log (no thresholds, no texts).
 
 from __future__ import annotations
 
-from cpsatlog import CpSatLog
-from cpsatlog.schema import Loc
+from cpsat_logutils import CpSatLog
+from cpsat_logutils.schema import Loc
 
 
 def num_workers(log: CpSatLog) -> Loc[int] | None:

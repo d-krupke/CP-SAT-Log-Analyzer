@@ -7,7 +7,7 @@ column that occurs in `logs/**/*.txt` and prints the ones that have no entry in
 `knowledge/*.toml`. Run it after a batch; the output is a to-do list for the
 knowledge base.
 
-    uv run --project ../cpsatlog python mine_patterns.py
+    uv run python mine_patterns.py
 """
 
 from __future__ import annotations
@@ -19,7 +19,7 @@ import sys
 import tomllib
 from pathlib import Path
 
-from cpsatlog import parse_log
+from cpsat_logutils import parse_log
 
 ROOT = Path(__file__).resolve().parent
 LOGS = ROOT / "logs"

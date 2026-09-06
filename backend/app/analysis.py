@@ -1,6 +1,6 @@
 """Derived analysis of a parsed log: the ``Analysis`` model, plot data and subsolver roles.
 
-The parser (``cpsatlog``) only structures the log; the ``app`` modules interpret
+The parser (``cpsat_logutils``) only structures the log; the ``app`` modules interpret
 it for the UI. Everything carries the line numbers it was derived from so the
 frontend can highlight the evidence. Overview tiles live in ``metrics.py`` (with
 their texts in ``knowledge/metrics.toml``), the insight boxes in the
@@ -12,8 +12,8 @@ from __future__ import annotations
 import math
 from typing import Any
 
-from cpsatlog import CpSatLog
-from cpsatlog.schema import SearchEvent
+from cpsat_logutils import CpSatLog
+from cpsat_logutils.schema import SearchEvent
 from pydantic import BaseModel, Field
 
 from .explanations import describe_subsolver

@@ -105,10 +105,11 @@ feature-frozen.
 | [docs/architecture.md](docs/architecture.md) | how the parser, backend, knowledge base and UI fit together |
 | [docs/README.md](docs/README.md) | index, including the per-component READMEs |
 
-The repository is the analyzer: [`cpsatlog/`](cpsatlog/README.md) the parser library,
-[`backend/`](backend/README.md) the FastAPI app, [`frontend/`](frontend/README.md) the React
-UI, [`knowledge/`](knowledge/README.md) the TOML texts and [`corpus/`](corpus/README.md) the
-295 logs the tests run against.
+The repository is the analyzer: [`backend/`](backend/README.md) the FastAPI app,
+[`frontend/`](frontend/README.md) the React UI, [`knowledge/`](knowledge/README.md) the TOML
+texts and [`corpus/`](corpus/README.md) the 295 logs the tests run against. Reading the log
+itself is the job of [cpsat-logutils](https://github.com/d-krupke/cpsat-logutils), a separate package developed for this tool -
+`pip install cpsat-logutils` if you want the parsed model without the UI.
 
 ## Contributing
 

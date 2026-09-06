@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from cpsatlog.schema import ModelDescription
+from cpsat_logutils.schema import ModelDescription
 
 from ..base import Context, Insight, Trigger
 

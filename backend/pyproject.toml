@@ -1,13 +1,16 @@
 [project]
 name = "cpsat-log-analyzer-backend"
 version = "2.0.0"
-description = "FastAPI backend of the CP-SAT Log Analyzer: parses logs with cpsatlog and adds explanations."
+description = "FastAPI backend of the CP-SAT Log Analyzer: parses logs with cpsat-logutils and adds explanations."
 requires-python = ">=3.12"
 dependencies = [
-    "cpsatlog",
+    # The parser, developed in this project and published from
+    # github.com/d-krupke/cpsat-logutils. Capped at the next major: the schema this
+    # app reads (Loc, the section models, the block index) is that package's API.
+    "cpsat-logutils>=1.0,<2",
     "fastapi>=0.115",
     # Imported directly (request/response models), not just pulled in by fastapi
-    # and cpsatlog. Same floor as cpsatlog, whose models this app passes around.
+    # and cpsat-logutils. Same floor as that package, whose models this app passes around.
     "pydantic>=2.10",
     "uvicorn[standard]>=0.30",
 ]
@@ -20,8 +23,8 @@ dev = [
     "ty",
 ]
 
-[tool.uv.sources]
-cpsatlog = { path = "../cpsatlog", editable = true }
+# To develop against a local checkout of the parser instead of the release:
+#   uv add --editable ../cpsat-logutils      (and revert before committing)
 
 [build-system]
 requires = ["hatchling"]

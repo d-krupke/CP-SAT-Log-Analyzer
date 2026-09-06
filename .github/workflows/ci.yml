@@ -1,8 +1,8 @@
-# CI for the three projects: the parser library, the backend and the frontend are
+# CI for the two projects in this repository: the backend and the frontend are
 # checked independently, each with the tooling it is developed with (uv for the
-# Python parts, npm for the frontend). The weekly run additionally upgrades
-# OR-Tools to its newest release, which is how a changed log format shows up
-# here before a user reports it.
+# Python part, npm for the frontend). The parser is the separate cpsat-logutils
+# package and has its own CI; the weekly run here upgrades it to its newest
+# release, which is how a changed log format shows up before a user reports it.
 name: ci
 
 on:
@@ -12,41 +12,6 @@ on:
     - cron: "0 0 * * FRI"
 
 jobs:
-  cpsatlog:
-    name: parser library
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: cpsatlog
-    steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v5
-        with:
-          enable-cache: true
-      - name: Install
-        run: uv sync --all-groups
-      - name: Upgrade OR-Tools (weekly run only)
-        if: github.event_name == 'schedule'
-        run: uv sync --all-groups --upgrade-package ortools
-      - run: uv run ruff check .
-      - run: uv run ruff format --check .
-      - run: uv run ty check .
-      - run: uv run pytest -q
-      # The lock file resolves to the newest pydantic, so a wrong lower bound in
-      # pyproject.toml stays invisible until a user pins an older one. Run the
-      # suite against the floor we advertise as well. test_latest_version.py is
-      # excluded because it asserts the *newest* OR-Tools, which is the opposite
-      # question.
-      - name: Tests against the oldest supported dependencies
-        run: |
-          uv run --isolated --resolution lowest-direct --group dev \
-            pytest -q --ignore=tests/test_latest_version.py
-      # The package advertises 3.13 in its classifiers, so something has to run it.
-      - name: Tests on Python 3.13
-        run: |
-          uv run --isolated --python 3.13 --group dev \
-            pytest -q --ignore=tests/test_latest_version.py
-
   backend:
     name: backend
     runs-on: ubuntu-latest
@@ -60,6 +25,9 @@ jobs:
           enable-cache: true
       - name: Install
         run: uv sync --all-groups
+      - name: Upgrade the parser (weekly run only)
+        if: github.event_name == 'schedule'
+        run: uv sync --all-groups --upgrade-package cpsat-logutils
       - run: uv run ruff check .
       - run: uv run ruff format --check .
       - run: uv run ty check .

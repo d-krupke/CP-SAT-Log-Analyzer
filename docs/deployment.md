@@ -259,7 +259,7 @@ uvicorn access lines only; log contents are never logged.
 | Changed | Rebuild |
 | --- | --- |
 | `knowledge/*.toml`, `example_logs/` | `backend` (or bind-mount, see above) |
-| `backend/app/`, `cpsatlog/` | `backend` |
+| `backend/app/`, `backend/pyproject.toml` (parser version) | `backend` |
 | `frontend/src/` | `frontend` |
 | `frontend/nginx.conf` | `frontend` |
 | `.env` (issue link, legal pages) | nothing - `docker compose up -d backend` re-creates the container with the new values |
@@ -268,8 +268,7 @@ uvicorn access lines only; log contents are never logged.
 migration and no state, so a rollback is complete.
 
 **Build context.** The backend image is built from the **repository root** (see
-`docker-compose.yml`), because it needs `cpsatlog`, `knowledge` and `example_logs`
-next to the app. Keep that in mind when building the image by hand:
+`docker-compose.yml`), because it needs `knowledge` and `example_logs` next to the app. Keep that in mind when building the image by hand:
 `docker build -f backend/Dockerfile .` from the root.
 
 ## Continuous integration

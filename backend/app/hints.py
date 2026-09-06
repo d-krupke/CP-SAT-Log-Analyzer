@@ -15,15 +15,15 @@ Created 2026-09. The parser collects the hint-related lines verbatim
   not be reported as a hint.
 
 Change this when a new OR-Tools version adds a hint line: add the wording to
-``cpsatlog.parsers.hints`` first, then map its kind here.
+``cpsat_logutils.parsers.hints`` first, then map its kind here.
 """
 
 from __future__ import annotations
 
 from typing import Literal
 
-from cpsatlog import CpSatLog
-from cpsatlog.schema import HintNote
+from cpsat_logutils import CpSatLog
+from cpsat_logutils.schema import HintNote
 from pydantic import BaseModel, Field
 
 HintStatus = Literal[

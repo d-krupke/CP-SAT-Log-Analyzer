@@ -1,6 +1,6 @@
 # Backend
 
-FastAPI app: parses a log with [`cpsatlog`](../cpsatlog/README.md), derives the analysis
+FastAPI app: parses a log with [`cpsat-logutils`](https://github.com/d-krupke/cpsat-logutils), derives the analysis
 (tiles, insight boxes, progress series, subsolver attribution, hint report) and serves the
 texts of the [knowledge base](../knowledge/README.md).
 

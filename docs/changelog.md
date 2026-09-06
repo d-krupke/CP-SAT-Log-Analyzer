@@ -7,6 +7,15 @@ Notable changes, newest first. Dates are the day the work landed on `main`.
 (Entries before the flatten name paths under the `v2/` directory the rewrite grew up in;
 drop that prefix to find the file today.)
 
+* **2026-09-06** - The parser left this repository. It is published as
+  **[cpsat-logutils](https://github.com/d-krupke/cpsat-logutils) 1.0.0** on PyPI, replacing
+  that package's old block-based `LogParser` API, and the backend depends on it like any other
+  library (`cpsat-logutils>=1.0,<2`). The import is `cpsat_logutils` now, matching the
+  distribution name. Its tests, the example logs and a copy of the corpus went with it, so this
+  repository is the analyzer - backend, frontend, knowledge base - and CI here dropped a job
+  while the weekly run gained an upgrade of the parser, which is where a new log format shows
+  up first.
+
 * **2026-09-06** - *Only part of the portfolio ran* is an insight box now instead of two
   sentences crammed into the Workers tile, and it says what this run actually started: one
   worker means `main` alone with no LNS beside it, two to seven means a subset the box lists

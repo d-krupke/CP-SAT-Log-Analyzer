@@ -1,19 +1,15 @@
 # Development
 
-Everything in this branch is ``. The legacy Streamlit app lives on the `legacy` branch and
-is frozen; it is documented there.
+Everything described here lives on `main`. The legacy Streamlit app lives on the `legacy`
+branch and is frozen; it is documented there.
 
 Requirements: Python 3.12 with [uv](https://docs.astral.sh/uv/), Node 22+, and Docker if you
 want to run the whole stack.
 
-## The three projects
+## The two projects
 
 ```sh
-cd cpsatlog                       # parser library
-uv sync --python 3.12
-uv run pytest && uv run ruff check . && uv run ty check
-
-cd backend                        # FastAPI app (depends on ../cpsatlog)
+cd backend                        # FastAPI app
 uv sync --python 3.12
 uv run uvicorn app.main:app --reload --port 8000
 uv run pytest && uv run ruff check . && uv run ty check app
@@ -28,19 +24,21 @@ npm run lint
 The dev server proxies `/api` to `http://localhost:8000`; set `VITE_PROXY_TARGET` to point
 somewhere else. `?example=915_01` deep-links an example.
 
-Both Python projects must stay clean under `ruff` and `ty`; files are kept small (~200-300
-lines, a split is due past ~500).
+The backend must stay clean under `ruff` and `ty`; files are kept small (~200-300 lines, a
+split is due past ~500).
+
+Reading the log is not done here: `parse_log` comes from
+[cpsat-logutils](https://github.com/d-krupke/cpsat-logutils), an ordinary dependency in `backend/pyproject.toml`. To work on the
+parser and the analyzer at once, clone that repository next to this one and point the backend
+at it with `uv add --editable ../cpsat-logutils`, then revert that before committing.
 
 ## Tests
 
+The parser has its own suite in [cpsat-logutils](https://github.com/d-krupke/cpsat-logutils) (units, every example log, the 295-log
+corpus, damaged input, hint wordings). What runs here:
+
 | Suite | What it covers |
 | --- | --- |
-| `cpsatlog/tests/test_units.py`, `test_specific.py` | parser internals and exact values of individual example logs |
-| `cpsatlog/tests/test_examples.py` | invariants on every log in `example_logs/` **and** `example_logs/archive/`: parses, block index covers every line, JSON round trip |
-| `cpsatlog/tests/test_corpus.py` | all 295 corpus logs parse, leave nothing in `log.unparsed`, and match the metadata OR-Tools reported (`corpus/`) |
-| `cpsatlog/tests/test_broken.py` | damaged input (truncated, clipped, prefixed, foreign text): no crash, line anchoring intact, unrecognized text kept verbatim |
-| `cpsatlog/tests/test_hints.py` | every wording of the solution-hint lines is classified, and a hint line inside the presolve block is still found |
-| `cpsatlog/tests/test_latest_version.py` | the parser against a log produced by the installed OR-Tools |
 | `backend/tests/test_api.py` | every endpoint, every example through the HTTP layer |
 | `backend/tests/test_analysis.py` | one hand-written log per insight trigger |
 | `backend/tests/test_insights.py` | the trigger framework: discovery, display order, the invariants of a box, and that a trigger which raises is contained |
@@ -100,16 +98,18 @@ corpus test suites. After collecting a new batch:
 
 ```sh
 cd benchmarks
-uv run --project ../cpsatlog python validate_logs.py   # does the parser understand everything
-uv run --project ../cpsatlog python mine_patterns.py   # does the knowledge base explain every label
+uv run python validate_logs.py   # does the parser understand everything
+uv run python mine_patterns.py   # does the knowledge base explain every label
 uv run python pack_corpus.py                              # refresh corpus/benchmark_logs.tar.xz
 ```
 
 ## Supporting a new OR-Tools version
 
 1. Solve something with the new version and keep the log.
-2. Run the parser tests against it; unrecognized sections show up as `log.unparsed` entries.
-3. Extend the parsers in `cpsatlog/src/cpsatlog/parsers/` and the schema in `schema/`.
+2. Run the parser tests in the cpsat-logutils checkout against it; unrecognized sections show
+   up as `log.unparsed` entries.
+3. Extend that package's `parsers/` and `schema/`, release it, and raise the floor in
+   `backend/pyproject.toml`.
 4. Explain new tables, columns, subsolvers or messages in `knowledge/*.toml`.
 5. Regenerate the parameter documentation:
    `cd backend && uv run python tools/extract_sat_parameters.py /path/to/or-tools/ortools/sat/sat_parameters.proto`.

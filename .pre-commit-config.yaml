@@ -29,9 +29,9 @@ repos:
     hooks:
       - id: ruff
         args: [--fix]
-        files: '^(cpsatlog|backend)/'
+        files: '^backend/'
       - id: ruff-format
-        files: '^(cpsatlog|backend)/'
+        files: '^backend/'
 
   - repo: https://github.com/codespell-project/codespell
     rev: v2.2.4

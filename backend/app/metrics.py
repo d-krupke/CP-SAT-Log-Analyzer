@@ -7,8 +7,8 @@ computes the values and anchors each tile to the log line it came from.
 
 from __future__ import annotations
 
-from cpsatlog import CpSatLog
-from cpsatlog.schema import Loc
+from cpsat_logutils import CpSatLog
+from cpsat_logutils.schema import Loc
 from pydantic import BaseModel
 
 from .hints import HintReport

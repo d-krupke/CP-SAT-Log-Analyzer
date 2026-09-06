@@ -15,7 +15,7 @@ import logging
 from pathlib import Path
 
 import pytest
-from cpsatlog import parse_log
+from cpsat_logutils import parse_log
 
 from app.analysis import analyze, build_progress
 from app.hints import build_hint_report

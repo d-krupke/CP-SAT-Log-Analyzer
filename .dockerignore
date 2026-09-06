@@ -1,5 +1,5 @@
 # Keeps the docker build context (the repository root) small. The backend image
-# needs only cpsatlog/, backend/, knowledge/ and example_logs/ - everything else
+# needs only backend/, knowledge/ and example_logs/ - everything else
 # here is development material that would otherwise be uploaded to the daemon.
 .git
 .github

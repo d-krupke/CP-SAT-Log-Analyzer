@@ -1,6 +1,6 @@
 # Explanations of free-form solver messages. Keys are the message kinds the
-# parser assigns (see cpsatlog/src/cpsatlog/parsers/misc.py, and
-# parsers/hints.py for every `hint_*` kind).
+# parser assigns (see cpsat_logutils/parsers/misc.py in the cpsat-logutils package,
+# and its parsers/hints.py for every `hint_*` kind).
 
 [messages]
 closed_by_presolve = 'Presolve proved optimality or infeasibility, so no search ran.'

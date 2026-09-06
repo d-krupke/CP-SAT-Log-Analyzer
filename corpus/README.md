@@ -41,9 +41,10 @@ unchanged corpus produces no diff.
 
 ## Who reads it
 
-* `cpsatlog/tests/test_corpus.py` - every log parses, leaves nothing in `log.unparsed`, and
-  the parsed response matches `index.json`.
 * `backend/tests/test_corpus.py` - `analyze()` succeeds on every log and every insight text
   renders.
+* The same archive is committed in [cpsat-logutils](https://github.com/d-krupke/cpsat-logutils),
+  where its `tests/test_corpus.py` checks that every log parses and matches `index.json`. Copy
+  it over after regenerating.
 
-Both suites skip themselves if the archive is missing, so a shallow checkout still runs.
+The suite skips itself if the archive is missing, so a shallow checkout still runs.

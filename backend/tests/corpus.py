@@ -2,7 +2,7 @@
 
 Created 2026-09-06 so the analysis can be tested against all 295 collected CP-SAT logs
 instead of the handful of example logs. The archive is read once per session; see
-``corpus/README.md`` for its layout and how to regenerate it. The cpsatlog tests keep
+``corpus/README.md`` for its layout and how to regenerate it. The cpsat_logutils tests keep
 their own copy of this helper - it is a dozen lines and neither project imports the
 other's tests.
 """

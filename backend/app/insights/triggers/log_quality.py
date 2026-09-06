@@ -8,7 +8,7 @@ highlighted in the raw log view as well.
 
 from __future__ import annotations
 
-from cpsatlog import CpSatLog
+from cpsat_logutils import CpSatLog
 
 from ..base import Context, Insight, Trigger
 

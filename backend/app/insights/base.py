@@ -44,8 +44,8 @@ from dataclasses import dataclass
 from inspect import cleandoc
 from typing import TYPE_CHECKING, ClassVar
 
-from cpsatlog import CpSatLog
-from cpsatlog.schema import Loc, ResponseSummary
+from cpsat_logutils import CpSatLog
+from cpsat_logutils.schema import Loc, ResponseSummary
 from pydantic import BaseModel, Field
 
 from ..solver_info import num_workers

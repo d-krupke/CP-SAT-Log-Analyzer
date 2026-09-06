@@ -1,10 +1,9 @@
-"""Parse every collected log with the ``cpsatlog`` parser and report gaps.
+"""Parse every collected log with the ``cpsat_logutils`` parser and report gaps.
 
 Created 2026-09-06: the point of the benchmark corpus is to find log shapes the
 parser or the analyzer does not handle yet, so this script parses `logs/**/*.txt`
 and prints, per problem, how many logs parsed, which raised, and which sections
-ended up in ``log.unparsed``. Run it after a batch; it needs the parser importable
-(``uv run --project ../cpsatlog python validate_logs.py`` or an installed cpsatlog).
+ended up in ``log.unparsed``. Run it after a batch (``uv run python validate_logs.py``).
 """
 
 from __future__ import annotations
@@ -14,7 +13,7 @@ import sys
 import traceback
 from pathlib import Path
 
-from cpsatlog import parse_log
+from cpsat_logutils import parse_log
 
 LOGS = Path(__file__).resolve().parent / "logs"
 

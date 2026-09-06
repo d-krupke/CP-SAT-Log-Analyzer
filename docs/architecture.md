@@ -8,14 +8,16 @@ the backend derives.** Nothing about CP-SAT semantics is hard-coded in the UI.
             example_logs/            knowledge/*.toml
           (12 offered + archive)   (texts, advice, thresholds)
                     |                        |
-   raw log  ->  cpsatlog  ->  backend/app  ->  JSON  ->  frontend
+   raw log  ->  cpsat_logutils  ->  backend/app  ->  JSON  ->  frontend
               (parse only)   (analysis +            (two linked panes)
                               explanations)
 ```
 
-## `cpsatlog` - the parser library
+## `cpsat-logutils` - the parser library
 
-Standalone, `pip install`-able, no knowledge of the UI. `parse_log(text)` returns a
+A [separate package](https://github.com/d-krupke/cpsat-logutils) developed for this tool, with no knowledge of the UI
+(`pip install cpsat-logutils`, imported as `cpsat_logutils`). It is described here because
+the shape of everything downstream follows from it. `parse_log(text)` returns a
 `CpSatLog` pydantic model with one attribute per log section (`solver`, `initial_model`,
 `presolved_model`, `presolve`, `search`, `stats`, `response`, `messages`, `hints`,
 `unparsed`).
@@ -25,7 +27,7 @@ The defining property is **line anchoring**: every scalar is a `Loc[T]` carrying
 index mapping any line back to the section that produced it. That is what lets the UI show the
 raw log next to the analysis with both directions clickable.
 
-Sections are parsed by `BlockParser` subclasses in `src/cpsatlog/parsers/` (header, model,
+Sections are parsed by `BlockParser` subclasses in that package's `parsers/` (header, model,
 presolve, events, tables, response, ...); a chunk no parser claims lands in `log.unparsed`
 instead of being dropped, so a new log format is visible rather than silently mangled.
 
@@ -103,7 +105,8 @@ log is recognizable as such at a glance instead of looking like a complete analy
   `example_logs/archive/` holds retired ones (older OR-Tools formats, redundant variants) that
   the test suites still parse.
 * `corpus/benchmark_logs.tar.xz` - 295 real logs from the `benchmarks/` harness, the
-  regression base for both parser and analysis. See `corpus/README.md`.
+  regression base for the analysis here and, as a copy in that repository, for the parser.
+  See `corpus/README.md`.
 * Some example logs are generated on purpose rather than collected:
   `benchmarks/make_hint_example.py` solves one random job shop twice and hints the second run
   with the first run's solution, which gives the pair `915_jobshop_no_hint` /

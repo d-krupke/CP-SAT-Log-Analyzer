@@ -15,7 +15,7 @@ import os
 from functools import lru_cache
 from pathlib import Path
 
-from cpsatlog import parse_log
+from cpsat_logutils import parse_log
 from pydantic import BaseModel, Field
 
 from .knowledge import load

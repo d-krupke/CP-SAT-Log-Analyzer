@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from inspect import cleandoc
 
-from cpsatlog.schema.search import SubsolverGroup
+from cpsat_logutils.schema.search import SubsolverGroup
 
 from ..base import Context, Insight, Trigger
 

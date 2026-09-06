@@ -14,7 +14,7 @@ from __future__ import annotations
 import logging
 
 import pytest
-from cpsatlog import parse_log
+from cpsat_logutils import parse_log
 
 from app.analysis import analyze
 

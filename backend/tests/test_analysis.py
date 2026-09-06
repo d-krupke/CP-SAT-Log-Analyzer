@@ -8,7 +8,7 @@ fires a trigger, so a threshold or a cell format can be checked without a full e
 
 from __future__ import annotations
 
-from cpsatlog import parse_log
+from cpsat_logutils import parse_log
 
 from app.analysis import analyze
 from app.insights.triggers.lns import LnsClosedQuickly

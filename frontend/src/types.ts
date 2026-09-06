@@ -1,5 +1,6 @@
 /**
- * TypeScript mirror of the cpsatlog pydantic schema (cpsatlog/src/cpsatlog/schema)
+ * TypeScript mirror of the cpsat-logutils pydantic schema
+ * (github.com/d-krupke/cpsat-logutils, `cpsat_logutils/schema`)
  * and of the backend analysis models (backend/app/analysis.py).
  *
  * Keep in sync when the Python models change. Every parsed value carries the

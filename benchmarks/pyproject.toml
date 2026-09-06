@@ -4,4 +4,6 @@ version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
     "ortools>=9.15.6755",
+    # validate_logs.py and mine_patterns.py parse the collected logs.
+    "cpsat-logutils>=1.0,<2",
 ]

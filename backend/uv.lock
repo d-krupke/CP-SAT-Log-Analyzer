@@ -65,7 +65,7 @@ name = "cpsat-log-analyzer-backend"
 version = "2.0.0"
 source = { editable = "." }
 dependencies = [
-    { name = "cpsatlog" },
+    { name = "cpsat-logutils" },
     { name = "fastapi" },
     { name = "pydantic" },
     { name = "uvicorn", extra = ["standard"] },
@@ -81,7 +81,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "cpsatlog", editable = "../cpsatlog" },
+    { name = "cpsat-logutils", specifier = ">=1.0,<2" },
     { name = "fastapi", specifier = ">=0.115" },
     { name = "pydantic", specifier = ">=2.10" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.30" },
@@ -96,22 +96,15 @@ dev = [
 ]
 
 [[package]]
-name = "cpsatlog"
-version = "0.1.0"
-source = { editable = "../cpsatlog" }
+name = "cpsat-logutils"
+version = "1.0.0"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pydantic" },
 ]
-
-[package.metadata]
-requires-dist = [{ name = "pydantic", specifier = ">=2.10" }]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "ortools", specifier = ">=9.10" },
-    { name = "pytest", specifier = ">=8" },
-    { name = "ruff", specifier = ">=0.6" },
-    { name = "ty", specifier = ">=0.0.78" },
+sdist = { url = "https://files.pythonhosted.org/packages/f8/42/2c2c14746ce87ff2932c8e086efbcc264e05664f29e36934f176c4c8ca19/cpsat_logutils-1.0.0.tar.gz", hash = "sha256:db8e0b5bf16fae203e08692088e9f8a248846e03934242367f7da5dab10322ee", size = 200951, upload-time = "2026-09-06T16:09:15.3Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/15/6e/2c65834041468bcabb956c5e4465ad240af7f312b2d8b54d7c9a51b26885/cpsat_logutils-1.0.0-py3-none-any.whl", hash = "sha256:02112cc460d30aeab3a591592bfa09cc5705fa3745d5d418a7339e8843c14e5d", size = 37338, upload-time = "2026-09-06T16:09:13.47Z" },
 ]
 
 [[package]]

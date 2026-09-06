@@ -11,11 +11,13 @@
 `npm run screenshots` in `frontend`, not taken by hand - see
 [development.md](development.md#screenshots-for-the-readme).
 
+The parser is not in this repository: it is the [cpsat-logutils](https://github.com/d-krupke/cpsat-logutils) package,
+which documents its own API, models and supported log versions.
+
 Component documentation lives next to the code:
 
 | Where | What |
 | --- | --- |
-| [`cpsatlog/README.md`](../cpsatlog/README.md) | the parser library as a library: API, models, supported versions |
 | [`backend/README.md`](../backend/README.md) | the FastAPI app and its HTTP API |
 | [`frontend/README.md`](../frontend/README.md) | the React UI and its layout |
 | [`knowledge/README.md`](../knowledge/README.md) | which file holds which text, and the format of each |

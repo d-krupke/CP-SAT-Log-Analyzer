@@ -1,11 +1,11 @@
-# Backend image: FastAPI app + cpsatlog library, managed with uv.
+# Backend image: the FastAPI app, managed with uv. The parser (cpsat-logutils) is
+# an ordinary dependency and comes from PyPI.
 # Build context is the repository root (see docker-compose.yml) so that the
-# parser library (../cpsatlog, referenced from pyproject.toml) and the example
-# logs can be copied in with the same relative layout as in the repository.
+# knowledge base and the example logs can be copied in with the same relative
+# layout as in the repository.
 FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim AS builder
 ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy
 WORKDIR /src/backend
-COPY cpsatlog /src/cpsatlog
 COPY backend/pyproject.toml backend/uv.lock ./
 RUN uv sync --no-dev --no-install-project --frozen
 COPY backend/app ./app

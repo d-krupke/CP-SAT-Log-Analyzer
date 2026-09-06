@@ -23,7 +23,7 @@ uv run python run.py solve                # no names = every problem class
 | `bench/runner.py` | solves one instance and writes the log + metadata |
 | `run.py` | CLI: `list`, `download`, `solve` |
 | `mzn_run.py` | MiniZinc Challenge families through the bundled MiniZinc + `cp-sat` backend |
-| `validate_logs.py` | parses every collected log with the `cpsatlog` parser and reports gaps |
+| `validate_logs.py` | parses every collected log with the `cpsat_logutils` parser and reports gaps |
 | `collect_all.sh` | the batches that produce the corpus (worker counts, parameter variants) |
 | `make_hint_example.py` | generates the solution-hint example pair (see below); not part of the corpus |
 
@@ -71,7 +71,7 @@ uv run python mzn_run.py solve rcpsp steelmillslab --limit 60 --max-instances 2
 ## Checking the corpus against the parser
 
 ```sh
-uv run --project ../cpsatlog python validate_logs.py
+uv run python validate_logs.py
 ```
 
 Prints per problem how many logs parsed, which top-level sections are missing
@@ -92,10 +92,11 @@ corpus produces no diff. The archive carries the `.txt` logs plus a normalized `
 (problem, instance, parameters, version, status, objective, bound, walltime, model size,
 source URL) instead of the raw sidecars, because the MiniZinc sidecars embed the full
 solution output of third-party models. The instances themselves stay local - they may be
-copyrighted. Two test suites read the archive: `cpsatlog/tests/test_corpus.py` (every log
-parses, nothing unparsed, parsed values match `index.json`) and
-`backend/tests/test_corpus.py` (`analyze()` works, insight texts render, every worker and
-every parameter is documented). See `corpus/README.md`.
+copyrighted. Two test suites read the archive: `backend/tests/test_corpus.py` here (`analyze()` works,
+insight texts render, every worker and every parameter is documented) and, from a copy of the
+archive in [cpsat-logutils](https://github.com/d-krupke/cpsat-logutils), its
+`tests/test_corpus.py` (every log parses, nothing unparsed, parsed values match `index.json`).
+See `corpus/README.md`.
 
 Corpus logs also became the frontend's examples. The landing page offered ten `915_*`
 logs, selected for diversity rather than coverage of every parameter: one small introductory
