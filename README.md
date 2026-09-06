@@ -124,9 +124,9 @@ change.
 
 ## Authors
 
-Developed by [Dominik Krupke](https://github.com/d-krupke/), Algorithms Group, TU
-Braunschweig. There is no funding for this project; it is mainly developed in spare time. If
-you want to support it, contribute or get in touch.
+Developed by [Dominik Krupke](https://github.com/d-krupke/). There is no funding for this
+project; it is mainly developed in spare time. If you want to support it, contribute or get in
+touch.
 
 ## Related projects
 
