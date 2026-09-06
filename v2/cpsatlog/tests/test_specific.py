@@ -156,3 +156,19 @@ def test_response_has_no_header_in_extra() -> None:
     log = parse_log(read_example("98_07.txt"))
     assert log.response is not None
     assert not [k for k in log.response.extra if k.startswith("line_")]
+
+
+def test_interleaved_batch_size_message() -> None:
+    """`interleave_search` prints a batch-size line; it must become a message, not raw text.
+
+    Seen in the benchmark corpus (`interleave_search=true` runs): the line is informational,
+    but as an unparsed chunk it would show up in the UI without any explanation.
+    """
+    log = parse_log(
+        "Starting CP-SAT solver v9.15.0\n"
+        "\n"
+        "Setting number of tasks in each batch of interleaved search to 24\n"
+    )
+    kinds = [m.message_kind for m in log.messages]
+    assert "interleave_batch_size" in kinds
+    assert not log.unparsed

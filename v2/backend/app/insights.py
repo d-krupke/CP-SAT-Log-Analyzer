@@ -128,8 +128,8 @@ def _insight_lns(log: CpSatLog, out: list[Insight]) -> None:
     rule = _rule("lns_closed_quickly")
     high = []
     for r in table.rows:
-        closed = r.values.get("Closed")
-        if isinstance(closed, int | float) and closed > rule["closed_percent"]:
+        closed = _percent(r.values.get("Closed"))
+        if closed is not None and closed > rule["closed_percent"]:
             high.append(r)
     if len(high) >= max(rule["min_rows"], len(table.rows) // 2):
         out.append(
@@ -140,6 +140,22 @@ def _insight_lns(log: CpSatLog, out: list[Insight]) -> None:
                 total=len(table.rows),
             )
         )
+
+
+def _percent(cell: Any) -> float | None:
+    """Value of a percentage cell such as ``50%``.
+
+    The LNS stats table prints `Closed` with a percent sign, so the parser keeps it as text;
+    without this the rule silently never fired (found while mining the benchmark corpus).
+    """
+    if isinstance(cell, int | float):
+        return float(cell)
+    if isinstance(cell, str):
+        try:
+            return float(cell.removesuffix("%"))
+        except ValueError:
+            return None
+    return None
 
 
 def _insight_model_growth(log: CpSatLog, out: list[Insight]) -> None:

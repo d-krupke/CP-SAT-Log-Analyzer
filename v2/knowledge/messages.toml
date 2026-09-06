@@ -14,5 +14,10 @@ hint = '''
 Information about the solution hint (whether it was complete/feasible and which objective it
 had).'''
 infeasible = 'The model was proven infeasible.'
+interleave_batch_size = '''
+`interleave_search` is on and `interleave_batch_size` was left at 0, so the solver picked the
+batch size itself: `num_workers * 3` (1 with a single worker). The portfolio then runs in
+synchronised batches, which makes the run deterministic but leaves each worker less
+uninterrupted time.'''
 legacy_subsolver_stats = '''
 Per-worker statistics dump of an old OR-Tools version (newer versions print tables instead).'''

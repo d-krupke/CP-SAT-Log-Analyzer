@@ -16,6 +16,10 @@ _MESSAGES: list[tuple[re.Pattern[str], str]] = [
     (re.compile(r"^INFEASIBLE:"), "infeasible"),
     (re.compile(r"^Unsat after presolving"), "infeasible"),
     (re.compile(r"^Sub-solver search statistics:"), "legacy_subsolver_stats"),
+    (
+        re.compile(r"^Setting number of tasks in each batch of interleaved search"),
+        "interleave_batch_size",
+    ),
 ]
 
 
