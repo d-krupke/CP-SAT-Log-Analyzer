@@ -77,6 +77,33 @@ Prints per problem how many logs parsed, which top-level sections are missing
 and which chunks the parser left in `log.unparsed` — that list is the to-do
 list for the parser and the knowledge base.
 
+## Committed archive and the frontend examples (2026-09-06)
+
+The logs are git-ignored, but they are also the best regression input the project has, so
+they are shipped compressed:
+
+```sh
+uv run python pack_corpus.py       # -> ../v2/corpus/benchmark_logs.tar.xz (~0.9 MB, 295 logs)
+```
+
+Re-run it after every batch and commit the archive; it is byte-reproducible, so an unchanged
+corpus produces no diff. The archive carries the `.txt` logs plus a normalised `index.json`
+(problem, instance, parameters, version, status, objective, bound, walltime, model size,
+source URL) instead of the raw sidecars, because the MiniZinc sidecars embed the full
+solution output of third-party models. The instances themselves stay local - they may be
+copyrighted. Two test suites read the archive: `v2/cpsatlog/tests/test_corpus.py` (every log
+parses, nothing unparsed, parsed values match `index.json`) and
+`v2/backend/tests/test_corpus.py` (`analyze()` works, insight texts render, every worker and
+every parameter is documented). See `v2/corpus/README.md`.
+
+Thirteen corpus logs were also promoted to `example_logs/` as `915_*` for the frontend
+landing page, each showing a different phenomenon: 1 vs 8 vs 16 workers on job-shop,
+`interleave_search`, `use_lns_only`, `cp_model_presolve=false`, an objective that presolve
+pins to a constant, a proven infeasibility, `enumerate_all_solutions`, a satisfaction model
+that stays UNKNOWN, a presolve blow-up from 1,275 to 3 million variables, shared-tree search,
+and a FlatZinc model from MiniZinc. Their curated texts live in
+`v2/knowledge/examples.toml`; a test now fails if an example has no description.
+
 ## Audit of the knowledge base against the corpus (2026-09-06)
 
 Every quantitative claim in `v2/knowledge/` that the 295 logs can test was checked;

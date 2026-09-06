@@ -1,6 +1,67 @@
 # Curated one-line descriptions of the bundled example logs (example_logs/<name>.txt).
+#
+# The `915_*` logs come from the benchmark corpus (see v2/corpus/README.md) and are
+# chosen so that each one shows a different phenomenon - worker counts, portfolio
+# filters, presolve effects, statuses. The older logs are kept because they are the
+# only samples of the 9.3 ... 9.10 log formats. Names starting with the version
+# digits give the "OR-Tools x.y" badge in the UI (see app/examples.py).
 
 [examples]
+# --- OR-Tools 9.15, from the benchmark corpus -------------------------------------
+915_01 = '''
+OR-Tools 9.15: knapsack with integer quantities and an AllDifferent side constraint.'''
+915_jobshop_8workers = '''
+Job-shop scheduling (ta61) with 8 workers: 219 improving solutions, most of them from the
+LNS neighbourhoods, and the 60 s limit stops the run with a small gap left.'''
+915_jobshop_1worker = '''
+The same solver on one worker (instance la26): a single `main` subsolver with exactly your
+parameters, no portfolio and no LNS - optimality after 9.8 s.'''
+915_jobshop_16workers = '''
+The la26 instance again with 16 workers: 11 full subsolvers plus the LNS helpers close it in
+0.4 s. Compare the Search stats with the single-worker log.'''
+915_jobshop_interleaved = '''
+`interleave_search`: the header says "deterministic search", the full-worker roster is no
+longer truncated to the worker count, and the workers without a chunked implementation are
+missing.'''
+915_setcover_lns_only = '''
+`use_lns_only` on a set-covering instance: no exact worker runs, 22 subsolvers are filtered
+out and the bound never leaves 0 - good solutions, no proof.'''
+915_mknapsack_no_presolve = '''
+`cp_model_presolve=false` on a multi-knapsack: the presolved model is identical to the initial
+one and the search has to work on the raw formulation.'''
+915_coloring_objective_fixed = '''
+Graph colouring where presolve pins the objective to 11 colours: the portfolio then has no
+objective workers (`core`, `pseudo_costs`, ...) and no LNS at all, only feasibility work.'''
+915_langford_infeasible = '''
+Langford pairing L(2,18), proven infeasible immediately - and a case where the presolved model
+is *larger* than the initial one because AllDifferent is expanded into Booleans.'''
+915_langford_enumerate_all = '''
+`enumerate_all_solutions`: 376 solutions of L(2,8) are enumerated, so the log has many `#N`
+events but no objective and no bound.'''
+915_nqueens_time_limit = '''
+500 queens as a pure satisfaction problem: no solution within 60 s (UNKNOWN), so all the
+difficulty is feasibility rather than optimisation.'''
+915_qap_presolve_blowup = '''
+QAP with `linearization_level=0` where presolve expands 1,275 variables (AllDifferent plus
+1,225 element constraints) into 3 million Booleans and eats the whole time limit - the search
+never starts.'''
+915_sudoku_shared_tree = '''
+16x16 Sudoku with 16 workers on a satisfaction model: CP-SAT enables shared-tree search
+("Setting number of shared tree workers to 6") and a `shared_tree` worker finds the solution.'''
+915_minizinc_radiation = '''
+A FlatZinc model (MiniZinc Challenge `radiation`) solved through the `cp-sat` backend: presolve
+removes two thirds of the 47,213 variables, then LNS produces 57 improving solutions.'''
+
+# --- older OR-Tools versions, kept for their log formats --------------------------
+910_01 = '''
+OR-Tools 9.10 asked for a 1% gap (`relative_gap_limit`) but the 30 s time limit came first, so
+the run ends FEASIBLE with the gap still open.'''
+99_01 = '''
+Rectangle packing (NoOverlap2D) satisfaction problem that is still UNKNOWN after 30 s.'''
+99_02 = 'A 79,004-variable model proven infeasible after 3 s.'
+98_01 = '''
+Stopped by `relative_gap_limit: 0.25` after 13 s ("Relative gap limit of 0.25 reached"), which
+is why the status is OPTIMAL although a gap remains.'''
 98_02 = 'TSP with MTZ constraints, not solved to optimality within the time limit.'
 98_03 = 'TSP with AddCircuit constraint, easily solved to optimality.'
 98_04 = 'Multi-Knapsack: solved to optimality after a longer search.'
@@ -9,7 +70,22 @@ Rectangle packing (NoOverlap2D) satisfaction problem; a packing is found quickly
 98_06 = 'Rectangle packing satisfaction problem that is proven infeasible.'
 98_07 = 'Knapsack problem, mostly solved by presolve (old MacBook).'
 98_08 = 'One iteration of the SampLNS algorithm.'
+98_09 = '''
+An extreme presolve reduction: 885,104 variables in the initial model, 975 in the presolved
+one, solved in 17 s with 15 workers.'''
+98_10 = '''
+62,923 variables in general linear constraints (`kLinearN`) only, proven optimal after 11 s.'''
+98_11 = '''
+Routing with time windows (`kCircuit` plus intervals), stopped by a 60 s limit - the same model
+as the next log.'''
+98_12 = '''
+The 98_11 model with 120 s instead of 60 s: what the extra minute buys in solution quality and
+bound.'''
 97_01 = 'Small teaching example.'
+97_02 = '''
+The smallest log here: three variables and one linear constraint, and presolve alone leaves
+nothing to search.'''
 93_01 = 'Log of an old OR-Tools version (9.3) with the legacy log format.'
-915_01 = '''
-OR-Tools 9.15: knapsack with integer quantities and an AllDifferent side constraint.'''
+issue_with_search_strategies_defined = '''
+Scheduling model with user-defined decision strategies (from a bug report): the log prints a
+`Search strategy:` line per strategy before the model, which used to break the parser.'''

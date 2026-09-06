@@ -132,9 +132,13 @@ examples/tsp_evaluation/PRIVATE_DATA/full_experiment_data
 evaluations/tsp/2023-11-18_random_euclidean/PRIVATE_DATA
 evaluations/tsp/2023-11-18_tsplib/PRIVATE_DATA
 
-# benchmark instances/logs/tools are collected locally only
+# benchmark instances/logs/tools are collected locally only (the logs are shipped
+# compressed in v2/corpus/, the instances never - they may be copyrighted)
 benchmarks/data/
 benchmarks/logs/
 benchmarks/tools/
 benchmarks/.venv/
 benchmarks/collect.log
+
+# stray archives of third-party models/logs dropped in the repo root
+models.tar.gz

@@ -1,0 +1,87 @@
+
+Starting CP-SAT solver v9.15.6755
+Parameters: max_time_in_seconds: 30 max_memory_in_mb: 8000 log_search_progress: true linearization_level: 0 log_to_stdout: false log_subsolver_statistics: true num_workers: 8
+
+Initial optimization model '': (model_fingerprint: 0xf68cfee4f3b8a3c5)
+#Variables: 1'275 (#ints: 1'225 in objective) (1'275 primary variables)
+  - 1'225 in [0,9]
+  - 50 in [0,49]
+#kAllDiff: 1
+#kElement: 1'225
+
+Starting presolve at 0.08s
+  3.01e-04s  0.00e+00d  [DetectDominanceRelations] 
+  3.13e-01s  0.00e+00d  [PresolveToFixPoint] #num_loops=2 #num_dual_strengthening=1 
+  8.64e-06s  0.00e+00d  [ExtractEncodingFromLinear] 
+  2.68e-01s  0.00e+00d  [DetectDuplicateColumns] 
+  3.05e-01s  0.00e+00d  [DetectDuplicateConstraints] 
+[Symmetry] Problem too large. Skipping. You can use symmetry_level:3 or more to force it.
+  3.52e-01s  0.00e+00d  [DetectDuplicateConstraintsWithDifferentEnforcements] 
+  5.22e+00s  1.05e+00d *[Probe] #probed=37 #fixed_bools=1 #new_bounds=1 #new_binary_clauses=23'880 
+  2.29e-02s  0.00e+00d  [MaxClique] 
+  4.52e-01s  0.00e+00d  [DetectDominanceRelations] 
+  1.25e+01s  0.00e+00d  [PresolveToFixPoint] #num_loops=2 #num_dual_strengthening=1 
+  1.95e-01s  0.00e+00d  [ProcessAtMostOneAndLinear] 
+  3.15e-01s  0.00e+00d  [DetectDuplicateConstraints] 
+  3.41e-01s  0.00e+00d  [DetectDuplicateConstraintsWithDifferentEnforcements] 
+  4.44e-02s  1.34e-05d  [DetectDominatedLinearConstraints] #relevant_constraints=1'225 
+  4.34e-02s  0.00e+00d  [DetectDifferentVariables] 
+  2.66e-01s  9.27e-03d  [ProcessSetPPC] #relevant_constraints=13'525 
+  1.47e-01s  0.00e+00d  [TransformClausesToExactlyOne] 
+  1.72e+00s  0.00e+00d  [DetectEncodedComplexDomains] 
+  4.99e-02s  3.94e-04d  [FindAlmostIdenticalLinearConstraints] #num_tested_pairs=26'252 
+  4.34e-01s  1.00e+00d *[FindBigAtMostOneAndLinearOverlap] 
+  2.23e-01s  7.69e-02d  [FindBigVerticalLinearOverlap] 
+  4.52e-02s  0.00e+00d  [FindBigHorizontalLinearOverlap] 
+  3.74e-02s  0.00e+00d  [MergeClauses] 
+  7.21e+00s  0.00e+00d  [PresolveToFixPoint] #num_loops=1 #num_dual_strengthening=1 
+  2.90e-07s  0.00e+00d  [MergeNoOverlap] 
+  7.42e-07s  0.00e+00d  [MergeNoOverlap2D] 
+
+Presolve summary:
+  - 0 affine relations were detected.
+  - rule 'TODO dual: only one blocking constraint?' was applied 1'225 times.
+  - rule 'all_diff: permutation expanded' was applied 1 time.
+  - rule 'at_most_one: resolved two constraints with opposite literal' was applied 12'250 times.
+  - rule 'deductions: 6154498 stored' was applied 1 time.
+  - rule 'element: expanded value element' was applied 1'225 times.
+  - rule 'enforcement: false literal' was applied 1 time.
+  - rule 'enforcement: true literal' was applied 1 time.
+  - rule 'exactly_one: removed literals' was applied 1 time.
+  - rule 'linear: always true' was applied 1 time.
+  - rule 'new_bool: integer encoding' was applied 3'077'250 times.
+  - rule 'presolve: 1 unused variables removed.' was applied 1 time.
+  - rule 'presolve: iteration' was applied 1 time.
+  - rule 'variables: add encoding constraint' was applied 3'077'250 times.
+  - rule 'variables: only used in objective and in encodings' was applied 1'225 times.
+
+Presolved optimization model '': (model_fingerprint: 0x69972c3cb2079abf)
+#Variables: 3'066'274 (#bools: 2'692'550 in objective) (3'064'950 primary variables)
+  - 3'064'999 Booleans in [0,1]
+  - 50 in [0,49]
+  - 1'224 in [0,2499]
+  - 1 in [1,2499]
+#kExactlyOne: 1'275 (#literals: 3'064'999)
+#kLinear1: 6'129'998 (#enforced: 6'129'998)
+#kLinear3: 1'225
+Stopped after presolve.
+PresolvedNumVariables: 3066274
+PresolvedNumConstraints: 6132498
+PresolvedNumTerms: 15328670
+CpSolverResponse summary:
+status: UNKNOWN
+objective: 0
+best_bound: 0
+integers: 0
+booleans: 0
+conflicts: 0
+branches: 0
+propagations: 0
+integer_propagations: 0
+restarts: 0
+lp_iterations: 0
+walltime: 36.5834
+usertime: 36.5834
+deterministic_time: 2.13666
+gap_integral: 0
+

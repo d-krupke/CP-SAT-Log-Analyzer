@@ -1,0 +1,67 @@
+"""The analysis must survive every log of the committed benchmark corpus (295 real logs).
+
+Created 2026-09-06: the insight rules and the knowledge texts were audited against the
+local corpus by hand (see ``benchmarks/README.md``); this test keeps that audit alive.
+Its job is coverage, not exact values - the hand-written logs in ``test_analysis.py``
+pin down single rules, while this one makes sure no real log makes ``analyze`` raise,
+leaves an insight text with an unfilled placeholder, or shows a worker the knowledge
+base cannot name.
+
+Skipped entirely when the archive is not present; see ``v2/corpus/README.md``.
+"""
+
+from __future__ import annotations
+
+import pytest
+from cpsatlog import parse_log
+
+from app.analysis import analyze
+
+from .corpus import ARCHIVE, corpus_names, load_corpus
+
+pytestmark = pytest.mark.skipif(not ARCHIVE.is_file(), reason=f"no corpus at {ARCHIVE}")
+
+NAMES = corpus_names()
+
+
+@pytest.mark.parametrize("name", NAMES)
+def test_analysis_runs_and_renders(name: str) -> None:
+    """Every log analyses, and every insight/metric it produces is presentable.
+
+    An unfilled ``{field}`` in an insight text means the rule and ``insights.toml`` disagree
+    about the available format fields - the kind of mistake that only shows on real logs.
+    """
+    logs, _ = load_corpus()
+    analysis = analyze(parse_log(logs[name]))
+    for insight in analysis.insights:
+        assert insight.title, name
+        assert insight.text.strip(), (name, insight.title)
+        assert "{" not in insight.text, (name, insight.title, insight.text)
+        assert insight.level in {"info", "good", "warn", "bad"}, (name, insight.level)
+    for metric in analysis.metrics:
+        assert metric.label, name
+    titles = [insight.title for insight in analysis.insights]
+    assert len(titles) == len(set(titles)), (name, titles)
+
+
+@pytest.mark.parametrize("name", NAMES)
+def test_every_worker_in_the_log_is_documented(name: str) -> None:
+    """Each subsolver the analysis lists gets a description from ``subsolvers.toml``.
+
+    New OR-Tools versions add workers and rename others; when that happens the UI would
+    silently show an undocumented name, so the corpus is the tripwire.
+    """
+    logs, _ = load_corpus()
+    analysis = analyze(parse_log(logs[name]))
+    undocumented = [s.name for s in analysis.subsolvers if not s.description]
+    assert undocumented == [], (name, undocumented)
+
+
+@pytest.mark.parametrize("name", NAMES)
+def test_overridden_parameters_are_documented(name: str) -> None:
+    """Parameters printed in the header are either documented or explicitly marked unknown."""
+    logs, _ = load_corpus()
+    analysis = analyze(parse_log(logs[name]))
+    for parameter in analysis.parameters:
+        assert parameter.known, (name, parameter.name)
+        assert parameter.doc.strip() or parameter.advice, (name, parameter.name)

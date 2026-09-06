@@ -31,6 +31,20 @@ def test_examples_listed_and_readable() -> None:
     assert client.get("/api/examples/nope").status_code == 404
 
 
+def test_every_example_has_a_curated_description() -> None:
+    """The landing page shows one line per example, so an undescribed log looks like a stub.
+
+    Added 2026-09-06 with the corpus-based examples: the curated texts in
+    ``knowledge/examples.toml`` are what distinguishes the examples from each other, and a
+    new log is easy to drop into ``example_logs/`` while forgetting its text.
+    """
+    listed = client.get("/api/examples").json()
+    assert listed, "no examples found"
+    undescribed = [e["name"] for e in listed if not e["description"].strip()]
+    assert undescribed == [], undescribed
+    assert all(e["summary"].strip() for e in listed)
+
+
 def test_parse_rejects_empty() -> None:
     assert client.post("/api/parse", json={"text": "   "}).status_code == 400
 
