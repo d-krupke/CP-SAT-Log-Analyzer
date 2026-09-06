@@ -7,6 +7,12 @@ Notable changes, newest first. Dates are the day the work landed on `main`.
 (Entries before the flatten name paths under the `v2/` directory the rewrite grew up in;
 drop that prefix to find the file today.)
 
+* **2026-09-06** - Public instance at <https://cpsat-loganalyzer.krupke-algorithms.de/>, which
+  is what the README now points at first; `docs/deployment.md` describes it as the reference
+  deployment. The browser tab said "frontend" - the title Vite scaffolds - and now says
+  *CP-SAT Log Analyzer*, with a description and Open Graph tags so a shared link previews as
+  something.
+
 * **2026-09-06** - The rewrite moved out of `v2/` into the repository root: `cpsatlog/`,
   `backend/`, `frontend/`, `knowledge/`, `corpus/` and `docker-compose.yml` now sit at the top
   level, which is where the CI, the Docker build context and every relative link already

@@ -4,16 +4,17 @@ CP-SAT's search log is dense, long, and full of information that only makes sens
 the solver's internals. This tool turns it into something you can read: parsed, explained,
 plotted, and annotated with what the numbers actually mean for *your* model.
 
+**Try it: <https://cpsat-loganalyzer.krupke-algorithms.de/>**
+
 Paste a log, upload a file, or click one of the bundled examples. Nothing is stored - your log
-is parsed and thrown away.
+is processed in memory for the duration of the request and then gone. No database, no account,
+no cookies, no tracking.
 
 _This project is not affiliated with Google._
 
 ![The Overview of a job-shop run next to the raw log](docs/screenshots/02-overview.png)
 
 ## What it does
-
-You run it with one `docker compose up`.
 
 **Explains every section of the log.** Solver header, initial and presolved model, presolve
 passes, search events, statistics tables, response summary - each gets a text that says what it
@@ -74,21 +75,26 @@ logs from public instance libraries on every test run.
 
 ## Try it
 
+Open <https://cpsat-loganalyzer.krupke-algorithms.de/> - that instance runs this repository,
+and needs nothing installed.
+
+![Paste a log, upload a file, or open one of the bundled examples](docs/screenshots/01-landing.png)
+
+To run your own, so that logs never leave your machine or your network:
+
 ```sh
 git clone https://github.com/d-krupke/CP-SAT-Log-Analyzer.git
 cd CP-SAT-Log-Analyzer
 docker compose up --build
 # open http://localhost:8080
 ```
-![Paste a log, upload a file, or open one of the bundled examples](docs/screenshots/01-landing.png)
-
-
-The earlier Streamlit implementation - the one behind
-<https://cpsat-log-analyzer.streamlit.app/> - is no longer part of this branch; it lives on the
-`legacy` branch and is feature-frozen.
 
 Deploying it for others, configuration, sizing and operations:
 [docs/deployment.md](docs/deployment.md).
+
+The earlier Streamlit implementation - the one behind
+<https://cpsat-log-analyzer.streamlit.app/> - lives on the `legacy` branch and is
+feature-frozen.
 
 ## Documentation
 

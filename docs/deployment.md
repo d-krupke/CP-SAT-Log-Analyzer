@@ -1,8 +1,12 @@
 # Deployment
 
-How to run the analyzer for other people. Everything here is about the **current stack**
-(``: FastAPI backend + React frontend), which is all this branch contains; the legacy
-Streamlit app is covered [at the end](#legacy-streamlit-app).
+How to run the analyzer for other people. Everything here is about the current stack - the
+FastAPI backend and the React frontend that make up this repository; the legacy Streamlit app
+is covered [at the end](#legacy-streamlit-app).
+
+<https://cpsat-loganalyzer.krupke-algorithms.de/> is the reference deployment: this repository,
+Docker Compose behind a reverse proxy, with `ISSUE_URL` set and the two legal pages mounted as
+Markdown files. Everything it does is described below.
 
 The service is **stateless**: no database, no volumes, no accounts, and no log is ever written
 to disk. A submitted log lives in memory for the duration of the request. That makes
@@ -286,4 +290,4 @@ Community Cloud app must be pointed at `legacy` (Manage app -> Settings -> Branc
 its next redeploy finds no `app.py`. Its structure, features and screenshots are documented in
 `docs/legacy-streamlit-app.md` on that branch.
 
-It shares no code with `` and is feature-frozen: new work happens here.
+It shares no code with the current stack and is feature-frozen: new work happens here.
