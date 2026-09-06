@@ -33,7 +33,8 @@ REQUIRED: dict[str, tuple[str, ...]] = {
     "tables": ("tables",),
     "response_fields": ("response_fields",),
     "subsolvers": ("roles", "subsolvers", "patterns", "categories"),
-    "constraints": ("constraints",),
+    "constraints": ("constraints", "complexity"),
+    "model": ("domain_size",),
     "messages": ("messages",),
     "parameters": ("safe", "unknown", "advice", "warning"),
     "insights": (),
@@ -78,6 +79,7 @@ def validate() -> list[str]:
                 problems.append(f"{path}: missing section [{key}]")
     problems.extend(_validate_subsolvers())
     problems.extend(_validate_insights())
+    problems.extend(_validate_model_indicators())
     return problems
 
 
@@ -111,6 +113,37 @@ def _validate_insights() -> list[str]:
                 out.append(f"insights.toml: [{key}] lacks '{field}'")
         if rule.get("level") not in {"info", "good", "warn", "bad"}:
             out.append(f"insights.toml: [{key}] has unknown level {rule.get('level')!r}")
+    return out
+
+
+def _validate_model_indicators() -> list[str]:
+    out = []
+    try:
+        cons, model = load("constraints"), load("model")
+    except Exception:  # noqa: BLE001
+        return out
+    levels = cons.get("complexity", {})
+    for key, entry in cons.get("constraints", {}).items():
+        if not entry.get("summary"):
+            out.append(f"constraints.toml: {key} lacks 'summary'")
+        if entry.get("complexity") not in levels:
+            out.append(
+                f"constraints.toml: {key} has unknown complexity {entry.get('complexity')!r}"
+            )
+    domain = model.get("domain_size", {})
+    for text in ("holes", "truncated", "summary", "constant"):
+        if not domain.get(text):
+            out.append(f"model.toml: [domain_size] lacks '{text}'")
+    sizes = [lv.get("max_size") for lv in domain.get("level", [])]
+    if not sizes or sizes[-1] is not None:
+        out.append("model.toml: the last [[domain_size.level]] must have no max_size")
+    if any(a is None or (b is not None and a >= b) for a, b in zip(sizes, sizes[1:], strict=False)):
+        out.append("model.toml: [[domain_size.level]] max_size values must increase")
+    for lv in domain.get("level", []) + list(levels.values()):
+        if lv.get("color") not in {"good", "info", "warn", "bad"}:
+            out.append(
+                f"knowledge: level {lv.get('label')!r} has unknown color {lv.get('color')!r}"
+            )
     return out
 
 

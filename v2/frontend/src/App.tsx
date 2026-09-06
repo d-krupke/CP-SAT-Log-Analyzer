@@ -22,6 +22,8 @@ const EMPTY_EXPLANATIONS: Explanations = {
   subsolver_roles: {},
   subsolver_categories: {},
   constraints: {},
+  constraint_complexity: {},
+  domains: { levels: [], holes: '', truncated: '', summary: '', constant: '' },
   messages: {},
 }
 

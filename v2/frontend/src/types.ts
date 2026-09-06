@@ -96,6 +96,12 @@ export interface DomainLine {
   line: number
   count: number
   description: string
+  kind: 'bool' | 'int' | 'constant' | 'summary' | 'other'
+  lo: number | null
+  hi: number | null
+  size: number | null
+  intervals: number | null
+  truncated: boolean
 }
 export interface ConstraintLine {
   line: number
@@ -309,6 +315,26 @@ export interface SubsolverDoc {
 export interface SubsolverPattern extends SubsolverDoc {
   pattern: string
 }
+export interface ConstraintDoc {
+  summary: string
+  complexity: string
+}
+export interface LevelDoc {
+  label: string
+  color: 'good' | 'info' | 'warn' | 'bad'
+  text: string
+}
+export interface DomainSizeLevel extends LevelDoc {
+  id: string
+  max_size: number | null
+}
+export interface DomainDocs {
+  levels: DomainSizeLevel[]
+  holes: string
+  truncated: string
+  summary: string
+  constant: string
+}
 /** Mirror of app/explanations.py; every section is a TOML file in v2/knowledge/. */
 export interface Explanations {
   blocks: Record<string, string>
@@ -319,7 +345,9 @@ export interface Explanations {
   subsolver_patterns: SubsolverPattern[]
   subsolver_roles: Record<string, string>
   subsolver_categories: Record<string, string>
-  constraints: Record<string, string>
+  constraints: Record<string, ConstraintDoc>
+  constraint_complexity: Record<string, LevelDoc>
+  domains: DomainDocs
   messages: Record<string, string>
 }
 export interface ExampleInfo {

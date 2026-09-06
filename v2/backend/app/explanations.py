@@ -2,7 +2,7 @@
 
 This module only shapes the knowledge files into the API models; the texts
 themselves live in ``blocks.toml``, ``tables.toml``, ``response_fields.toml``,
-``subsolvers.toml``, ``constraints.toml`` and ``messages.toml`` (see
+``subsolvers.toml``, ``constraints.toml``, ``model.toml`` and ``messages.toml`` (see
 ``v2/knowledge/README.md``). Keys are the stable identifiers used by the parser
 (block kinds, ``table_id``s, column names, response fields, subsolver names).
 """
@@ -31,6 +31,30 @@ class SubsolverPattern(SubsolverDoc):
     pattern: str
 
 
+class ConstraintDoc(BaseModel):
+    summary: str
+    complexity: str = "simple"
+
+
+class LevelDoc(BaseModel):
+    label: str
+    color: str = "info"
+    text: str = ""
+
+
+class DomainSizeLevel(LevelDoc):
+    id: str
+    max_size: int | None = Field(default=None, description="Inclusive upper bound; None = rest")
+
+
+class DomainDocs(BaseModel):
+    levels: list[DomainSizeLevel]
+    holes: str
+    truncated: str
+    summary: str
+    constant: str
+
+
 class Explanations(BaseModel):
     blocks: dict[str, str]
     cards: dict[str, str]
@@ -40,7 +64,9 @@ class Explanations(BaseModel):
     subsolver_patterns: list[SubsolverPattern]
     subsolver_roles: dict[str, str]
     subsolver_categories: dict[str, str]
-    constraints: dict[str, str]
+    constraints: dict[str, ConstraintDoc]
+    constraint_complexity: dict[str, LevelDoc]
+    domains: DomainDocs
     messages: dict[str, str]
 
 
@@ -64,6 +90,7 @@ def describe_subsolver(name: str) -> SubsolverDoc | None:
 
 def all_explanations() -> Explanations:
     blocks, subs = load("blocks"), load("subsolvers")
+    cons, dom = load("constraints"), load("model")["domain_size"]
     return Explanations(
         blocks=blocks["blocks"],
         cards=blocks["cards"],
@@ -73,6 +100,8 @@ def all_explanations() -> Explanations:
         subsolver_patterns=[SubsolverPattern(**p) for p in subs["patterns"]],
         subsolver_roles=subs["roles"],
         subsolver_categories=subs["categories"],
-        constraints=load("constraints")["constraints"],
+        constraints={k: ConstraintDoc(**v) for k, v in cons["constraints"].items()},
+        constraint_complexity={k: LevelDoc(**v) for k, v in cons["complexity"].items()},
+        domains=DomainDocs(levels=dom["level"], **{k: v for k, v in dom.items() if k != "level"}),
         messages=load("messages")["messages"],
     )

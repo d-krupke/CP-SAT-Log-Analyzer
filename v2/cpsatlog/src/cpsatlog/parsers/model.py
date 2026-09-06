@@ -9,6 +9,7 @@ from ..schema.model import ConstraintLine, DomainLine, ModelDescription
 from ..splitter import Chunk
 from ..text import NUMBER_TOKEN, parse_int
 from .base import BlockParser
+from .domain import parse_domain
 
 _HEADER = re.compile(
     r"^(?P<stage>Initial|Presolved) (?P<type>\w+) model '(?P<name>.*?)':?\s*"
@@ -67,11 +68,13 @@ class ModelParser(BlockParser):
                     )
                 )
             elif m := _DOMAIN.match(line):
+                desc = m.group("desc").strip()
                 model.domains.append(
                     DomainLine(
                         line=no,
                         count=parse_int(m.group("n")) or 0,
-                        description=m.group("desc").strip(),
+                        description=desc,
+                        **parse_domain(desc),
                     )
                 )
             elif _STRATEGY.match(line):

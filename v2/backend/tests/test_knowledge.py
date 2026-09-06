@@ -64,7 +64,8 @@ def test_explanations_endpoint_shape() -> None:
     ex = all_explanations()
     assert "search" in ex.blocks and "progress" in ex.cards
     assert "search_stats" in ex.tables and "Conflicts" in ex.tables["search_stats"].columns
-    assert ex.constraints["kNoOverlap2D"]
+    assert ex.constraints["kNoOverlap2D"].complexity in ex.constraint_complexity
+    assert ex.domains.levels[-1].max_size is None and ex.domains.levels[0].max_size == 2
     assert ex.messages["closed_by_presolve"]
     assert set(ex.subsolver_roles) >= {d.role for d in ex.subsolvers.values()}
 

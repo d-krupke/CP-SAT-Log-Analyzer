@@ -75,3 +75,25 @@ def test_splitter_forced_cuts() -> None:
     ]
     assert (chunks[0].start, chunks[0].end) == (1, 3)
     assert (chunks[1].start, chunks[1].end) == (4, 5)
+
+
+def test_parse_domain_shapes() -> None:
+    """Domain lines become structured size/holes info; truncated lines keep only the bounds."""
+    from cpsatlog.parsers.domain import parse_domain
+
+    d = parse_domain("Booleans in [0,1]")
+    assert d["kind"] == "bool" and d["size"] == 2 and d["intervals"] == 1
+    d = parse_domain("in [0,12'864]")
+    assert d["kind"] == "int" and (d["lo"], d["hi"], d["size"]) == (0, 12864, 12865)
+    d = parse_domain("in [0][10][20,22]")
+    assert d["size"] == 5 and d["intervals"] == 3 and d["hi"] == 22
+    d = parse_domain("in [-5,-1][3]")
+    assert (d["lo"], d["hi"], d["size"]) == (-5, 3, 6)
+    d = parse_domain("constants in {2,3,4,5}")
+    assert d["kind"] == "constant" and d["size"] == 4 and d["hi"] == 5
+    d = parse_domain("in [0][910][1070][1 ... ][2245][2270][2500]")
+    assert d["truncated"] and d["size"] is None and (d["lo"], d["hi"]) == (0, 2500)
+    d = parse_domain("different domains in [0,12864] with a largest complexity of 3.")
+    assert d["kind"] == "summary" and d["intervals"] == 3 and d["hi"] == 12864
+    d = parse_domain("affine relations were detected.")
+    assert d["kind"] == "other" and d["size"] is None

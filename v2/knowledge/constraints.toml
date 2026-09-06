@@ -1,31 +1,144 @@
-# Short descriptions of the constraint kinds listed in the model sections (kLinear2, ...).
+# Constraint kinds listed in the model sections (kLinear2, kNoOverlap2D, ...).
+#
+# Each kind has a one-line `summary` and a `complexity` level. The levels are
+# defined in [complexity] below (label, colour and explanation) and drive the
+# badges and the "constraint mix" bar of the model cards. Colours: good, info,
+# warn, bad.
 
-[constraints]
-kLinear0 = 'linear constraint without variables (a constant check)'
-kLinear1 = 'linear constraint with one variable (a bound, often reified)'
-kLinear2 = 'linear constraint with two variables'
-kLinear3 = 'linear constraint with three variables'
-kLinearN = 'linear constraint with many variables'
-kBoolOr = 'clause (at least one literal true)'
-kBoolAnd = 'conjunction (enforcement implies all literals)'
-kBoolAndClauses = 'conjunction with several enforcement literals (compact encoding of clauses)'
-kAtMostOne = 'at most one literal true'
-kExactlyOne = 'exactly one literal true'
-kBoolXor = 'XOR of literals'
-kIntDiv = 'integer division'
-kIntMod = 'modulo'
-kIntProd = 'product'
-kLinMax = 'maximum of linear expressions'
-kAllDiff = 'all different'
-kElement = 'element / array indexing'
-kTable = 'table (allowed tuples)'
-kAutomaton = 'automaton / regular constraint'
-kInverse = 'inverse permutation'
-kReservoir = 'reservoir constraint'
-kCircuit = 'Hamiltonian circuit'
-kRoutes = 'multiple vehicle routes'
-kInterval = 'interval variable (start, size, end)'
-kNoOverlap = 'disjunctive scheduling (no overlap in 1D)'
-kNoOverlap2D = 'rectangle packing (no overlap in 2D)'
-kCumulative = 'cumulative resource constraint'
-kDummyConstraint = 'placeholder keeping variables alive (presolve testing only; rejected by the solver)'
+[complexity.simple]
+label = 'simple'
+color = 'good'
+text = '''
+Linear and Boolean constraints are CP-SAT's native language: clauses, at-most-one and linear
+constraints have strong, cheap propagators and enter the LP relaxation directly, so bounds
+and propagation are as good as it gets.'''
+
+[complexity.encoded]
+label = 'encoded'
+color = 'info'
+text = '''
+Non-linear or combinatorial constraints (products, max, all-different, element, table,
+automaton, ...) that presolve expands into Booleans and linear pieces. Propagation is
+reasonable, but the expansion can multiply the model size and the LP relaxation is weaker;
+compare the initial and presolved model.'''
+
+[complexity.global]
+label = 'global'
+color = 'warn'
+text = '''
+Scheduling, packing and routing globals (no-overlap, cumulative, circuit, routes,
+reservoir) with dedicated, comparatively expensive propagators and a weak LP relaxation.
+They usually decide the difficulty of the model: bounds move slowly and the portfolio
+relies on specialised workers and LNS.'''
+
+[constraints.kLinear0]
+summary = 'linear constraint without variables (a constant check)'
+complexity = 'simple'
+
+[constraints.kLinear1]
+summary = 'linear constraint with one variable (a bound, often reified)'
+complexity = 'simple'
+
+[constraints.kLinear2]
+summary = 'linear constraint with two variables'
+complexity = 'simple'
+
+[constraints.kLinear3]
+summary = 'linear constraint with three variables'
+complexity = 'simple'
+
+[constraints.kLinearN]
+summary = 'linear constraint with many variables'
+complexity = 'simple'
+
+[constraints.kBoolOr]
+summary = 'clause (at least one literal true)'
+complexity = 'simple'
+
+[constraints.kBoolAnd]
+summary = 'conjunction (enforcement implies all literals)'
+complexity = 'simple'
+
+[constraints.kBoolAndClauses]
+summary = 'conjunction with several enforcement literals (compact encoding of clauses)'
+complexity = 'simple'
+
+[constraints.kAtMostOne]
+summary = 'at most one literal true'
+complexity = 'simple'
+
+[constraints.kExactlyOne]
+summary = 'exactly one literal true'
+complexity = 'simple'
+
+[constraints.kBoolXor]
+summary = 'XOR of literals'
+complexity = 'encoded'
+
+[constraints.kIntDiv]
+summary = 'integer division'
+complexity = 'encoded'
+
+[constraints.kIntMod]
+summary = 'modulo'
+complexity = 'encoded'
+
+[constraints.kIntProd]
+summary = 'product'
+complexity = 'encoded'
+
+[constraints.kLinMax]
+summary = 'maximum of linear expressions'
+complexity = 'encoded'
+
+[constraints.kAllDiff]
+summary = 'all different'
+complexity = 'encoded'
+
+[constraints.kElement]
+summary = 'element / array indexing'
+complexity = 'encoded'
+
+[constraints.kTable]
+summary = 'table (allowed tuples)'
+complexity = 'encoded'
+
+[constraints.kAutomaton]
+summary = 'automaton / regular constraint'
+complexity = 'encoded'
+
+[constraints.kInverse]
+summary = 'inverse permutation'
+complexity = 'encoded'
+
+[constraints.kReservoir]
+summary = 'reservoir constraint'
+complexity = 'global'
+
+[constraints.kCircuit]
+summary = 'Hamiltonian circuit'
+complexity = 'global'
+
+[constraints.kRoutes]
+summary = 'multiple vehicle routes'
+complexity = 'global'
+
+[constraints.kInterval]
+summary = 'interval variable (start, size, end)'
+complexity = 'simple'
+
+[constraints.kNoOverlap]
+summary = 'disjunctive scheduling (no overlap in 1D)'
+complexity = 'global'
+
+[constraints.kNoOverlap2D]
+summary = 'rectangle packing (no overlap in 2D)'
+complexity = 'global'
+
+[constraints.kCumulative]
+summary = 'cumulative resource constraint'
+complexity = 'global'
+
+[constraints.kDummyConstraint]
+summary = 'placeholder keeping variables alive (presolve testing only; rejected by the solver)'
+complexity = 'simple'

@@ -15,7 +15,8 @@ decide *what* it says.
 | a statistics table (`Search stats`, `Lp stats`, `LNS stats`, ...) or one of its columns | `tables.toml` | `[tables.<table_id>]`, `[tables.<table_id>.columns]` |
 | a field of the `CpSolverResponse summary:` | `response_fields.toml` | `[response_fields]` |
 | what a worker/subsolver does (`core`, `max_lp`, `rins`, ...), its role, the group descriptions | `subsolvers.toml` | `[subsolvers.<name>]`, `[roles]`, `[categories]`, `[[patterns]]` |
-| the one-liner for a constraint kind (`kNoOverlap2D`, ...) | `constraints.toml` | `[constraints]` |
+| the one-liner for a constraint kind (`kNoOverlap2D`, ...) and whether it counts as simple/encoded/global | `constraints.toml` | `[constraints.<kind>]`, `[complexity]` |
+| the domain-size levels (Boolean/small/medium/large) and texts of the model cards | `model.toml` | `[domain_size]`, `[[domain_size.level]]` |
 | the explanation of a solver message (`Problem closed by presolve.`, hint info, ...) | `messages.toml` | `[messages]` |
 | advice for an overridden parameter, which parameters get a warning and the warning text | `parameters.toml` | `[advice]`, `safe`, `[[warning]]` |
 | an insight box in the Overview: its threshold, level, title or text | `insights.toml` | one section per rule |

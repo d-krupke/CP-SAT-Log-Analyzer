@@ -13,7 +13,10 @@ initial_model = '''
 Booleans/integers appear in the objective), the variable domains, and a histogram of
 constraint types (`kLinear2`, `kNoOverlap`, ...). `#enforced` counts constraints with
 enforcement literals (reified constraints), `#terms` the total number of linear terms.
-Compare it with the presolved model to see how much presolve simplified.'''
+The bars show how much of the model is Boolean or small-domain and how many constraints
+are simple (linear/Boolean), encoded (expanded by presolve) or global (scheduling,
+packing, routing). Compare it with the presolved model to see how much presolve
+simplified.'''
 presolved_model = '''
 **Presolved model.** The model that is actually searched. Presolve removes fixed and
 dominated variables, merges constraints and expands high-level constraints into the

@@ -1,0 +1,57 @@
+# Indicators of the model cards (Initial model / Presolved model).
+#
+# [[domain_size.level]] classifies each variable-domain line by the number of
+# values in the domain; rules are checked top to bottom, the first level whose
+# `max_size` is not exceeded wins, and a level without `max_size` catches the
+# rest. `color` is one of good, info, warn, bad. Constraint complexity levels
+# live in constraints.toml.
+
+[domain_size]
+holes = '''
+Domain with holes (several intervals). CP-SAT keeps only the bounds of a variable and
+creates literals for the holes as needed; many small intervals make such a variable behave
+more like a set of Booleans than like an integer.'''
+truncated = 'The solver shortened this line; only the outer bounds are known.'
+summary = '''
+Too many distinct domains to list: the count is the number of *different* domains, not of
+variables. The "largest complexity" is the maximum number of intervals of one domain.'''
+constant = 'Fixed variables (constants). Presolve substitutes them away.'
+
+[[domain_size.level]]
+id = 'bool'
+max_size = 2
+label = 'Boolean'
+color = 'good'
+text = '''
+Booleans are what the SAT core reasons about natively: clause learning, strong propagation
+and exact linearisation. The more of the model is Boolean, the better CP-SAT is at it.'''
+
+[[domain_size.level]]
+id = 'small'
+max_size = 64
+label = 'small'
+color = 'good'
+text = '''
+Small integer domain. CP-SAT can afford to create a literal for every value (`x == v`), so
+constraints like element, table or all-different propagate well, and presolve often
+encodes such variables fully into Booleans.'''
+
+[[domain_size.level]]
+id = 'medium'
+max_size = 100000
+label = 'medium'
+color = 'info'
+text = '''
+Medium integer domain. Only bound literals (`x <= v`) are created lazily, so propagation
+works on the bounds; value-based reasoning (element, table, all-different) is weaker and
+the LP relaxation matters more.'''
+
+[[domain_size.level]]
+id = 'large'
+label = 'large'
+color = 'warn'
+text = '''
+Large integer domain (more than 100'000 values). The variable is handled purely through
+bounds; every branching decision splits the domain, so the search relies on the LP
+relaxation and on linear propagation. Big coefficients or domains also stress the
+integer arithmetic (overflow checks, scaled objectives).'''

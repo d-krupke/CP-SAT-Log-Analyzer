@@ -1,6 +1,8 @@
 import { Anchor, Card } from '../Card'
 import { formatNumber, useSelection } from '../../state/selection'
 import type { BlockRef, Explanations, ModelDescription } from '../../types'
+import { constraintMix, domainMix } from '../../modelMix'
+import { DomainSize, LevelTag, MixBar } from './ModelIndicators'
 
 
 export function ModelBlock({ blockRef, data, explanations }: { blockRef: BlockRef; data: ModelDescription; explanations: Explanations }) {
@@ -36,11 +38,20 @@ export function ModelBlock({ blockRef, data, explanations }: { blockRef: BlockRe
         <div>constraints</div>
         <div>{formatNumber(total)}</div>
       </div>
+      <MixBar title="Variables by domain size" segments={domainMix(data, explanations)} />
+      <MixBar title="Constraints by complexity" segments={constraintMix(data, explanations)} />
       {data.domains.length > 0 && (
         <details open>
           <summary>Variable domains</summary>
           <div className="tbl-wrap">
             <table className="tbl">
+              <thead>
+                <tr>
+                  <th>count</th>
+                  <th style={{ textAlign: 'left' }}>domain</th>
+                  <th style={{ textAlign: 'left' }}>size</th>
+                </tr>
+              </thead>
               <tbody>
                 {data.domains.map((d) => (
                   <tr key={d.line} className={selection.line === d.line ? 'selected' : ''} onClick={() => select(d.line, 'panel')}>
@@ -49,6 +60,9 @@ export function ModelBlock({ blockRef, data, explanations }: { blockRef: BlockRe
                     </td>
                     <td style={{ textAlign: 'left', whiteSpace: 'normal' }}>
                       <Anchor line={d.line}>{d.description}</Anchor>
+                    </td>
+                    <td style={{ textAlign: 'left' }}>
+                      <DomainSize d={d} ex={explanations} />
                     </td>
                   </tr>
                 ))}
@@ -66,20 +80,24 @@ export function ModelBlock({ blockRef, data, explanations }: { blockRef: BlockRe
                 <tr>
                   <th>kind</th>
                   <th>count</th>
+                  <th style={{ textAlign: 'left' }}>complexity</th>
                   <th style={{ textAlign: 'left' }}>details</th>
                 </tr>
               </thead>
               <tbody>
                 {data.constraints.map((c) => (
-                  <tr key={c.line} className={selection.line === c.line ? 'selected' : ''} onClick={() => select(c.line, 'panel')} title={explanations.constraints[c.name] ?? ''}>
+                  <tr key={c.line} className={selection.line === c.line ? 'selected' : ''} onClick={() => select(c.line, 'panel')} title={explanations.constraints[c.name]?.summary ?? ''}>
                     <td>
                       <Anchor line={c.line}>{c.name}</Anchor>
                     </td>
                     <td className="num">
                       <Anchor line={c.line}>{formatNumber(c.count)}</Anchor>
                     </td>
+                    <td style={{ textAlign: 'left' }}>
+                      <LevelTag level={explanations.constraint_complexity[explanations.constraints[c.name]?.complexity ?? '']} />
+                    </td>
                     <td style={{ textAlign: 'left' }} className="muted">
-                      {explanations.constraints[c.name] ?? ''}
+                      {explanations.constraints[c.name]?.summary ?? ''}
                       {Object.entries(c.details).length > 0 && (
                         <> · {Object.entries(c.details).map(([k, v]) => `#${k}: ${formatNumber(v)}`).join(', ')}</>
                       )}
