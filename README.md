@@ -114,11 +114,10 @@ Here are some ideas for future improvements:
 
 ### Authors
 
-This project is developed by [Dominik Krupke](https://github.com/d-krupke/),
-Postdoctoral Researcher at the Algorithms Group of the Technische Universität
-Braunschweig. There is no funding for this project, and it is mainly developed
-in my free time. If you want to support this project, please consider
-contributing or contacting me for other ways to support it.
+This project is developed by [Dominik Krupke](https://github.com/d-krupke/).
+There is no funding for this project, and it is mainly developed in my free
+time. If you want to support this project, please consider contributing or
+contacting me for other ways to support it.
 
 ## Related Projects
 
