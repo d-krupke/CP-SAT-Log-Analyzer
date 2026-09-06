@@ -37,4 +37,16 @@ repos:
     rev: v2.2.4
     hooks:
       - id: codespell
-        exclude: '^(LICENSE$|knowledge/parameters\.toml$)'
+        # Generated or vendored text: the proto dump and the npm lockfile carry
+        # upstream typos that must stay verbatim.
+        exclude: |
+          (?x)^(
+            LICENSE|
+            knowledge/parameters\.toml|
+            backend/app/data/sat_parameters\.json|
+            frontend/package-lock\.json
+          )$
+        # Not typos: "Strenghtened" is OR-Tools' own spelling of a table column and
+        # is a knowledge-base key because of it, BENG is a 2DPackLib instance family,
+        # and "earch" is the tail of the regex `[sS]earch`.
+        args: ["-L", "strenghtened,beng,earch"]
