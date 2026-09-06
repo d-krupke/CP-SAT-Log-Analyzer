@@ -25,6 +25,7 @@ uv run python run.py solve                # no names = every problem class
 | `mzn_run.py` | MiniZinc Challenge families through the bundled MiniZinc + `cp-sat` backend |
 | `validate_logs.py` | parses every collected log with the v2 `cpsatlog` parser and reports gaps |
 | `collect_all.sh` | the batches that produce the corpus (worker counts, parameter variants) |
+| `make_hint_example.py` | generates the solution-hint example pair (see below); not part of the corpus |
 
 ## Logs
 
@@ -96,7 +97,7 @@ parses, nothing unparsed, parsed values match `index.json`) and
 `v2/backend/tests/test_corpus.py` (`analyze()` works, insight texts render, every worker and
 every parameter is documented). See `v2/corpus/README.md`.
 
-Corpus logs also became the frontend's examples. The landing page now offers ten `915_*`
+Corpus logs also became the frontend's examples. The landing page offered ten `915_*`
 logs, selected for diversity rather than coverage of every parameter: one small introductory
 run, a job-shop instance on 1 and on 8 workers, a 16-worker satisfaction model with
 shared-tree search, `use_lns_only` (no exact worker at all), an objective that presolve pins
@@ -108,6 +109,24 @@ to `example_logs/archive/`: the API does not serve it, but both test suites stil
 (the only coverage of the 9.3 ... 9.10 log formats). Curated texts for both groups live in
 `v2/knowledge/examples.toml` (`[examples]` and `[archived]`); a test fails if an offered
 example has no description or if an archived one shows up on the landing page.
+
+## Generated examples: the solution-hint pair (2026-09-06)
+
+Some behavior does not show up in a corpus that solves every instance once. Nothing in the 295
+logs is a run with a *useful* solution hint - the 11 logs whose output mentions a complete and
+feasible hint were given no hint at all (CP-SAT prints that sentence when presolve has fixed
+every variable). So `make_hint_example.py` produces the missing case on purpose:
+
+```sh
+uv run python make_hint_example.py     # writes both logs into example_logs/
+```
+
+It builds one random 15x15 job shop (fixed seed, 10 s, 8 workers), solves it plain, then builds
+the *same* model a second time and hints it with the first run's solution - a fresh model,
+because re-solving the solved one would reuse its solution pool. The result is a pair that
+differs in exactly one thing: `915_jobshop_no_hint` climbs from 1390 to 1146 over 109 improving
+solutions, while `915_jobshop_hinted` starts at 1146 after 0.01 s with a single
+`#1 ... complete_hint` event and reaches the same bound. Both are offered on the landing page.
 
 ## Audit of the knowledge base against the corpus (2026-09-06)
 

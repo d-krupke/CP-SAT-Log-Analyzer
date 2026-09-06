@@ -18,6 +18,7 @@ from .knowledge import load
 
 if TYPE_CHECKING:
     from .analysis import ProgressSeries
+    from .hints import HintReport
 
 
 class Insight(BaseModel):
@@ -41,7 +42,7 @@ def _insight(key: str, lines: list[int], **fields: Any) -> Insight:
     )
 
 
-def build_insights(log: CpSatLog, progress: ProgressSeries) -> list[Insight]:
+def build_insights(log: CpSatLog, progress: ProgressSeries, hint: HintReport) -> list[Insight]:
     out: list[Insight] = []
     _insight_log_quality(log, out)
     response = log.response
@@ -60,6 +61,7 @@ def build_insights(log: CpSatLog, progress: ProgressSeries) -> list[Insight]:
     _insight_search_stats(log, out)
     _insight_response_counters(log, out)
     _insight_lns(log, out)
+    _insight_hint(hint, out)
     _insight_model_growth(log, out)
     _insight_objective_removed(log, out)
     return out
@@ -94,6 +96,35 @@ def _insight_log_quality(log: CpSatLog, out: list[Insight]) -> None:
                 first_line=log.unparsed[0].span.start,
             )
         )
+
+
+def _insight_hint(hint: HintReport, out: list[Insight]) -> None:
+    """What became of the solution hint - including the case where there was none.
+
+    A hint is the caller's own input, so its fate deserves to be stated rather than left in a
+    single line somewhere in the presolve output. The `vacuous` case is the odd one: CP-SAT
+    prints "The solution hint is complete and is feasible." for a model whose variables
+    presolve has all fixed, which reads like a hint was accepted when none was given.
+    """
+    if hint.status == "vacuous":
+        out.append(_insight("hint_line_without_a_hint", hint.lines[:1]))
+        return
+    if not hint.provided:
+        return
+    lines = hint.lines[:3]
+    if hint.status == "accepted":
+        key = "hint_used" if hint.used_as_first_solution else "hint_accepted"
+        out.append(_insight(key, lines))
+    elif hint.status == "infeasible":
+        out.append(_insight("hint_infeasible", lines))
+    elif hint.status == "incomplete" and hint.hinted is not None and hint.active is not None:
+        out.append(_insight("hint_incomplete", lines, hinted=hint.hinted, active=hint.active))
+    elif hint.status == "outside_domain":
+        out.append(_insight("hint_outside_domain", lines))
+    elif hint.status == "breaks_assumptions":
+        out.append(_insight("hint_breaks_assumptions", lines))
+    elif hint.status == "ignored":
+        out.append(_insight("hint_ignored", lines))
 
 
 def _insight_stalls(

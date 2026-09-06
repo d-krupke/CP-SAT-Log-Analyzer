@@ -306,6 +306,27 @@ select {
   flex-direction: column;
   gap: 12px;
 }
+/* Group header in front of each phase of the solve (setup, presolve, ...). */
+.panel > h2.phase {
+  margin: 14px 0 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.panel > h2.phase::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.panel > h2.phase:first-child {
+  margin-top: 0;
+}
 .card {
   background: var(--panel);
   border: 1px solid var(--border);

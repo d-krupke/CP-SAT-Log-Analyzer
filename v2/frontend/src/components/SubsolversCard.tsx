@@ -3,6 +3,7 @@ import { Fragment, useState } from 'react'
 import { Card } from './Card'
 import { Md } from './Md'
 import { subsolverDoc } from '../knowledge'
+import { cardCollapsedByDefault } from '../state/expansion'
 import { useSelection } from '../state/selection'
 import type { Explanations, SubsolverContribution } from '../types'
 
@@ -11,7 +12,7 @@ export function SubsolversCard({ items, explanations }: { items: SubsolverContri
   const [open, setOpen] = useState<string | null>(null)
   if (items.length === 0) return null
   return (
-    <Card kind="search" title="Subsolver contributions" path="/subsolvers" explanation={explanations.cards.subsolvers} collapsed>
+    <Card kind="search" title="Subsolver contributions" path="/subsolvers" explanation={explanations.cards.subsolvers} collapsed={cardCollapsedByDefault('subsolvers')}>
       <div className="tbl-wrap">
         <table className="tbl">
           <thead>

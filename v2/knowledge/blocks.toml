@@ -86,6 +86,15 @@ CP-SAT prints only parameters that differ from their defaults. Each one is docum
 solves.'''
 parameters_none = '''
 No parameter differs from its default. Usually a good sign: the default portfolio is hard to beat.'''
+hint = '''
+**Was your hint used?** CP-SAT checks the solution hint twice: once on the model as you built
+it and once on the presolved model. A hint that assigns *every* non-fixed variable and
+satisfies all constraints becomes solution `#1`, credited to the worker `complete_hint` - that
+solution is the proof that the hint was really used. An incomplete hint cannot become a
+solution; it is followed as a branching preference instead (`use_optimization_hints`). An
+infeasible one is repaired for `hint_conflict_limit` conflicts (`repair_hint`) and then
+dropped. Beware of the line `The solution hint is complete and is feasible.` in a log without
+a hint: the check trivially succeeds once presolve has fixed every variable.'''
 subsolvers = '''
 Which configuration of the portfolio produced the improving solutions and the bound improvements,
 combined from the search log and the final `Solutions`/`Objective bounds` tables. LNS workers

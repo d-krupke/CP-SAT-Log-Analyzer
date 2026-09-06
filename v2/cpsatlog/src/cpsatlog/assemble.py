@@ -2,15 +2,16 @@
 
 Responsibilities that go beyond single chunks live here: merging the several
 chunks that make up the presolve or the search phase, collecting stray progress
-lines (``#Bound ... initial_domain`` inside presolve), deriving the objective
-sense, placing tables into ``FinalStats`` and building the ordered block index
-that maps lines back to parsed data.
+lines (``#Bound ... initial_domain`` inside presolve) and the hint lines,
+deriving the objective sense, placing tables into ``FinalStats`` and building the
+ordered block index that maps lines back to parsed data.
 """
 
 from __future__ import annotations
 
 from .parsers import parse_chunk
 from .parsers.events import parse_event
+from .parsers.hints import parse_hint_note
 from .schema.base import Block, CommentBlock, LineSpan, Loc, MessageBlock, RawBlock
 from .schema.log import BlockRef, CpSatLog
 from .schema.model import ModelDescription
@@ -41,6 +42,11 @@ def parse_log(text: str) -> CpSatLog:
                 e for e in (parse_event(line, no) for no, line in chunk.numbered()) if e
             )
     _finish_search(log, stray_events)
+    # Hint lines are not a block of their own: when presolve closes the model the
+    # message sits inside the presolve block, so scan the whole log for them.
+    log.hints = [
+        note for note in (parse_hint_note(line, no) for no, line in enumerate(lines, 1)) if note
+    ]
     return log
 
 

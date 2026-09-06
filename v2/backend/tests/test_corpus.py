@@ -65,3 +65,23 @@ def test_overridden_parameters_are_documented(name: str) -> None:
     for parameter in analysis.parameters:
         assert parameter.known, (name, parameter.name)
         assert parameter.doc.strip() or parameter.advice, (name, parameter.name)
+
+
+def test_the_only_hint_lines_in_the_corpus_are_vacuous_ones() -> None:
+    """None of the 295 benchmark runs passed a hint, so none may be reported as hinted.
+
+    Eleven of them (sudoku, one dominating set instance) nevertheless print `The solution hint
+    is complete and is feasible.`, because presolve fixed every variable and the check then
+    trivially succeeds. This guards the rule that recognizes those lines as vacuous - without
+    it the analyzer would tell users about a hint they never gave.
+    """
+    logs, _ = load_corpus()
+    hinted, vacuous = [], []
+    for name, text in logs.items():
+        report = analyze(parse_log(text)).hint
+        if report.provided:
+            hinted.append(name)
+        elif report.status == "vacuous":
+            vacuous.append(name)
+    assert hinted == []
+    assert len(vacuous) == 11, vacuous

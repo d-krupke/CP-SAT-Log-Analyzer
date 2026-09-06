@@ -1,6 +1,7 @@
 """Pydantic schema of a parsed CP-SAT log (see ``log.CpSatLog`` for the root)."""
 
 from .base import Block, CommentBlock, LineSpan, Loc, MessageBlock, RawBlock
+from .hints import HintNote, HintNoteKind
 from .log import BlockRef, CpSatLog
 from .model import ConstraintLine, DomainLine, ModelDescription
 from .presolve import PresolveLog, PresolveRule, PresolveStep, PresolveSummary
@@ -23,6 +24,8 @@ __all__ = [
     "CpSatLog",
     "DomainLine",
     "FinalStats",
+    "HintNote",
+    "HintNoteKind",
     "LineSpan",
     "Loc",
     "MessageBlock",

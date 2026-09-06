@@ -3,7 +3,8 @@
 The parser (``cpsatlog``) only structures the log; the ``app`` modules interpret
 it for the UI. Everything carries the line numbers it was derived from so the
 frontend can highlight the evidence. Overview tiles live in ``metrics.py``,
-insights in ``insights.py``; their texts and thresholds in ``v2/knowledge/``.
+insights in ``insights.py``, the solution hint in ``hints.py``; their texts and
+thresholds in ``v2/knowledge/``.
 """
 
 from __future__ import annotations
@@ -16,6 +17,7 @@ from cpsatlog.schema import SearchEvent
 from pydantic import BaseModel, Field
 
 from .explanations import describe_subsolver
+from .hints import HintReport, build_hint_report
 from .insights import Insight, build_insights
 from .metrics import Metric, build_metrics, loc_val
 from .parameters import ParameterInfo, describe_all
@@ -55,16 +57,19 @@ class Analysis(BaseModel):
     parameters: list[ParameterInfo]
     subsolvers: list[SubsolverContribution]
     insights: list[Insight]
+    hint: HintReport
 
 
 def analyze(log: CpSatLog) -> Analysis:
     progress = build_progress(log)
+    hint = build_hint_report(log)
     return Analysis(
         metrics=build_metrics(log),
         progress=progress,
         parameters=describe_all(_parameters(log)),
         subsolvers=build_subsolvers(log),
-        insights=build_insights(log, progress),
+        insights=build_insights(log, progress, hint),
+        hint=hint,
     )
 
 

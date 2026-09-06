@@ -1,6 +1,7 @@
 /** Generic renderer for the final statistics tables and the task timing table. */
 import { Anchor, Card } from '../Card'
 import { subsolverDoc } from '../../knowledge'
+import { tableCollapsedByDefault } from '../../state/expansion'
 import { formatNumber, useSelection } from '../../state/selection'
 import type { BlockRef, Explanations, Table, TaskTimingTable } from '../../types'
 
@@ -11,11 +12,12 @@ export function TableBlock({ blockRef, data, explanations }: { blockRef: BlockRe
   return (
     <Card
       kind="table"
-      title={data.title + (data.count !== null ? ` (${data.count})` : '')}
+      // `title` is the header line verbatim and already carries the count, e.g. 'Solutions (219)'.
+      title={data.title}
       span={blockRef.span}
       path={blockRef.path}
       explanation={doc?.summary ?? `**${data.title}.** Statistics table (no explanation available yet).`}
-      collapsed={['lp_debug', 'lp_dimension', 'lp_pool', 'sat_formula', 'sat_stats', 'vivification', 'clause_deletion', 'ls_stats', 'solution_repositories', 'linear2_shared'].includes(data.table_id)}
+      collapsed={tableCollapsedByDefault(data.table_id)}
     >
       <div className="tbl-wrap">
         <table className="tbl">
@@ -66,7 +68,7 @@ export function TaskTimingBlock({ blockRef, data, explanations }: { blockRef: Bl
   const doc = explanations.tables.task_timing
   const cols = ['n', 'min', 'max', 'avg', 'dev', 'total'] as const
   return (
-    <Card kind="task_timing" title="Task timing" span={blockRef.span} path={blockRef.path} explanation={doc?.summary}>
+    <Card kind="task_timing" title="Task timing" span={blockRef.span} path={blockRef.path} explanation={doc?.summary} collapsed={tableCollapsedByDefault('task_timing')}>
       <div className="tbl-wrap">
         <table className="tbl">
           <thead>

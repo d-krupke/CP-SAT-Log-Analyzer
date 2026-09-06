@@ -291,12 +291,32 @@ export interface Insight {
   text: string
   lines: number[]
 }
+export interface HintNote {
+  line: number
+  kind: string
+  text: string
+  numbers: Record<string, number>
+}
+/** What the log says about the solution hint (backend/app/hints.py). */
+export interface HintReport {
+  provided: boolean
+  status: string
+  notes: HintNote[]
+  used_as_first_solution: boolean
+  first_solution_line: number | null
+  objective: number | null
+  hinted: number | null
+  active: number | null
+  fixed_variables: number | null
+  lines: number[]
+}
 export interface Analysis {
   metrics: Metric[]
   progress: ProgressSeries
   parameters: ParameterInfo[]
   subsolvers: SubsolverContribution[]
   insights: Insight[]
+  hint: HintReport
 }
 export interface ParseResult {
   log: CpSatLog

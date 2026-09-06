@@ -1,4 +1,5 @@
 import { Anchor, Card } from '../Card'
+import { cardCollapsedByDefault } from '../../state/expansion'
 import { formatNumber, useSelection } from '../../state/selection'
 import type { BlockRef, Explanations, PresolveLog, PresolveSummary } from '../../types'
 
@@ -14,7 +15,7 @@ export function PresolveBlock({ blockRef, data, explanations }: { blockRef: Bloc
   }
   const top = [...byName.entries()].sort((a, b) => b[1].time - a[1].time).slice(0, 5)
   return (
-    <Card kind="presolve" title="Presolve" span={blockRef.span} path={blockRef.path} explanation={explanations.blocks.presolve} collapsed>
+    <Card kind="presolve" title="Presolve" span={blockRef.span} path={blockRef.path} explanation={explanations.blocks.presolve} collapsed={cardCollapsedByDefault('presolve')}>
       <div className="kv">
         {data.start_time && (
           <>
@@ -101,7 +102,7 @@ export function PresolveSummaryBlock({ blockRef, data, explanations }: { blockRe
   const { selection, select } = useSelection()
   const rules = [...data.rules].sort((a, b) => b.count - a.count)
   return (
-    <Card kind="presolve_summary" title="Presolve summary" span={blockRef.span} path={blockRef.path} explanation={explanations.blocks.presolve_summary} collapsed>
+    <Card kind="presolve_summary" title="Presolve summary" span={blockRef.span} path={blockRef.path} explanation={explanations.blocks.presolve_summary} collapsed={cardCollapsedByDefault('presolve_summary')}>
       <div className="kv">
         {data.affine_relations && (
           <>

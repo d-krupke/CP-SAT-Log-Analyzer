@@ -20,6 +20,7 @@ from __future__ import annotations
 from pydantic import BaseModel, Field
 
 from .base import CommentBlock, LineSpan, MessageBlock, RawBlock
+from .hints import HintNote
 from .model import ModelDescription
 from .presolve import PresolveLog, PresolveSummary
 from .response import ResponseSummary
@@ -46,6 +47,9 @@ class CpSatLog(BaseModel):
     stats: FinalStats = Field(default_factory=FinalStats)
     response: ResponseSummary | None = None
     messages: list[MessageBlock] = Field(default_factory=list)
+    hints: list[HintNote] = Field(
+        default_factory=list, description="Hint-related lines, collected from the whole log"
+    )
     comments: list[CommentBlock] = Field(default_factory=list)
     unparsed: list[RawBlock] = Field(default_factory=list)
     blocks: list[BlockRef] = Field(default_factory=list, description="Ordered index of sections")

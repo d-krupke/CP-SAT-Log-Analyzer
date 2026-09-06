@@ -7,12 +7,12 @@ import re
 from ..schema.base import CommentBlock, LineSpan, MessageBlock, RawBlock
 from ..splitter import Chunk
 from .base import BlockParser, locs
+from .hints import parse_hint_note
 
 _MESSAGES: list[tuple[re.Pattern[str], str]] = [
     (re.compile(r"^Problem closed by presolve\."), "closed_by_presolve"),
     (re.compile(r"^(Relative|Absolute) gap limit of .* reached\."), "gap_limit_reached"),
     (re.compile(r"^Starting to load the model"), "loading_model"),
-    (re.compile(r"^The solution hint"), "hint"),
     (re.compile(r"^INFEASIBLE:"), "infeasible"),
     (re.compile(r"^Unsat after presolving"), "infeasible"),
     (re.compile(r"^Sub-solver search statistics:"), "legacy_subsolver_stats"),
@@ -21,6 +21,21 @@ _MESSAGES: list[tuple[re.Pattern[str], str]] = [
         "interleave_batch_size",
     ),
 ]
+
+
+def _message_kind(line: str) -> str | None:
+    """The kind of a known one-line message, or ``None`` for anything else.
+
+    Hint lines are classified by ``parsers.hints`` so that a standalone hint chunk and a hint
+    line buried in the presolve block get the same kind.
+    """
+    note = parse_hint_note(line, 1)
+    if note is not None:
+        return note.kind
+    for pattern, kind in _MESSAGES:
+        if pattern.match(line):
+            return kind
+    return None
 
 
 class CommentParser(BlockParser):
@@ -40,14 +55,13 @@ class MessageParser(BlockParser):
 
     @classmethod
     def matches(cls, chunk: Chunk) -> bool:
-        return any(p.match(chunk.first) for p, _ in _MESSAGES)
+        return _message_kind(chunk.first) is not None
 
     @classmethod
     def parse(cls, chunk: Chunk) -> MessageBlock:
-        message_kind = next(k for p, k in _MESSAGES if p.match(chunk.first))
         return MessageBlock(
             span=LineSpan(start=chunk.start, end=chunk.end),
-            message_kind=message_kind,
+            message_kind=_message_kind(chunk.first) or "generic",
             lines=locs(chunk),
         )
 

@@ -42,6 +42,15 @@ is *larger* than the initial one because AllDifferent is expanded into Booleans.
 915_nqueens_time_limit = '''
 500 queens as a pure satisfaction problem: no solution within 60 s (UNKNOWN), so all the
 difficulty is feasibility rather than optimization.'''
+915_jobshop_no_hint = '''
+A random 15x15 job-shop with 10 s and 8 workers and no hint: 109 improving solutions walk the
+makespan from 1390 down to 1146. The counterpart of `915_jobshop_hinted`, which solves the
+same instance starting from this run's solution.'''
+915_jobshop_hinted = '''
+The `915_jobshop_no_hint` instance solved again with every variable hinted to its value from
+that run: the hint is complete and feasible, so it becomes solution `#1` at 0.01 s under the
+worker name `complete_hint` and the whole run is spent on the bound - one solution line instead
+of 109, same objective, same bound.'''
 915_minizinc_radiation = '''
 A FlatZinc model (MiniZinc Challenge `radiation`) solved through the `cp-sat` backend: presolve
 removes two thirds of the 47,213 variables, then LNS produces 57 improving solutions.'''
@@ -76,7 +85,9 @@ is why the status is OPTIMAL although a gap remains.'''
 Rectangle packing (NoOverlap2D) satisfaction problem; a packing is found quickly.'''
 98_06 = 'Rectangle packing satisfaction problem that is proven infeasible.'
 98_07 = 'Knapsack problem, mostly solved by presolve (old MacBook).'
-98_08 = 'One iteration of the SampLNS algorithm.'
+98_08 = """
+One iteration of the SampLNS algorithm, and a hint CP-SAT could not use: "The solution hint
+is complete, but it is infeasible! we will try to repair it.""""
 98_09 = '''
 An extreme presolve reduction: 885,104 variables in the initial model, 975 in the presolved
 one, solved in 17 s with 15 workers.'''
@@ -87,7 +98,7 @@ Routing with time windows (`kCircuit` plus intervals), stopped by a 60 s limit -
 as 98_12.'''
 98_12 = '''
 The 98_11 model with 120 s instead of 60 s: what the extra minute buys in solution quality and
-bound.'''
+bound. It also passes a complete hint, which becomes solution `#1` (`complete_hint`).'''
 97_01 = 'Small teaching example.'
 97_02 = '''
 The smallest log here: three variables and one linear constraint, and presolve alone leaves
@@ -95,4 +106,5 @@ nothing to search.'''
 93_01 = 'Log of an old OR-Tools version (9.3) with the legacy log format.'
 issue_with_search_strategies_defined = '''
 Scheduling model with user-defined decision strategies (from a bug report): the log prints a
-`Search strategy:` line per strategy before the model, which used to break the parser.'''
+`Search strategy:` line per strategy before the model, which used to break the parser. It also
+holds two runs in one file, each with an incomplete hint in the old 9.8 wording.'''

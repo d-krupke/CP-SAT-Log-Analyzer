@@ -28,6 +28,15 @@ INSIGHT_FIELDS: dict[str, set[str]] = {
     "presolve_expanded": {"initial", "presolved"},
     "objective_removed_by_presolve": {"terms"},
     "presolve_shrank": {"initial", "presolved"},
+    # The solution hint (hints.py -> insights.py::_insight_hint).
+    "hint_used": set(),
+    "hint_accepted": set(),
+    "hint_infeasible": set(),
+    "hint_incomplete": {"hinted", "active"},
+    "hint_outside_domain": set(),
+    "hint_breaks_assumptions": set(),
+    "hint_ignored": set(),
+    "hint_line_without_a_hint": set(),
     # Quality of the log itself rather than of the solve.
     "not_a_cpsat_log": set(),
     "log_truncated": {"last_line"},
@@ -72,6 +81,8 @@ def test_explanations_endpoint_shape() -> None:
     # The search section is rendered as two cards, so it needs two texts: the
     # portfolio card (cards.portfolio) and the event stream (blocks.search).
     assert "portfolio" in ex.cards and "subsolvers" in ex.cards
+    # The solution hint has its own derived card (analysis.hint).
+    assert "hint" in ex.cards and ex.messages["hint_incomplete"]
     assert "search_stats" in ex.tables and "Conflicts" in ex.tables["search_stats"].columns
     assert ex.constraints["kNoOverlap2D"].complexity in ex.constraint_complexity
     assert ex.domains.levels[-1].max_size is None and ex.domains.levels[0].max_size == 2

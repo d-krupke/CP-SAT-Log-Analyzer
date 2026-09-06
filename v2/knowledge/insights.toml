@@ -158,3 +158,78 @@ line {first_line}; they are marked in the log on the right. Usually this is your
 mixed into the log, a line-prefix added by a logging framework, or lines clipped by a
 terminal. If it is plain CP-SAT output, the parser is missing a section - please report the
 log.'''
+
+# --- Solution hint -----------------------------------------------------------
+# The hint is the caller's own input, so the log is the only place where they can
+# see what CP-SAT made of it. Rules in insights.py::_insight_hint.
+
+[hint_used]
+level = 'good'
+title = 'Hint used as the first solution'
+text = '''
+The solution hint was complete and feasible, and CP-SAT put it straight into the solution pool
+as solution `#1` under the worker name `complete_hint`. Every worker started from that
+incumbent, so the objective curve begins at your value instead of at the first solution the
+portfolio could find on its own.'''
+
+[hint_accepted]
+level = 'good'
+title = 'Hint complete and feasible'
+text = '''
+CP-SAT checked the hint and found it complete and feasible. Note that this line comes from the
+check on the model *as given*; the solver checks again after presolve and only then adds the
+hint to the solution pool (as `complete_hint`). No such solution appears in this log, so
+either presolve changed the model in a way that broke the hint, or the run stopped before the
+search started.'''
+
+[hint_infeasible]
+level = 'warn'
+title = 'Hint is infeasible'
+text = '''
+The hint assigned every variable but the assignment violates a constraint, so CP-SAT could not
+use it as a solution. It spends `hint_conflict_limit` conflicts trying to repair it
+(`repair_hint`) and then searches normally. An infeasible hint is usually a mismatch between
+the model you hinted and the model you solved - e.g. values from an earlier run whose
+constraints have since changed. Set `debug_crash_on_bad_hint` while developing to find out
+which constraint it breaks.'''
+
+[hint_incomplete]         # fields: hinted, active
+level = 'info'
+title = 'Hint is incomplete'
+text = '''
+Only {hinted} of the {active} non-fixed variables were hinted, so the hint cannot be used as a
+solution directly: CP-SAT follows it as a branching preference and searches for values for the
+rest. That is a perfectly good way to use hints, but it does not give you a starting
+incumbent - if you want one, hint every variable (typically by taking a full solution from an
+earlier run) and check for the `complete_hint` solution in the search log.'''
+
+[hint_outside_domain]
+level = 'warn'
+title = 'Hint outside the variable domains'
+text = '''
+The hint assigns a value that the variable's own domain does not contain, so it is ignored as a
+solution. This is nearly always a stale hint: the domains were tightened (or the variables
+rebuilt) after the values were produced.'''
+
+[hint_breaks_assumptions]
+level = 'warn'
+title = 'Hint breaks the assumptions'
+text = '''
+The hint is a feasible solution of the model but contradicts one of the assumption literals of
+this solve, so it cannot be used. Drop the assumptions or hint a solution that satisfies
+them.'''
+
+[hint_ignored]
+level = 'info'
+title = 'Hint ignored'
+text = '''
+The hint was dropped before the solve because the run set `cp_model_ignore_hints`. Nothing in
+this log reflects your hinted values.'''
+
+[hint_line_without_a_hint]
+level = 'info'
+title = 'The hint line here means nothing'
+text = '''
+`The solution hint is complete and is feasible.` also appears when **no** hint was given: the
+check short-circuits on a model that has no non-fixed variables left, which is what happens
+when presolve solves the model outright. Do not read this line as "my hint was accepted".'''
