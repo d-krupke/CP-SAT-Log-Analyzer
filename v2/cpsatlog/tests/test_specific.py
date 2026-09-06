@@ -172,3 +172,43 @@ def test_interleaved_batch_size_message() -> None:
     kinds = [m.message_kind for m in log.messages]
     assert "interleave_batch_size" in kinds
     assert not log.unparsed
+
+
+def test_shared_tree_worker_count_in_the_header() -> None:
+    """A 16-worker satisfaction run prints how many shared-tree workers it chose.
+
+    From the benchmark corpus (`num_workers=16` on sudoku): the automatic rule
+    `(num_workers - 8) * 3 / 4` gives 6 workers and the solver logs that decision right after
+    the parameters. It belongs to the solver header, not to the free-form lines, so the UI can
+    show it next to the worker count.
+    """
+    log = parse_log(
+        "Starting CP-SAT solver v9.15.6755\n"
+        "Parameters: num_workers: 16\n"
+        "Setting number of shared tree workers to 6\n"
+    )
+    assert log.solver is not None
+    assert log.solver.num_shared_tree_workers is not None
+    assert log.solver.num_shared_tree_workers.value == 6
+    assert log.solver.other_lines == []
+    assert not log.unparsed
+
+
+def test_repeated_subsolver_in_the_portfolio_line() -> None:
+    """`default_lp(2)` means the same strategy runs twice with different seeds.
+
+    From the benchmark corpus: when presolve empties the objective the roster of full workers
+    is shorter than `num_workers`, so CP-SAT repeats one. The count must survive parsing,
+    otherwise the portfolio looks smaller than it is.
+    """
+    log = parse_log(
+        "Starting CP-SAT solver v9.15.6755\n"
+        "\n"
+        "Starting search at 0.00s with 8 workers.\n"
+        "6 full problem subsolvers: [default_lp(2), max_lp, no_lp, quick_restart, "
+        "quick_restart_no_lp]\n"
+    )
+    assert log.search is not None
+    group = log.search.subsolvers[0]
+    assert group.count == 6
+    assert [(s.name, s.count) for s in group.subsolvers][0] == ("default_lp", 2)

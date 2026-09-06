@@ -8,7 +8,8 @@
 summary = '''
 **Task timing.** How often each subsolver (task) ran and how long. The left group is wall
 time, the right group deterministic time (`dtime`, a hardware-independent measure of work).
-Full-problem workers run once for the whole search; LNS and first-solution tasks run many
+Full-problem workers run once for the whole search, so `n = 1`; with `interleave_search` they
+are split into chunks and `n` counts the batches instead. LNS and first-solution tasks run many
 short rounds, so `n` is large and `avg` small. A full worker with far less `time` than the
 others was stopped early or started late.'''
 
@@ -22,12 +23,15 @@ time = 'Total wall time / total deterministic time over all runs.'
 
 [tables.search_stats]
 summary = '''
-**Search stats.** One row per full-problem worker, straight from its SAT core. Because the
-portfolio runs differently configured copies of the same search loop, comparing rows shows
-which configuration actually searched. `Conflicts` stays at or below `Branches`; the ratio
-tells you whether a worker learns from nearly every decision (hard combinatorial core) or
-mostly descends feasibly. The two propagation columns are usually the largest by far:
-propagation does most of the work, branching only a little.'''
+**Search stats.** One row per worker that runs the full SAT/CP search loop, straight from its
+core. That includes the first-solution workers `fs_*` (they are full workers stopped at the
+first solution) but not `fj`/`ls`, which are not SAT-based. Because the portfolio runs
+differently configured copies of the same search loop, comparing rows shows which
+configuration actually searched. `Conflicts` is usually well below `Branches`; the ratio tells
+you whether a worker learns from nearly every decision (hard combinatorial core) or mostly
+descends feasibly. It can exceed 1 in rare cases, because a conflict can also come out of
+propagation without a new decision. The two propagation columns are usually the largest by
+far: propagation does most of the work, branching only a little.'''
 
 [tables.search_stats.columns]
 Bools = '''

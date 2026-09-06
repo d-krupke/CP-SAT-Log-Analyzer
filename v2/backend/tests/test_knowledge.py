@@ -125,3 +125,22 @@ def test_worker_names_from_example_logs_are_documented() -> None:
         d = describe_subsolver(name)
         assert d is not None, name
         assert d.summary
+
+
+def test_response_counters_are_not_attributed_to_the_first_full_worker() -> None:
+    """The summary counters belong to the worker that finished first, not to `default_lp`.
+
+    Verified on the benchmark corpus: in the 85 logs where the summary's `conflicts` matches
+    exactly one Search stats row, that row is the first full worker in only 39 cases and a
+    first-solution worker (`fs_random_no_lp`) in 29. The mechanism is
+    `SharedResponseManager::AppendResponseToBeMerged` (stats are handed over when a worker is
+    freed) plus `subsolver_responses_.front()` in the final merge. The old wording claimed the
+    first full worker, so this guards against reintroducing it.
+    """
+    fields = knowledge.load("response_fields")["response_fields"]
+    texts = [fields[f] for f in ("conflicts", "branches")]
+    texts.append(knowledge.load("blocks")["blocks"]["response"])
+    texts.append(knowledge.load("insights")["per_worker_counters"]["text"])
+    for text in texts:
+        assert "first full worker" not in text, text
+    assert "finished first" in texts[0] or "finished first" in texts[-1]

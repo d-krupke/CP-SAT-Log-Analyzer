@@ -9,21 +9,26 @@ objective = 'Objective value of the returned (best) solution.'
 best_bound = '''
 Best proven bound on the objective. The gap between objective and bound quantifies how far
 the solution may be from optimal.'''
-# The counters below are those of the *first* full worker of the portfolio (usually the one
-# with the user parameters, i.e. default_lp), not the portfolio total and not necessarily
-# the worker that found the returned solution (cp_model.proto, "Some statistics").
-integers = "Integer variables in the first full worker's model."
+# The counters below belong to ONE worker, not to the portfolio. Each worker hands its
+# statistics to the shared response manager when it is freed, and the summary merges only the
+# first of those (synchronization.cc: `subsolver_responses_.front()`), i.e. the worker that
+# finished first. Verified on 295 benchmark logs: that is a first-solution worker
+# (`fs_random_no_lp`) in about half of the parallel runs, otherwise the worker that closed the
+# search (`default_lp`, `no_lp`, ...); `main` in a single-worker run.
+integers = "Integer variables in that worker's model."
 booleans = '''
-Boolean variables (incl. minted bound literals) of the first full worker of the portfolio.'''
+Boolean variables (incl. minted bound literals) of the worker whose statistics the summary
+reports (the first worker to finish, not the whole portfolio).'''
 conflicts = '''
-Conflicts of the first full worker of the portfolio (usually `default_lp`), not the portfolio
-total and not necessarily the worker that found the solution.'''
+Conflicts of the worker that finished first, not the portfolio total and not necessarily the
+worker that found the solution. Often a first-solution worker such as `fs_random_no_lp`,
+whose search stops as soon as a solution exists.'''
 branches = '''
-Decisions of the first full worker of the portfolio, not the portfolio total.'''
-propagations = 'Boolean propagations of the first full worker.'
-integer_propagations = 'Integer bound propagations of the first full worker.'
-restarts = 'Restarts of the first full worker.'
-lp_iterations = 'Simplex iterations of the first full worker.'
+Decisions of that one worker, not the portfolio total.'''
+propagations = 'Boolean propagations of that one worker.'
+integer_propagations = 'Integer bound propagations of that one worker.'
+restarts = 'Restarts of that one worker.'
+lp_iterations = 'Simplex iterations of that one worker (0 if it ran without an LP).'
 walltime = 'Total wall-clock time of the solve.'
 usertime = '''
 Meant to be the CPU time of the main thread; in the open-source build it is measured with the

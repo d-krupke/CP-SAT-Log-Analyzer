@@ -36,9 +36,12 @@ since, or a newer addition).'''
 num_workers = '''
 Number of parallel workers. With 1 worker a single worker named `main` runs with exactly
 your parameters (no portfolio); from 2 on the named strategies plus LNS/first-solution
-heuristics join. The number of full workers grows with `num_workers` (e.g. 6 of 8, 11 of 16),
-so a reasonably diverse portfolio needs 8-16 and the complete list of ~18 named strategies
-closer to 32. Matching the number of *physical* cores often beats hyper-threads.'''
+heuristics join. The number of full workers grows with `num_workers`: 6 of 8 and 11 of 16 for
+an optimisation model, 13 of 16 for a satisfaction model (6 of them `shared_tree`), and the
+whole roster with `interleave_search`. A reasonably diverse portfolio needs 8-16 and the
+complete list of ~18 named strategies closer to 32. If the roster is shorter than the budget
+CP-SAT repeats a strategy with a new seed, printed as `default_lp(2)` in the portfolio line.
+Matching the number of *physical* cores often beats hyper-threads.'''
 num_search_workers = 'Deprecated alias of `num_workers`; still honoured when `num_workers` is 0.'
 max_time_in_seconds = '''
 Wall-clock limit. On hitting it the status is FEASIBLE (or UNKNOWN) and the gap in the
@@ -79,13 +82,20 @@ subsolver_params = '''
 Named parameter overrides for individual workers. This is the safe way to try expensive
 propagation settings: only that worker pays for them.'''
 use_lns_only = '''
-Runs only the LNS/first-solution heuristics; needs a time limit and never proves optimality.'''
+Runs only the LNS/first-solution heuristics; needs a time limit and never proves optimality.
+The filter keeps only names matching `fj*`, `fs*` and `*lns`, so `rins/rens`,
+`feasibility_pump` and the violation-LS workers (`ls`, `ls_lin`) disappear too and the portfolio
+line reports 0 full problem subsolvers.'''
 use_lns = 'Disabling LNS removes the main improvement heuristics of the portfolio.'
 use_feasibility_jump = '''
 Feasibility jump is the main first-solution heuristic; disabling it delays first solutions.'''
 interleave_search = '''
 Runs the portfolio in synchronised batches so the result is deterministic regardless of
-`num_workers`; the work is still distributed over `num_workers` threads.'''
+`num_workers`; the work is still distributed over `num_workers` threads. The header line
+becomes `Starting deterministic search ... and batch size of N`, the full-worker roster is no
+longer truncated to the worker count (all named strategies run, split into chunks), and the
+workers that have no chunked implementation are dropped: `probing*`, `objective_shaving*`,
+`lb_tree_search`, `objective_lb_search`, plus `rins/rens` and `feasibility_pump`.'''
 random_seed = 'Changes the random choices; run several seeds to judge variance.'
 enumerate_all_solutions = '''
 Enumerates all solutions. Single-threaded if `num_workers` is left at 0; with an explicit

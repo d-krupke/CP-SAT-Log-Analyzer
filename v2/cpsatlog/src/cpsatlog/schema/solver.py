@@ -21,4 +21,11 @@ class SolverInfo(Block):
         default=None,
         description="From 'Setting number of workers to N' (printed when num_workers was 0)",
     )
+    num_shared_tree_workers: Loc[int] | None = Field(
+        default=None,
+        description=(
+            "From 'Setting number of shared tree workers to N', printed when "
+            "shared_tree_num_workers was left at -1 and the automatic rule enabled it"
+        ),
+    )
     other_lines: list[Loc[str]] = Field(default_factory=list)

@@ -74,9 +74,9 @@ level = 'info'
 title = 'Summary counters are per worker'
 text = '''
 The summary reports {response_conflicts:,} conflicts while the busiest worker had
-{max_conflicts:,}. The summary counters come from the first full worker of the portfolio
-(usually `default_lp`), not from the whole portfolio. Use the Search stats table to judge
-the effort.'''
+{max_conflicts:,}. The summary counters come from one worker only: the first one that finished
+and was freed, often a first-solution worker such as `fs_random_no_lp`. They are not a
+portfolio total. Use the Search stats table to judge the effort.'''
 
 [lns_closed_quickly]      # fields: count, total
 closed_percent = 80          # a neighbourhood counts as "closed quickly" above this Closed value

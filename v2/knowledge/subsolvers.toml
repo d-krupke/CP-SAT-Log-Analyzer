@@ -81,8 +81,11 @@ details = '''
 the SAT core for a solution; each *unsat core* (a set of assumptions that cannot hold
 together) is turned into a relaxed constraint that raises the lower bound. Strong on
 objectives that are sums of many small terms (soft constraints, penalties, weighted
-Booleans). It is scheduled only when the objective has several terms and dropped for
-single-term or satisfaction problems.'''
+Booleans). It is scheduled only when the objective has more than one variable: a single-term
+objective, a satisfaction problem, or an objective that presolve removed entirely (the
+presolved model then prints `( in objective)`) drops `core` along with the other
+objective-based workers (`lb_tree_search`, `objective_lb_search`, `objective_shaving*`,
+`pseudo_costs`) and all LNS neighbourhoods.'''
 
 [subsolvers.core_default_lp]
 role = 'exact'
@@ -417,7 +420,11 @@ variables to free. Enabled with `use_lb_relax_lns` and only when `num_workers` r
 [subsolvers.scheduling_intervals_lns]
 role = 'lns'
 summary = 'Scheduling LNS: frees a random set of intervals (their start/size/end variables).'
-details = 'Only created when the model contains NoOverlap or Cumulative constraints. Everything else keeps the incumbent schedule.'
+details = '''
+Only created when the model contains NoOverlap or Cumulative constraints *and* the presolved
+model still has an objective: every neighbourhood generator needs an incumbent to improve, so
+satisfaction models get no `*_lns` workers at all (only `feasibility_pump` and `rins/rens`
+remain in the interleaved list). Everything else keeps the incumbent schedule.'''
 
 [subsolvers.scheduling_time_window_lns]
 role = 'lns'

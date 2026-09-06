@@ -76,3 +76,44 @@ uv run --project ../v2/cpsatlog python validate_logs.py
 Prints per problem how many logs parsed, which top-level sections are missing
 and which chunks the parser left in `log.unparsed` — that list is the to-do
 list for the parser and the knowledge base.
+
+## Audit of the knowledge base against the corpus (2026-09-06)
+
+Every quantitative claim in `v2/knowledge/` that the 295 logs can test was checked;
+each one that failed was traced to the OR-Tools sources before the text was changed.
+
+Confirmed by the logs:
+
+- Full workers per `num_workers`: 1 -> `main` only, 8 -> 6, 16 -> 11 (optimisation).
+  Satisfaction at 16 gives 13, six of them `shared_tree`, which is exactly the automatic
+  rule `(num_workers - 8) * 3 / 4 > 4`.
+- `fixed` is in the roster if and only if the model has a decision strategy or scheduling
+  constraints (250/250 portfolio runs).
+- Global `search_branching = FIXED_SEARCH` without either drops `default_lp`, `no_lp` and
+  `max_lp` from the portfolio (two MiniZinc logs show it).
+- `feasibility_pump` disappears with `linearization_level = 0`; `feasibility_pump` and
+  `rins/rens` disappear with `interleave_search`, with 1 worker and with `use_lns_only`.
+- Automatic interleave batch size is `num_workers * 3` (24 at 8 workers).
+- `ls` needs an objective; one `ls` at 8 workers, `ls` + `ls_lin` at 16.
+- `lb_relax_lns` only appears from 16 workers on.
+- `no_lp` and `core` never have an `Lp stats` row.
+- `usertime` equals `walltime` in all 295 logs.
+- All twelve insight rules fire on real logs and no threshold is degenerate.
+
+Corrected because the logs contradicted the text:
+
+- The response counters (`conflicts`, `branches`, ...) are **not** those of the first full
+  worker. Each worker hands its statistics over when it is freed and only the first of those
+  is merged, so they belong to the worker that finished first: `fs_random_no_lp` in 29 of the
+  85 unambiguous logs, `default_lp` in 11.
+- `Search stats` also has rows for the `fs_*` first-solution workers.
+- `Conflicts` can exceed `Branches` (two logs), so the ratio is not bounded by 1.
+- Full workers run once only without `interleave_search`; with it `n` counts batches.
+- `core` is dropped when the objective has at most one variable, which includes objectives
+  that presolve removes entirely (`( in objective)`); the other objective-based workers and
+  all LNS neighbourhoods go with it.
+- The portfolio line repeats a strategy (`default_lp(2)`, `fj(2)`, `shared_tree(6)`) when the
+  roster is shorter than the worker budget.
+
+`Setting number of shared tree workers to N` is now parsed into the solver header instead of
+being kept as a free-form line.
