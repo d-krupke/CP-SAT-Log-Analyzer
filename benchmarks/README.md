@@ -96,13 +96,18 @@ parses, nothing unparsed, parsed values match `index.json`) and
 `v2/backend/tests/test_corpus.py` (`analyze()` works, insight texts render, every worker and
 every parameter is documented). See `v2/corpus/README.md`.
 
-Thirteen corpus logs were also promoted to `example_logs/` as `915_*` for the frontend
-landing page, each showing a different phenomenon: 1 vs 8 vs 16 workers on job-shop,
-`interleave_search`, `use_lns_only`, `cp_model_presolve=false`, an objective that presolve
-pins to a constant, a proven infeasibility, `enumerate_all_solutions`, a satisfaction model
-that stays UNKNOWN, a presolve blow-up from 1,275 to 3 million variables, shared-tree search,
-and a FlatZinc model from MiniZinc. Their curated texts live in
-`v2/knowledge/examples.toml`; a test now fails if an example has no description.
+Corpus logs also became the frontend's examples. The landing page now offers ten `915_*`
+logs, selected for diversity rather than coverage of every parameter: one small introductory
+run, a job-shop instance on 1 and on 8 workers, a 16-worker satisfaction model with
+shared-tree search, `use_lns_only` (no exact worker at all), an objective that presolve pins
+to a constant, a presolve blow-up from 1,275 to 3 million variables with no search at all, a
+proven infeasibility, a satisfaction model that stays UNKNOWN, and a FlatZinc model from
+MiniZinc - so each entry differs in problem type, status, portfolio shape, presolve effect or
+constraint family. Everything retired from that list, including all the pre-9.15 logs, moved
+to `example_logs/archive/`: the API does not serve it, but both test suites still parse it
+(the only coverage of the 9.3 ... 9.10 log formats). Curated texts for both groups live in
+`v2/knowledge/examples.toml` (`[examples]` and `[archived]`); a test fails if an offered
+example has no description or if an archived one shows up on the landing page.
 
 ## Audit of the knowledge base against the corpus (2026-09-06)
 

@@ -14,7 +14,14 @@ from fastapi.testclient import TestClient
 from app.main import app
 
 EXAMPLES = Path(__file__).resolve().parents[3] / "example_logs"
+ARCHIVE = EXAMPLES / "archive"  # retired from the landing page, still parsed here
 client = TestClient(app)
+
+
+def example_text(name: str) -> str:
+    """Read an example log by file name, from the offered set or from the archive."""
+    path = EXAMPLES / name
+    return (path if path.is_file() else ARCHIVE / name).read_text()
 
 
 def test_health() -> None:
@@ -24,9 +31,12 @@ def test_health() -> None:
 def test_examples_listed_and_readable() -> None:
     listed = client.get("/api/examples").json()
     names = {e["name"] for e in listed}
-    assert "98_07" in names and "915_01" in names
-    text = client.get("/api/examples/98_07").json()["text"]
+    assert "915_01" in names and "915_jobshop_8workers" in names
+    text = client.get("/api/examples/915_01").json()["text"]
     assert "CpSolverResponse summary" in text
+    # The archive is test material, not a landing-page offer.
+    assert not (names & {p.stem for p in ARCHIVE.glob("*.txt")})
+    assert client.get("/api/examples/98_07").status_code == 404
     assert client.get("/api/examples/../etc").status_code == 404
     assert client.get("/api/examples/nope").status_code == 404
 
@@ -49,7 +59,11 @@ def test_parse_rejects_empty() -> None:
     assert client.post("/api/parse", json={"text": "   "}).status_code == 400
 
 
-@pytest.mark.parametrize("path", sorted(EXAMPLES.glob("*.txt")), ids=lambda p: p.stem)
+@pytest.mark.parametrize(
+    "path",
+    sorted(EXAMPLES.glob("*.txt")) + sorted(ARCHIVE.glob("*.txt")),
+    ids=lambda p: p.stem,
+)
 def test_parse_example(path: Path) -> None:
     """Every example parses via the API; metrics and blocks are line-anchored."""
     res = client.post("/api/parse", json={"text": path.read_text()})
@@ -83,7 +97,7 @@ def test_parse_915_analysis() -> None:
 
 def test_parse_98_07_summary_counter_insight() -> None:
     """98_07: solution returned by a helper -> summary conflicts far below core's; insight fires."""
-    body = client.post("/api/parse", json={"text": (EXAMPLES / "98_07.txt").read_text()}).json()
+    body = client.post("/api/parse", json={"text": example_text("98_07.txt")}).json()
     titles = {i["title"] for i in body["analysis"]["insights"]}
     assert "Summary counters are per worker" in titles
 
@@ -101,7 +115,7 @@ def test_explanations_and_parameters() -> None:
 
 def test_progress_ends_with_response_bound() -> None:
     """93_01 proves optimality without a final bound line; the response bound closes the curve."""
-    body = client.post("/api/parse", json={"text": (EXAMPLES / "93_01.txt").read_text()}).json()
+    body = client.post("/api/parse", json={"text": example_text("93_01.txt")}).json()
     bounds = body["analysis"]["progress"]["bounds"]
     assert bounds[-1]["value"] == 15
     assert bounds[-1]["time"] > bounds[-2]["time"]
@@ -109,5 +123,5 @@ def test_progress_ends_with_response_bound() -> None:
 
 def test_satisfaction_problem_has_no_bound_curve() -> None:
     """98_05 is a satisfaction problem: the response's 'best_bound: 0' must not create a curve."""
-    body = client.post("/api/parse", json={"text": (EXAMPLES / "98_05.txt").read_text()}).json()
+    body = client.post("/api/parse", json={"text": example_text("98_05.txt")}).json()
     assert body["analysis"]["progress"]["bounds"] == []

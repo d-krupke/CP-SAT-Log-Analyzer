@@ -3,6 +3,10 @@
 The directory is resolved from ``EXAMPLE_LOGS_DIR`` (set in Docker) or, for
 local development, from the repository layout ``v2/backend/app`` -> ``../../../example_logs``.
 Curated descriptions come from ``v2/knowledge/examples.toml``.
+
+Only the top level is served: ``example_logs/archive/`` holds logs that were retired from
+the landing page (older OR-Tools versions, redundant parameter variants) but are still
+parsed by the test suites, so the glob here stays non-recursive on purpose.
 """
 
 from __future__ import annotations
@@ -43,7 +47,7 @@ def list_examples() -> list[ExampleInfo]:
     if not directory.is_dir():
         return []
     result = []
-    for path in sorted(directory.glob("*.txt")):
+    for path in sorted(directory.glob("*.txt")):  # non-recursive: skips archive/
         name = path.stem
         result.append(
             ExampleInfo(

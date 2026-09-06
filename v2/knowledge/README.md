@@ -21,7 +21,8 @@ decide *what* it says.
 | advice for an overridden parameter, which parameters get a warning and the warning text | `parameters.toml` | `[advice]`, `safe`, `[[warning]]` |
 | an insight box in the Overview: its threshold, level, title or text | `insights.toml` | one section per rule |
 | when a tile in the Overview turns yellow/red and its hint | `metrics.toml` | one section per tile |
-| the description of a bundled example log | `examples.toml` | `[examples]` |
+| the description of an example log offered on the landing page | `examples.toml` | `[examples]` |
+| the description of a retired example log (`example_logs/archive/`, test material only) | `examples.toml` | `[archived]` |
 
 The official documentation of each parameter (shown under "Documentation from
 sat_parameters.proto") is *not* here: it is generated from OR-Tools into
