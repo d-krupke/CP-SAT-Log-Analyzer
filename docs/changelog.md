@@ -4,6 +4,12 @@ Notable changes, newest first. Dates are the day the work landed on `main`.
 
 ## v2 stack (`v2/`)
 
+* **2026-09-06** - Layout pass on the cards: the parts of a card are headed sections instead of
+  nested `<details>` (a card is already collapsible as a whole), a collapsed card shows a
+  one-line summary (`52 steps · 0.01 s`, `14 rules`) instead of a bare bar, the presolved model
+  states its counts as `before → after` with the change (`1,275 → 3,066,274  ×2,405`), and the
+  Overview gained a *Hint* tile so "was a hint given?" is answerable without opening anything.
+  The progress plot can be anchored at 0, which shows the gap at its true relative size.
 * **2026-09-06** - The solution hint got its own story: the parser classifies every hint line
   (`cpsatlog.parsers.hints`, collected in `log.hints`), the backend turns them into a
   `HintReport` that also says whether CP-SAT actually started from the hint (the silent

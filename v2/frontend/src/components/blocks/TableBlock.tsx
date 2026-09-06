@@ -1,5 +1,6 @@
 /** Generic renderer for the final statistics tables and the task timing table. */
 import { Anchor, Card } from '../Card'
+import { Section } from '../Section'
 import { subsolverDoc } from '../../knowledge'
 import { tableCollapsedByDefault } from '../../state/expansion'
 import { formatNumber, useSelection } from '../../state/selection'
@@ -48,8 +49,7 @@ export function TableBlock({ blockRef, data, explanations }: { blockRef: BlockRe
         </table>
       </div>
       {doc && Object.keys(doc.columns).length > 0 && (
-        <details>
-          <summary>Column reference</summary>
+        <Section title="Column reference">
           <ul className="coldocs">
             {columns.filter((c) => doc.columns[c]).map((c) => (
               <li key={c}>
@@ -57,7 +57,7 @@ export function TableBlock({ blockRef, data, explanations }: { blockRef: BlockRe
               </li>
             ))}
           </ul>
-        </details>
+        </Section>
       )}
     </Card>
   )
@@ -68,7 +68,15 @@ export function TaskTimingBlock({ blockRef, data, explanations }: { blockRef: Bl
   const doc = explanations.tables.task_timing
   const cols = ['n', 'min', 'max', 'avg', 'dev', 'total'] as const
   return (
-    <Card kind="task_timing" title="Task timing" span={blockRef.span} path={blockRef.path} explanation={doc?.summary} collapsed={tableCollapsedByDefault('task_timing')}>
+    <Card
+      kind="task_timing"
+      title="Task timing"
+      summary={`${data.rows.length} tasks`}
+      span={blockRef.span}
+      path={blockRef.path}
+      explanation={doc?.summary}
+      collapsed={tableCollapsedByDefault('task_timing')}
+    >
       <div className="tbl-wrap">
         <table className="tbl">
           <thead>

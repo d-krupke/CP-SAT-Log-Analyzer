@@ -12,7 +12,14 @@ export function SubsolversCard({ items, explanations }: { items: SubsolverContri
   const [open, setOpen] = useState<string | null>(null)
   if (items.length === 0) return null
   return (
-    <Card kind="search" title="Subsolver contributions" path="/subsolvers" explanation={explanations.cards.subsolvers} collapsed={cardCollapsedByDefault('subsolvers')}>
+    <Card
+      kind="search"
+      title="Subsolver contributions"
+      summary={`${items.length} workers`}
+      path="/subsolvers"
+      explanation={explanations.cards.subsolvers}
+      collapsed={cardCollapsedByDefault('subsolvers')}
+    >
       <div className="tbl-wrap">
         <table className="tbl">
           <thead>

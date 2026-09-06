@@ -20,7 +20,8 @@ is and what to look for. Tables and their columns, constraint kinds (`kNoOverlap
 `kAllDiff`, ...), solver messages and every response field are documented too.
 
 **Points out what matters.** An Overview card scores the run - OR-Tools version, worker count,
-final gap, presolve share of the wall time, solutions and bound improvements - and colors a
+final gap, presolve share of the wall time, solutions and bound improvements, and whether a
+solution hint was given and used - and colors a
 tile when something deserves attention. On top of that, twenty-five insight rules look for
 specific situations and say what they imply, for example:
 

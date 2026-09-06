@@ -8,6 +8,10 @@
  * `owns` exists for the two cards that share one log block (portfolio and
  * search progress): it says which part of the block this card is responsible
  * for, so only one of them lights up for a given line.
+ *
+ * `summary` is the one line a card shows while it is collapsed (`61 steps ·
+ * 0.03 s`). Cards that start collapsed would otherwise be a bare bar, which
+ * says nothing about whether it is worth opening.
  */
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { kindClass, useSelection } from '../state/selection'
@@ -17,6 +21,7 @@ import type { LineSpan } from '../types'
 interface Props {
   kind: string
   title: string
+  summary?: string
   span?: LineSpan
   path?: string
   explanation?: string
@@ -25,7 +30,7 @@ interface Props {
   owns?: LineSpan
 }
 
-export function Card({ kind, title, span, path, explanation, children, collapsed = false, owns }: Props) {
+export function Card({ kind, title, summary, span, path, explanation, children, collapsed = false, owns }: Props) {
   const { selection, block, select } = useSelection()
   const [open, setOpen] = useState(!collapsed)
   const ref = useRef<HTMLElement>(null)
@@ -52,7 +57,10 @@ export function Card({ kind, title, span, path, explanation, children, collapsed
           setOpen(!open)
         }}
       >
-        <h2>{title}</h2>
+        <h2>
+          {title}
+          {!open && summary && <span className="sum">{summary}</span>}
+        </h2>
         {span && (
           <span
             className="lines"

@@ -75,7 +75,12 @@ React + Vite + Plotly. `AnalysisPanel` (Overview tiles, insights, progress plot,
 subsolvers, one card per log block) on the left, `LogView` with the raw log on the right, a
 `Splitter` between them, and a line index that links the two. Block cards are specialized per
 section (`blocks/ModelBlock`, `PresolveBlock`, `SearchBlock`, `ResponseBlock`, `TableBlock`,
-...); `Md.tsx` renders the Markdown that comes from the knowledge base. Two small modules keep
+...); `Md.tsx` renders the Markdown that comes from the knowledge base. Inside a card, the
+parts are `Section`s - a heading, not another disclosure triangle, because the card is already
+collapsible as a whole; `<details>` is left to per-item disclosure (a parameter's proto
+documentation, a worker's description). A card that starts collapsed carries a one-line
+`summary` in its title bar (`52 steps · 0.01 s`), so a closed card still says whether it is
+worth opening. Two small modules keep
 policy out of the components: `state/phases.ts` maps a block kind to the phase of the solve it
 belongs to, which is what puts the *Setup* / *Presolve* / *Search* / *Final statistics* /
 *Result* headers between the cards, and `state/expansion.ts` decides in one place which cards

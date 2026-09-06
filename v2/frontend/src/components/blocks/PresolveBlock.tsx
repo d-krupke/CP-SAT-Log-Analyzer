@@ -1,4 +1,5 @@
 import { Anchor, Card } from '../Card'
+import { Section } from '../Section'
 import { cardCollapsedByDefault } from '../../state/expansion'
 import { formatNumber, useSelection } from '../../state/selection'
 import type { BlockRef, Explanations, PresolveLog, PresolveSummary } from '../../types'
@@ -15,7 +16,15 @@ export function PresolveBlock({ blockRef, data, explanations }: { blockRef: Bloc
   }
   const top = [...byName.entries()].sort((a, b) => b[1].time - a[1].time).slice(0, 5)
   return (
-    <Card kind="presolve" title="Presolve" span={blockRef.span} path={blockRef.path} explanation={explanations.blocks.presolve} collapsed={cardCollapsedByDefault('presolve')}>
+    <Card
+      kind="presolve"
+      title="Presolve"
+      summary={`${data.steps.length} steps · ${total.toFixed(2)} s`}
+      span={blockRef.span}
+      path={blockRef.path}
+      explanation={explanations.blocks.presolve}
+      collapsed={cardCollapsedByDefault('presolve')}
+    >
       <div className="kv">
         {data.start_time && (
           <>
@@ -35,16 +44,17 @@ export function PresolveBlock({ blockRef, data, explanations }: { blockRef: Bloc
         )}
       </div>
       {data.messages.length > 0 && (
-        <pre className="raw" style={{ marginTop: 6 }}>
-          {data.messages.map((l) => (
-            <div key={l.line} className={selection.line === l.line ? 'selected' : ''} onClick={() => select(l.line, 'panel')}>
-              <Anchor line={l.line}>{l.value}</Anchor>
-            </div>
-          ))}
-        </pre>
+        <Section title="Messages">
+          <pre className="raw raw-wrap">
+            {data.messages.map((l) => (
+              <div key={l.line} className={selection.line === l.line ? 'selected' : ''} onClick={() => select(l.line, 'panel')}>
+                <Anchor line={l.line}>{l.value}</Anchor>
+              </div>
+            ))}
+          </pre>
+        </Section>
       )}
-      <details>
-        <summary>All presolve steps ({data.steps.length})</summary>
+      <Section title="All presolve steps" count={data.steps.length}>
         <div className="tbl-wrap">
           <table className="tbl">
             <thead>
@@ -79,11 +89,10 @@ export function PresolveBlock({ blockRef, data, explanations }: { blockRef: Bloc
             </tbody>
           </table>
         </div>
-      </details>
+      </Section>
       {data.symmetry_lines.length + data.sat_presolve_lines.length > 0 && (
-        <details>
-          <summary>Symmetry and SAT presolve lines</summary>
-          <pre className="raw">
+        <Section title="Symmetry and SAT presolve lines">
+          <pre className="raw raw-wrap">
             {[...data.symmetry_lines, ...data.sat_presolve_lines]
               .sort((a, b) => a.line - b.line)
               .map((l) => (
@@ -92,7 +101,7 @@ export function PresolveBlock({ blockRef, data, explanations }: { blockRef: Bloc
                 </div>
               ))}
           </pre>
-        </details>
+        </Section>
       )}
     </Card>
   )
@@ -102,7 +111,15 @@ export function PresolveSummaryBlock({ blockRef, data, explanations }: { blockRe
   const { selection, select } = useSelection()
   const rules = [...data.rules].sort((a, b) => b.count - a.count)
   return (
-    <Card kind="presolve_summary" title="Presolve summary" span={blockRef.span} path={blockRef.path} explanation={explanations.blocks.presolve_summary} collapsed={cardCollapsedByDefault('presolve_summary')}>
+    <Card
+      kind="presolve_summary"
+      title="Presolve summary"
+      summary={`${rules.length} rules${data.closed_by_presolve ? ' · closed by presolve' : ''}`}
+      span={blockRef.span}
+      path={blockRef.path}
+      explanation={explanations.blocks.presolve_summary}
+      collapsed={cardCollapsedByDefault('presolve_summary')}
+    >
       <div className="kv">
         {data.affine_relations && (
           <>
@@ -117,8 +134,7 @@ export function PresolveSummaryBlock({ blockRef, data, explanations }: { blockRe
           </>
         )}
       </div>
-      <details>
-        <summary>Rules applied ({rules.length})</summary>
+      <Section title="Rules applied" count={rules.length}>
         <div className="tbl-wrap">
           <table className="tbl">
             <tbody>
@@ -135,7 +151,7 @@ export function PresolveSummaryBlock({ blockRef, data, explanations }: { blockRe
             </tbody>
           </table>
         </div>
-      </details>
+      </Section>
     </Card>
   )
 }

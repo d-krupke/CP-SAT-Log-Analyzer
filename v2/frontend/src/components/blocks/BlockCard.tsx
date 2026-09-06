@@ -29,8 +29,10 @@ export function BlockCard({ blockRef, log, explanations }: { blockRef: BlockRef;
     case 'solver':
       return <SolverBlock {...common} data={log.solver!} />
     case 'initial_model':
-    case 'presolved_model':
       return <ModelBlock {...common} data={data as never} />
+    case 'presolved_model':
+      // The presolved model is shown against the model as it was handed in.
+      return <ModelBlock {...common} data={data as never} initial={log.initial_model} />
     case 'presolve':
       return <PresolveBlock {...common} data={log.presolve!} />
     case 'presolve_summary':

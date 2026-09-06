@@ -11,6 +11,7 @@ from cpsatlog import CpSatLog
 from cpsatlog.schema import Loc
 from pydantic import BaseModel
 
+from .hints import HintReport
 from .knowledge import load
 
 
@@ -43,7 +44,24 @@ def _version_tuple(text: str) -> tuple[int, ...]:
     return tuple(int(p) for p in text.split(".") if p.isdigit())
 
 
-def build_metrics(log: CpSatLog) -> list[Metric]:
+# Value and level of the Hint tile, keyed as in metrics.toml: the statuses of
+# hints.HintStatus plus `used` for a hint the solver actually started from.
+_HINT_TILE: dict[str, tuple[str, str]] = {
+    "none": ("none", "info"),
+    "vacuous": ("none", "info"),
+    "used": ("used", "good"),
+    "accepted": ("accepted", "good"),
+    "infeasible": ("infeasible", "warn"),
+    "incomplete": ("incomplete", "info"),
+    "outside_domain": ("outside domain", "warn"),
+    "breaks_assumptions": ("breaks assumptions", "warn"),
+    "ignored": ("ignored", "warn"),
+    "debug_only": ("debug only", "info"),
+    "other": ("given", "info"),
+}
+
+
+def build_metrics(log: CpSatLog, hint: HintReport) -> list[Metric]:
     cfg = load("metrics")
     metrics: list[Metric] = []
     solver, response = log.solver, log.response
@@ -74,6 +92,8 @@ def build_metrics(log: CpSatLog) -> list[Metric]:
                 hint=cfg["workers"]["hint_few"] if few else None,
             )
         )
+    if log.initial_model or log.response or log.search or hint.has_evidence:
+        metrics.append(_hint_metric(hint, cfg))
     if response:
         metrics.extend(_response_metrics(log, cfg))
     presolve_time = _presolve_duration(log)
@@ -120,6 +140,26 @@ def build_metrics(log: CpSatLog) -> list[Metric]:
     if log.search:
         metrics.extend(_search_metrics(log, cfg))
     return metrics
+
+
+def _hint_metric(hint: HintReport, cfg: dict) -> Metric:
+    """Was a solution hint given, and what became of it? Shown even when there was none.
+
+    The absence of a hint is information too - it is the cheapest thing to try on a model
+    whose first solution comes late - so the tile states it instead of staying silent.
+    """
+    key = "used" if hint.status == "accepted" and hint.used_as_first_solution else hint.status
+    value, level = _HINT_TILE[key]
+    if hint.status == "incomplete" and hint.hinted is not None and hint.active is not None:
+        value += f"\n{hint.hinted:,} of {hint.active:,} vars"
+    return Metric(
+        key="hint",
+        label="Hint",
+        value=value,
+        line=hint.lines[0] if hint.lines else None,
+        level=level,
+        hint=cfg["hint"][key],
+    )
 
 
 def _response_metrics(log: CpSatLog, cfg: dict) -> list[Metric]:

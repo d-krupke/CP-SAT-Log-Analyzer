@@ -380,6 +380,13 @@ select {
   margin: 0;
   flex: 1;
 }
+/* What a collapsed card says about itself. */
+.card > header h2 .sum {
+  margin-left: 8px;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--muted);
+}
 .card > header .lines {
   color: var(--muted);
   font-size: 12px;
@@ -490,6 +497,52 @@ select {
   margin-bottom: 2px;
 }
 
+/* Sections inside a card (Section.tsx): a heading, not another disclosure. */
+.sec {
+  margin-top: 14px;
+}
+.sec-title {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin: 0 0 5px;
+  padding-bottom: 3px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+.sec-title .count {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+/* Raw log lines shown as a section: long dumps scroll instead of pushing the card apart. */
+.raw-wrap {
+  overflow: auto;
+  max-height: 320px;
+}
+
+/* Before -> after of presolve, in the presolved model card. */
+.was {
+  color: var(--muted);
+}
+.delta {
+  margin-left: 6px;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+.delta.good {
+  color: var(--good);
+}
+.delta.warn {
+  color: var(--warn);
+}
+.delta.info {
+  color: var(--muted);
+}
+
 /* tables */
 .tbl-wrap {
   overflow: auto;
@@ -497,7 +550,7 @@ select {
 }
 table.tbl {
   border-collapse: collapse;
-  font-size: 12.5px;
+  font-size: 13px;
   font-variant-numeric: tabular-nums;
   width: 100%;
 }
@@ -696,11 +749,10 @@ button.link {
   font-size: 12px;
 }
 .mix-title {
-  color: var(--muted);
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  margin-bottom: 2px;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 3px;
 }
 .mix-bar {
   display: flex;

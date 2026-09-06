@@ -18,6 +18,7 @@ export function ProgressPlot({ progress }: { progress: ProgressSeries }) {
   const { select } = useSelection()
   const [logY, setLogY] = useState(false)
   const [focus, setFocus] = useState(true)
+  const [zeroY, setZeroY] = useState(false)
   const { data, layout } = useMemo(() => {
     const text = cssVar('--text')
     const muted = cssVar('--muted')
@@ -70,7 +71,7 @@ export function ProgressPlot({ progress }: { progress: ProgressSeries }) {
         zerolinecolor: border,
         color: muted,
         type: logY ? 'log' : 'linear',
-        range: focusRange(sols.map((p) => p.value), bounds.map((p) => p.value), focus, logY),
+        range: yRange(sols.map((p) => p.value), bounds.map((p) => p.value), { focus, logY, zero: zeroY }),
       },
       legend: { orientation: 'h', y: 1.1 },
       hovermode: 'closest',
@@ -79,7 +80,7 @@ export function ProgressPlot({ progress }: { progress: ProgressSeries }) {
         : [],
     }
     return { data, layout }
-  }, [progress, logY, focus])
+  }, [progress, logY, focus, zeroY])
 
   return (
     <>
@@ -89,6 +90,12 @@ export function ProgressPlot({ progress }: { progress: ProgressSeries }) {
         </label>
         <label>
           <input type="checkbox" checked={logY} onChange={(e) => setLogY(e.target.checked)} /> log scale
+        </label>
+        <label
+          style={{ opacity: logY ? 0.5 : 1 }}
+          title={logY ? 'A logarithmic axis cannot contain 0.' : 'Show the objective against 0 instead of against its own range.'}
+        >
+          <input type="checkbox" checked={zeroY && !logY} disabled={logY} onChange={(e) => setZeroY(e.target.checked)} /> anchor at 0
         </label>
       </div>
     <Plot
@@ -107,22 +114,35 @@ export function ProgressPlot({ progress }: { progress: ProgressSeries }) {
 }
 
 /**
- * Early solutions are often orders of magnitude worse than the final one and
- * would squash the interesting part of the plot. "Focus" clips the y-range to
+ * The y-range, from two independent options - `undefined` leaves it to Plotly.
+ *
+ * *Focus* ("hide early outliers"): early solutions are often orders of magnitude worse than
+ * the final one and would squash the interesting part of the plot, so the range is clipped to
  * the values seen after the objective got within 10x of its final value.
+ *
+ * *Zero* ("anchor at 0"): Plotly scales to the data, which blows a 2% gap up to the full
+ * height of the plot and makes every run look dramatic. Anchoring at 0 shows the gap at its
+ * true relative size. Impossible on a logarithmic axis, so log scale wins there.
  */
-function focusRange(sols: number[], bounds: number[], focus: boolean, logY: boolean): [number, number] | undefined {
-  if (!focus || sols.length === 0) return undefined
+function yRange(
+  sols: number[],
+  bounds: number[],
+  opts: { focus: boolean; logY: boolean; zero: boolean },
+): [number, number] | undefined {
+  const { focus, logY, zero } = opts
+  const wantZero = zero && !logY
+  if ((!focus && !wantZero) || sols.length === 0) return undefined
   const final = sols[sols.length - 1]
-  const keep = sols.filter((v) => Math.abs(v) <= 10 * Math.max(1, Math.abs(final)))
+  const keep = focus ? sols.filter((v) => Math.abs(v) <= 10 * Math.max(1, Math.abs(final))) : sols
   const vals = [...keep, ...bounds].filter((v) => Number.isFinite(v) && (!logY || v > 0))
-  if (vals.length < 2) return undefined
-  let lo = Math.min(...vals)
-  let hi = Math.max(...vals)
+  if (vals.length === 0 || (vals.length < 2 && !wantZero)) return undefined
+  let lo = wantZero ? Math.min(0, ...vals) : Math.min(...vals)
+  let hi = wantZero ? Math.max(0, ...vals) : Math.max(...vals)
   if (logY) {
     lo = Math.log10(lo)
     hi = Math.log10(hi)
   }
   const pad = (hi - lo) * 0.08 || 1
-  return [lo - pad, hi + pad]
+  // Keep the anchor exactly on 0; only the open end gets breathing room.
+  return [lo === 0 ? 0 : lo - pad, hi === 0 ? 0 : hi + pad]
 }

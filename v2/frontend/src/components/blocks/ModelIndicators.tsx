@@ -18,6 +18,29 @@ export function LevelTag({ level, title }: { level: LevelDoc | undefined; title?
   )
 }
 
+/**
+ * `2,001 -> 1,001  -50%`: what presolve did to a count.
+ *
+ * Shrinking is the good case, growth the one worth noticing (a global constraint
+ * unrolled into thousands of Booleans), so the sign is colored rather than just
+ * printed.
+ */
+export function Delta({ from, to }: { from: number; to: number }) {
+  if (from === 0 || from === to) return <span className="delta info">unchanged</span>
+  const change = (100 * (to - from)) / from
+  const level = change > 20 ? 'warn' : change < 0 ? 'good' : 'info'
+  // A presolve blow-up reaches +240392%, which nobody reads: say ×2,405 instead.
+  const text =
+    to >= 3 * from
+      ? `×${formatNumber(Math.round((10 * to) / from) / 10)}`
+      : `${change > 0 ? '+' : ''}${Math.abs(change) < 1 ? change.toFixed(1) : Math.round(change)}%`
+  return (
+    <span className={`delta ${level}`} title={`${formatNumber(from)} → ${formatNumber(to)}`}>
+      {text}
+    </span>
+  )
+}
+
 function pct(count: number, total: number): string {
   const p = (100 * count) / total
   return p < 1 ? '<1%' : `${Math.round(p)}%`

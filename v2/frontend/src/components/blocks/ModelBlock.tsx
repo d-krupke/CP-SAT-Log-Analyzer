@@ -1,13 +1,18 @@
 import { Anchor, Card } from '../Card'
+import { Section } from '../Section'
 import { formatNumber, useSelection } from '../../state/selection'
 import type { BlockRef, Explanations, ModelDescription } from '../../types'
 import { constraintMix, domainMix } from '../../modelMix'
-import { DomainSize, LevelTag, MixBar } from './ModelIndicators'
+import { Delta, DomainSize, LevelTag, MixBar } from './ModelIndicators'
 
 
-export function ModelBlock({ blockRef, data, explanations }: { blockRef: BlockRef; data: ModelDescription; explanations: Explanations }) {
+export function ModelBlock({ blockRef, data, initial, explanations }: { blockRef: BlockRef; data: ModelDescription; initial?: ModelDescription | null; explanations: Explanations }) {
   const { selection, select } = useSelection()
   const total = data.constraints.reduce((a, c) => a + c.count, 0)
+  // The presolved model is only interesting next to the one that was handed in, so
+  // its counts are shown as `before -> after` instead of on their own.
+  const before = data.stage === 'presolved' && initial ? initial : null
+  const beforeConstraints = before ? before.constraints.reduce((a, c) => a + c.count, 0) : 0
   return (
     <Card
       kind={blockRef.kind}
@@ -27,22 +32,27 @@ export function ModelBlock({ blockRef, data, explanations }: { blockRef: BlockRe
           <>
             <Anchor line={data.num_variables.line}>#Variables</Anchor>
             <Anchor line={data.num_variables.line}>
+              {before?.num_variables && <span className="was">{formatNumber(before.num_variables.value)} → </span>}
               {formatNumber(data.num_variables.value)}
               {data.num_bools_in_objective !== null && ` (${formatNumber(data.num_bools_in_objective.value)} Booleans in objective`}
               {data.num_ints_in_objective !== null && `, ${formatNumber(data.num_ints_in_objective.value)} integers in objective`}
               {data.num_bools_in_objective !== null && ')'}
               {data.num_primary_variables !== null && ` · ${formatNumber(data.num_primary_variables.value)} primary`}
+              {before?.num_variables && <Delta from={before.num_variables.value} to={data.num_variables.value} />}
             </Anchor>
           </>
         )}
         <div>constraints</div>
-        <div>{formatNumber(total)}</div>
+        <div>
+          {before && <span className="was">{formatNumber(beforeConstraints)} → </span>}
+          {formatNumber(total)}
+          {before && <Delta from={beforeConstraints} to={total} />}
+        </div>
       </div>
       <MixBar title="Variables by domain size" segments={domainMix(data, explanations)} />
       <MixBar title="Constraints by complexity" segments={constraintMix(data, explanations)} />
       {data.domains.length > 0 && (
-        <details open>
-          <summary>Variable domains</summary>
+        <Section title="Variable domains" count={data.domains.length}>
           <div className="tbl-wrap">
             <table className="tbl">
               <thead>
@@ -69,11 +79,10 @@ export function ModelBlock({ blockRef, data, explanations }: { blockRef: BlockRe
               </tbody>
             </table>
           </div>
-        </details>
+        </Section>
       )}
       {data.constraints.length > 0 && (
-        <details open>
-          <summary>Constraints</summary>
+        <Section title="Constraints" count={data.constraints.length}>
           <div className="tbl-wrap">
             <table className="tbl">
               <thead>
@@ -107,28 +116,29 @@ export function ModelBlock({ blockRef, data, explanations }: { blockRef: BlockRe
               </tbody>
             </table>
           </div>
-        </details>
+        </Section>
       )}
       {data.search_strategies.length > 0 && (
-        <details>
-          <summary>Search strategies ({data.search_strategies.length})</summary>
-          <pre className="raw">
+        <Section title="Search strategies" count={data.search_strategies.length}>
+          <pre className="raw raw-wrap">
             {data.search_strategies.map((l) => (
               <Anchor key={l.line} line={l.line}>
                 <div>{l.value}</div>
               </Anchor>
             ))}
           </pre>
-        </details>
+        </Section>
       )}
       {data.other_lines.length > 0 && (
-        <pre className="raw">
-          {data.other_lines.map((l) => (
-            <div key={l.line} className={selection.line === l.line ? 'selected' : ''} onClick={() => select(l.line, 'panel')}>
-              <Anchor line={l.line}>{l.value}</Anchor>
-            </div>
-          ))}
-        </pre>
+        <Section title="Other lines" count={data.other_lines.length}>
+          <pre className="raw raw-wrap">
+            {data.other_lines.map((l) => (
+              <div key={l.line} className={selection.line === l.line ? 'selected' : ''} onClick={() => select(l.line, 'panel')}>
+                <Anchor line={l.line}>{l.value}</Anchor>
+              </div>
+            ))}
+          </pre>
+        </Section>
       )}
     </Card>
   )

@@ -128,3 +128,46 @@ def test_used_hint_fires_the_good_insight() -> None:
     log = parse_log(HEADER + "#1       0.03s best:42    next:[13,41]    complete_hint\n")
     titles = [i.title for i in analyze(log).insights]
     assert load("insights")["hint_used"]["title"] in titles
+
+
+def _tile(body: str):  # noqa: ANN202 - Metric, kept short for readability
+    metrics = analyze(parse_log(HEADER + body)).metrics
+    return next(m for m in metrics if m.key == "hint")
+
+
+def test_overview_states_that_there_was_no_hint() -> None:
+    """ "Was a hint given?" must be answerable from the Overview, so the tile is always there.
+
+    A missing hint is a finding, not an absence: it is the cheapest thing to try when the first
+    solution comes late. Silence would leave the user unable to tell "no hint" from "the
+    analyzer did not look".
+    """
+    tile = _tile("Starting search at 0.02s with 8 workers.\n")
+    assert (tile.label, tile.value, tile.level) == ("Hint", "none", "info")
+    assert tile.hint  # the tooltip explains what a hint is and when to try one
+
+
+def test_overview_tile_reports_a_used_hint_as_good() -> None:
+    tile = _tile("#1       0.03s best:42    next:[13,41]    complete_hint\n")
+    assert (tile.value, tile.level) == ("used", "good")
+    assert tile.line == 3
+
+
+def test_overview_tile_carries_the_numbers_of_an_incomplete_hint() -> None:
+    """`7 of 42 vars` on the tile itself: the number is the point of that verdict."""
+    tile = _tile("The solution hint is incomplete: 7 out of 42 non fixed variables hinted.\n")
+    assert tile.value == "incomplete\n7 of 42 vars"
+
+
+def test_the_vacuous_line_does_not_claim_a_hint_on_the_tile() -> None:
+    tile = _tile(_VACUOUS)
+    assert tile.value == "none"
+    assert "presolve had already fixed every variable" in (tile.hint or "")
+
+
+def test_every_hint_outcome_has_a_tile_text() -> None:
+    """A status without a text in metrics.toml would raise KeyError while rendering."""
+    from app.metrics import _HINT_TILE
+
+    texts = load("metrics")["hint"]
+    assert set(_HINT_TILE) <= set(texts), set(_HINT_TILE) - set(texts)

@@ -64,7 +64,7 @@ def analyze(log: CpSatLog) -> Analysis:
     progress = build_progress(log)
     hint = build_hint_report(log)
     return Analysis(
-        metrics=build_metrics(log),
+        metrics=build_metrics(log, hint),
         progress=progress,
         parameters=describe_all(_parameters(log)),
         subsolvers=build_subsolvers(log),
