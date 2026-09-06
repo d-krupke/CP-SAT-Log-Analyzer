@@ -81,9 +81,7 @@ a rising bound means the solver is proving; a flat bound with improving solution
 relaxation is weak. Click a point to jump to its log line.'''
 parameters = '''
 CP-SAT prints only parameters that differ from their defaults. Each one is documented below (from
-`sat_parameters.proto`) with advice on typical pitfalls. Parameters that change the behavior of
-*all* workers reduce the diversity of the portfolio and are the usual cause of unexpectedly slow
-solves.'''
+`sat_parameters.proto`) with advice on typical pitfalls.'''
 parameters_none = '''
 No parameter differs from its default. Usually a good sign: the default portfolio is hard to beat.'''
 hint = '''

@@ -4,6 +4,15 @@ Notable changes, newest first. Dates are the day the work landed on `main`.
 
 ## v2 stack (`v2/`)
 
+* **2026-09-06** - The README screenshots are generated: `npm run screenshots` in `v2/frontend`
+  boots the backend and a production build under Playwright, drives the real UI over the
+  bundled example logs and writes `docs/screenshots/*.png`. Because it clicks real controls it
+  is also a coarse end-to-end smoke test, and it fails when a view breaks or a card is renamed.
+  The footer now also carries the MIT license, which belongs to the software rather than to a
+  deployment and is therefore always shown. Dropped the claim that parameters affecting all
+  workers are "the usual cause of unexpectedly slow solves" - the per-parameter advice says
+  what each one actually does, which is the part that holds up.
+
 * **2026-09-06** - A *Report issue* link in the top bar, and the operator's legal pages
   (imprint, privacy) as small links pinned to the lower right corner. Both come from the
   environment (`ISSUE_URL`, `IMPRINT_URL`/`IMPRINT_FILE`, `PRIVACY_URL`/`PRIVACY_FILE`, see

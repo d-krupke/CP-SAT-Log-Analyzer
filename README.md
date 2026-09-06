@@ -9,6 +9,8 @@ is parsed and thrown away.
 
 _This project is not affiliated with Google._
 
+![The Overview of a job-shop run next to the raw log](docs/screenshots/02-overview.png)
+
 ## What it does
 
 The features below describe the stack in [`v2/`](v2/README.md), which you run with one
@@ -31,14 +33,20 @@ specific situations and say what they imply, for example:
 * *Presolve fixed the objective* - the portfolio then loses every objective worker and all LNS;
 * *Log ends before the response summary* - so everything below it is partial;
 * *LNS neighborhoods closed quickly*, *solutions stalled early*, *solved by presolve*, ...
+![Overview tiles and the insight boxes they lead to](docs/screenshots/03-insights.png)
+
 
 **Says what became of your hint.** Whether a solution hint reached the solver, whether it was
 complete and feasible, and whether CP-SAT actually started from it (the `complete_hint`
 solution) - including the trap that CP-SAT prints "The solution hint is complete and is
 feasible." for runs that were given no hint at all.
+![The Solution hint card of a run that started from its hint](docs/screenshots/07-hint.png)
+
 
 **Plots the progress.** Incumbent objective and proven bound over time, interactive, and every
 point links back to the log line that produced it.
+![Incumbent objective and proven bound over 60 seconds](docs/screenshots/04-progress.png)
+
 
 **Attributes the work.** Which subsolver found the solutions, which raised the bound, and what
 each of the ~20 workers in CP-SAT's portfolio (`default_lp`, `core`, `fs_random_no_lp`,
@@ -48,6 +56,8 @@ each of the ~20 workers in CP-SAT's portfolio (`default_lp`, `core`, `fs_random_
 documentation, practical advice, and a warning when it quietly disables part of the portfolio -
 `interleave_search`, `use_lns_only`, `linearization_level`, `FIXED_SEARCH` and friends have
 consequences that the log alone does not spell out.
+![Overridden parameters with advice and a warning](docs/screenshots/06-parameters.png)
+
 
 **Copes with broken logs.** A run that was killed, a log clipped by a terminal, one prefixed by
 a logging framework, your own prints mixed in, or the wrong file entirely: nothing crashes, the
@@ -57,6 +67,8 @@ front that it is looking at an incomplete log.
 **Keeps the evidence.** Every parsed value knows the line it came from, so the analysis and the
 raw log sit side by side, linked in both directions - no claim without the line that supports
 it.
+![A selected search event highlighted in both panes](docs/screenshots/05-search.png)
+
 
 **Speaks CP-SAT 9.3 to 9.15**, including the older log formats, and is checked against 295 real
 logs from public instance libraries on every test run.
@@ -69,6 +81,8 @@ cd CP-SAT-Log-Analyzer/v2
 docker compose up --build
 # open http://localhost:8080
 ```
+![Paste a log, upload a file, or open one of the bundled examples](docs/screenshots/01-landing.png)
+
 
 The earlier Streamlit implementation - the one behind
 <https://cpsat-log-analyzer.streamlit.app/> - is no longer part of this branch; it lives on the
@@ -104,7 +118,9 @@ code:
   useful issue by itself.
 
 Before opening a pull request, run the suites listed in
-[docs/development.md](docs/development.md).
+[docs/development.md](docs/development.md). If you changed something visible, regenerate the
+screenshots on this page with `npm run screenshots` in `v2/frontend` and commit them with the
+change.
 
 ## Authors
 

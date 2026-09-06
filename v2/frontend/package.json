@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "screenshots": "playwright test",
+    "screenshots:install": "playwright install chromium"
   },
   "dependencies": {
     "plotly.js-basic-dist-min": "^4.0.0",
@@ -17,6 +19,7 @@
     "react-plotly.js": "^4.1.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@types/node": "^24.13.3",
     "@types/plotly.js": "^3.0.13",
     "@types/react": "^19.2.18",

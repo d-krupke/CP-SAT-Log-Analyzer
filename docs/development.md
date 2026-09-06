@@ -49,9 +49,35 @@ lines, a split is due past ~500).
 | `v2/backend/tests/test_site.py` | the deployment chrome: an unconfigured instance shows no legal links, URLs and Markdown files are picked up from the environment, a broken file is reported |
 | `v2/backend/tests/test_knowledge.py` | the knowledge base itself: required sections, documented labels, regressions on wrong claims |
 | `v2/backend/tests/test_corpus.py` | `analyze()` on all 295 corpus logs: no crash, no trigger blows up, every worker and parameter documented |
+| `v2/frontend/e2e/screenshots.spec.ts` | Playwright: the UI renders the examples end to end - it captures the README screenshots (below) and fails when a view breaks |
 
 Write the test with the change - the corpus suites are what catch the mistakes that only real
 logs produce.
+
+## Screenshots for the README
+
+The pictures in the README are generated, never pasted, so that they cannot quietly go stale.
+`v2/frontend/e2e/screenshots.spec.ts` drives the real UI with Playwright and writes PNGs into
+`docs/screenshots/`:
+
+```sh
+cd v2/frontend
+npm run screenshots:install   # once: downloads the Chromium build Playwright uses
+npm run screenshots           # boots backend + preview server, captures, tears both down
+```
+
+Playwright starts everything itself (see `playwright.config.ts`): `uv run uvicorn` on port
+8010 and a production `vite build` behind `vite preview` on 4173, both above the ports of a
+running `docker compose up` so a capture never collides with your development stack. The input
+is a committed example log and the backend keeps no state, so a rerun produces the same images.
+
+Because the spec clicks real controls, it is also a coarse end-to-end smoke test: a view that
+throws, a card that got renamed or an example that stopped parsing fails the run.
+
+Regenerate after any visible UI change, and commit the PNGs with it. To add a picture, add a
+test - `analyze()` opens an example through its `?example=` deep link, `open()` expands a card
+by title, and you photograph either the page or a card locator. `SCREENSHOT_THEME=dark`
+captures the dark theme instead.
 
 ## Editing explanations, advice and thresholds
 

@@ -8,7 +8,7 @@ import { loadExplanations, loadSite, parseLog, readExample } from './api'
 import { AnalysisPanel } from './components/AnalysisPanel'
 import { Landing } from './components/Landing'
 import { LogView } from './components/LogView'
-import { IssueLink, LegalLinks } from './components/SiteLinks'
+import { Footer, IssueLink } from './components/SiteLinks'
 import { Splitter } from './components/Splitter'
 import { blockForLine, SelectionContext, type Selection, type Source } from './state/selection'
 import type { Explanations, ParseResult, SiteConfig } from './types'
@@ -144,7 +144,7 @@ export default function App() {
         ) : (
           <Landing onAnalyze={analyze} onExample={loadExample} busy={busy} initialText={text} />
         )}
-        <LegalLinks site={site} />
+        <Footer site={site} />
       </div>
     </SelectionContext.Provider>
   )
