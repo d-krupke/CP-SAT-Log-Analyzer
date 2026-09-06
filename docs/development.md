@@ -48,6 +48,7 @@ corpus, damaged input, hint wordings). What runs here:
 | `backend/tests/test_knowledge.py` | the knowledge base itself: required sections, documented labels, regressions on wrong claims |
 | `backend/tests/test_corpus.py` | `analyze()` on all 295 corpus logs: no crash, no trigger blows up, every worker and parameter documented |
 | `frontend/e2e/screenshots.spec.ts` | Playwright: the UI renders the examples end to end - it captures the README screenshots (below) and fails when a view breaks |
+| `frontend/e2e/mobile.spec.ts` | Playwright at 390 px: one font size in the raw log, stacked panes with a draggable divider, and a top bar that retreats while reading and stays pinned on a wide screen |
 
 Write the test with the change - the corpus suites are what catch the mistakes that only real
 logs produce.

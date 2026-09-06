@@ -3,13 +3,14 @@
  * page to paste/upload/select a log, and the two-panel view (analysis left,
  * raw log right) once a log is parsed.
  */
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { loadExplanations, loadSite, parseLog, readExample } from './api'
 import { AnalysisPanel } from './components/AnalysisPanel'
 import { Landing } from './components/Landing'
 import { LogView } from './components/LogView'
 import { Footer, IssueLink } from './components/SiteLinks'
 import { Splitter } from './components/Splitter'
+import { useHideOnScroll } from './hooks/useHideOnScroll'
 import { blockForLine, SelectionContext, type Selection, type Source } from './state/selection'
 import type { Explanations, ParseResult, SiteConfig } from './types'
 
@@ -107,10 +108,15 @@ export default function App() {
   )
   const lines = useMemo(() => text.replace(/\r\n?/g, '\n').split('\n'), [text])
 
+  // On a phone the bar gets out of the way while you read; see useHideOnScroll.
+  const appRef = useRef<HTMLDivElement>(null)
+  const barRef = useRef<HTMLDivElement>(null)
+  useHideOnScroll(appRef, barRef)
+
   return (
     <SelectionContext.Provider value={{ selection, block, select }}>
-      <div className="app">
-        <div className="topbar">
+      <div className="app" ref={appRef}>
+        <div className="topbar" ref={barRef}>
           <h1>CP-SAT Log Analyzer</h1>
           {result && (
             <button onClick={() => setResult(null)} title="Back to the input page">

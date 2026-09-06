@@ -69,6 +69,14 @@ body,
   height: 100%;
   margin: 0;
 }
+/* Mobile Safari and Chrome "boost" text in blocks they consider too wide for the
+   screen, and they compute the factor per block: the raw log, whose lines are far
+   wider than a phone, then renders at several different sizes within one pane.
+   Every size here is deliberate, so opt out of the boosting entirely. */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
 body {
   background: var(--bg);
   color: var(--text);
@@ -196,22 +204,20 @@ select {
 .pane {
   min-height: 0;
   overflow: auto;
+  /* Keep a pane that has hit its end from rubber-banding the whole page on iOS. */
+  overscroll-behavior: contain;
 }
+/* --axis tells Splitter.tsx which way it moves, so the breakpoint below stays the
+   single place that decides whether the panes are side by side or stacked.
+   touch-action keeps the browser from scrolling the pane instead of dragging. */
 .splitter {
+  --axis: x;
   cursor: col-resize;
   background: var(--border);
+  touch-action: none;
 }
 .splitter:hover {
   background: var(--accent);
-}
-@media (max-width: 900px) {
-  .main {
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr 6px 1fr;
-  }
-  .splitter {
-    cursor: row-resize;
-  }
 }
 
 /* ---- landing / input ---- */
@@ -937,4 +943,77 @@ button.linky:hover {
 .modal header h2 {
   font-size: 16px;
   margin: 0;
+}
+
+/* ---- narrow screens (phones, and a very small window) ----
+   Last in the file on purpose: these rules only override base ones of the same
+   specificity, so source order is what makes them win. */
+@media (max-width: 900px) {
+  /* Stacked, and the analysis gets the larger half: on a phone the log is there
+     to check a line the analysis points at, not to be read top to bottom. */
+  .main {
+    grid-template-columns: 1fr;
+    grid-template-rows: var(--top, 58%) 10px minmax(0, 1fr);
+  }
+  .splitter {
+    --axis: y;
+    cursor: row-resize;
+  }
+  /* Two tiles per row instead of one very long column. */
+  .metrics {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+  /* Reclaim the horizontal room the desktop layout can afford to give away. */
+  .panel {
+    padding: 10px 10px 40vh;
+  }
+  .logline .no {
+    width: 38px;
+    padding-right: 6px;
+  }
+  /* The top bar wrapped onto three rows and ate a tenth of the screen. Even at two
+     it is too much to keep pinned here, so it slides away while you scroll down a
+     pane and comes back on the way up (useHideOnScroll sets .bar-hidden and the
+     --bar-h it moves by; on the desktop layout the class has no rule and the bar
+     stays). */
+  .app {
+    overflow: hidden;
+  }
+  .topbar {
+    gap: 6px 8px;
+    padding: 6px 10px;
+    transition: margin-top 0.18s ease;
+  }
+  .app.bar-hidden .topbar {
+    margin-top: calc(-1 * var(--bar-h, 70px));
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .topbar {
+      transition: none;
+    }
+  }
+  .topbar h1 {
+    font-size: 15px;
+    margin-right: 0;
+  }
+  .topbar a {
+    padding: 3px 8px;
+    font-size: 11.5px;
+  }
+  /* No hover on a touch screen, so the corner strip would sit half-faded over the
+     log for good. */
+  .sitelinks {
+    gap: 8px;
+    padding: 2px 7px;
+    opacity: 1;
+  }
+  /* iOS Safari zooms the page in when a field smaller than 16px gets focus, and
+     never zooms back out. */
+  .landing textarea {
+    font-size: 16px;
+  }
+  .landing {
+    margin: 16px auto;
+    padding: 0 12px;
+  }
 }

@@ -30,6 +30,8 @@ deep-links a bundled example.
 | `src/components/LogView.tsx` | right pane: the raw log, one anchored element per line |
 | `src/components/Landing.tsx` | paste / upload / pick an example |
 | `e2e/screenshots.spec.ts`, `playwright.config.ts` | the README screenshot capture, which doubles as an end-to-end smoke test ([development.md](../docs/development.md#screenshots-for-the-readme)) |
+| `e2e/mobile.spec.ts` | the phone layout, asserted rather than photographed: font sizes, the stacked panes and the retreating top bar |
+| `src/hooks/useHideOnScroll.ts` | slides the top bar away while a pane scrolls down; only the narrow media query acts on the class it sets |
 
 Nothing about CP-SAT is hard-coded here: all texts come from the backend's knowledge base
 ([`../knowledge/README.md`](../knowledge/README.md)), so wording changes need no frontend

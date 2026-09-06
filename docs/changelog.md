@@ -7,6 +7,15 @@ Notable changes, newest first. Dates are the day the work landed on `main`.
 (Entries before the flatten name paths under the `v2/` directory the rewrite grew up in;
 drop that prefix to find the file today.)
 
+* **2026-09-06** - The phone layout, after a report from an iPhone. The raw log was rendering
+  in several font sizes at once - mobile browsers inflate text per block when the block is much
+  wider than the screen, and the log's lines are - so the page opts out of that with
+  `text-size-adjust`. The two panes now stack 58/42 instead of 1fr/1fr, the divider between them
+  drags vertically and answers to a finger, the Overview shows two tiles per row, and the top
+  bar slides out of the way while you scroll a pane and comes back on the way up
+  (`frontend/src/hooks/useHideOnScroll.ts`; the desktop bar stays pinned). `frontend/e2e/mobile.spec.ts`
+  holds all of it in place.
+
 * **2026-09-06** - The parser left this repository. It is published as
   **[cpsat-logutils](https://github.com/d-krupke/cpsat-logutils) 1.0.0** on PyPI, replacing
   that package's old block-based `LogParser` API, and the backend depends on it like any other
