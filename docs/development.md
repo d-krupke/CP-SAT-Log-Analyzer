@@ -38,9 +38,11 @@ lines, a split is due past ~500).
 | `v2/cpsatlog/tests/test_units.py`, `test_specific.py` | parser internals and exact values of individual example logs |
 | `v2/cpsatlog/tests/test_examples.py` | invariants on every log in `example_logs/` **and** `example_logs/archive/`: parses, block index covers every line, JSON round trip |
 | `v2/cpsatlog/tests/test_corpus.py` | all 295 corpus logs parse, leave nothing in `log.unparsed`, and match the metadata OR-Tools reported (`v2/corpus/`) |
+| `v2/cpsatlog/tests/test_broken.py` | damaged input (truncated, clipped, prefixed, foreign text): no crash, line anchoring intact, unrecognised text kept verbatim |
 | `v2/cpsatlog/tests/test_latest_version.py` | the parser against a log produced by the installed OR-Tools |
 | `v2/backend/tests/test_api.py` | every endpoint, every example through the HTTP layer |
 | `v2/backend/tests/test_analysis.py` | one hand-written log per insight rule |
+| `v2/backend/tests/test_broken.py` | analysis and API on damaged logs, and the four log-quality insights |
 | `v2/backend/tests/test_knowledge.py` | the knowledge base itself: required sections, documented labels, regressions on wrong claims |
 | `v2/backend/tests/test_corpus.py` | `analyze()` on all 295 corpus logs: no crash, insight texts render, every worker and parameter documented |
 

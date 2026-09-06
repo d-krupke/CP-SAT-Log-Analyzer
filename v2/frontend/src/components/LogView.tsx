@@ -2,9 +2,11 @@
  * Right panel: the raw log with line numbers. Each line is coloured by the
  * block it belongs to, clicking selects it (the analysis panel then scrolls to
  * the matching card), and selections made in the analysis panel scroll here.
+ * Lines the parser could not use are marked (`k-unparsed`) so a broken or
+ * foreign log is visible as such at a glance.
  */
 import { memo, useEffect, useMemo, useRef } from 'react'
-import { kindClass, useSelection } from '../state/selection'
+import { blockClass, useSelection } from '../state/selection'
 import type { CpSatLog } from '../types'
 
 interface Props {
@@ -19,7 +21,7 @@ export function LogView({ lines, log }: Props) {
   const kinds = useMemo(() => {
     const arr = new Array<string>(lines.length + 2).fill('')
     for (const b of log.blocks) {
-      const cls = kindClass(b.kind)
+      const cls = blockClass(b)
       for (let i = b.span.start; i <= b.span.end && i < arr.length; i++) arr[i] = cls
     }
     return arr

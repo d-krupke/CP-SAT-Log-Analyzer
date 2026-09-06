@@ -25,7 +25,7 @@ is and what to look for. Tables and their columns, constraint kinds (`kNoOverlap
 
 **Points out what matters.** An Overview card scores the run - OR-Tools version, worker count,
 final gap, presolve share of the wall time, solutions and bound improvements - and colours a
-tile when something deserves attention. On top of that, thirteen insight rules look for
+tile when something deserves attention. On top of that, seventeen insight rules look for
 specific situations and say what they imply, for example:
 
 * *Not proven optimal* - and whether solutions or bounds stalled first;
@@ -46,6 +46,11 @@ each of the ~20 workers in CP-SAT's portfolio (`default_lp`, `core`, `fs_random_
 documentation, practical advice, and a warning when it quietly disables part of the portfolio -
 `interleave_search`, `use_lns_only`, `linearization_level`, `FIXED_SEARCH` and friends have
 consequences that the log alone does not spell out.
+
+**Copes with broken logs.** A run that was killed, a log clipped by a terminal, one prefixed by
+a logging framework, your own prints mixed in, or the wrong file entirely: nothing crashes, the
+parts that could not be read are marked in the raw log and listed, and the analysis says up
+front that it is looking at an incomplete log.
 
 **Keeps the evidence.** Every parsed value knows the line it came from, so the analysis and the
 raw log sit side by side, linked in both directions - no claim without the line that supports

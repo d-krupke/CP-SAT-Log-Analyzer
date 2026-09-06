@@ -19,7 +19,7 @@ from .schema.response import ResponseSummary
 from .schema.search import ObjectiveSense, SearchEvent, SearchProgress
 from .schema.solver import SolverInfo
 from .schema.tables import FinalStats, Table, TaskTimingTable
-from .splitter import split_into_chunks, split_lines
+from .splitter import Chunk, split_into_chunks, split_lines
 
 
 def parse_log(text: str) -> CpSatLog:
@@ -29,7 +29,7 @@ def parse_log(text: str) -> CpSatLog:
     stray_events: list[SearchEvent] = []
     for chunk in chunks:
         block = parse_chunk(chunk)
-        path = _place(log, block)
+        path = _place(log, block, chunk)
         if log.blocks and log.blocks[-1].path == path:
             log.blocks[-1].span = LineSpan(start=log.blocks[-1].span.start, end=block.span.end)
         else:
@@ -54,7 +54,7 @@ def _title(block: Block) -> str:
     return block.kind.replace("_", " ")
 
 
-def _place(log: CpSatLog, block: Block) -> str:
+def _place(log: CpSatLog, block: Block, chunk: Chunk) -> str:
     """Store ``block`` in ``log`` and return the JSON pointer to it."""
     match block:
         case SolverInfo():
@@ -62,7 +62,7 @@ def _place(log: CpSatLog, block: Block) -> str:
                 log.solver = block
                 return "/solver"
             log.warnings.append(f"Second solver header at line {block.span.start}; kept the first.")
-            return _unparsed(log, block)
+            return _unparsed(log, block, chunk)
         case ModelDescription():
             attr = "initial_model" if block.stage == "initial" else "presolved_model"
             if getattr(log, attr) is None:
@@ -71,7 +71,7 @@ def _place(log: CpSatLog, block: Block) -> str:
             log.warnings.append(
                 f"Second {block.stage} model at line {block.span.start}; kept the first."
             )
-            return _unparsed(log, block)
+            return _unparsed(log, block, chunk)
         case PresolveLog():
             if log.presolve is None:
                 log.presolve = block
@@ -90,7 +90,7 @@ def _place(log: CpSatLog, block: Block) -> str:
             log.warnings.append(
                 f"Second presolve summary at line {block.span.start}; kept the first."
             )
-            return _unparsed(log, block)
+            return _unparsed(log, block, chunk)
         case SearchProgress():
             if log.search is None:
                 log.search = block
@@ -119,7 +119,7 @@ def _place(log: CpSatLog, block: Block) -> str:
             log.warnings.append(
                 f"Second response summary at line {block.span.start}; kept the first."
             )
-            return _unparsed(log, block)
+            return _unparsed(log, block, chunk)
         case MessageBlock():
             if block.message_kind == "closed_by_presolve" and log.presolve_summary is not None:
                 summary = log.presolve_summary
@@ -140,13 +140,30 @@ def _place(log: CpSatLog, block: Block) -> str:
                     last.lines.extend(block.lines)
                     last.span = LineSpan(start=last.span.start, end=block.span.end)
                     return log.blocks[-1].path
-            return _unparsed(log, block)
+            return _unparsed(log, block, chunk)
         case _:
-            return _unparsed(log, block)
+            return _unparsed(log, block, chunk)
 
 
-def _unparsed(log: CpSatLog, block: Block) -> str:
-    raw = block if isinstance(block, RawBlock) else RawBlock(kind=block.kind, span=block.span)
+def _unparsed(log: CpSatLog, block: Block, chunk: Chunk) -> str:
+    """Keep ``block`` verbatim under ``/unparsed`` so the UI can show what was not used.
+
+    A block that a parser produced but that cannot be stored (a second solver header, a
+    duplicated response) is turned back into raw lines: dropping the text would leave the
+    reader with a warning and nothing to look at.
+    """
+    if isinstance(block, RawBlock):
+        raw = block
+    else:
+        raw = RawBlock(
+            kind=block.kind,
+            span=block.span,
+            lines=[
+                Loc(value=line, line=no)
+                for no, line in chunk.numbered()
+                if block.span.contains(no)
+            ],
+        )
     log.unparsed.append(raw)
     return f"/unparsed/{len(log.unparsed) - 1}"
 

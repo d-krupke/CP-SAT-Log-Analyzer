@@ -15,7 +15,7 @@ from dataclasses import dataclass, field
 
 _CUT_BEFORE = re.compile(
     r"^(?:CpSolverResponse summary:|LRAT_status:|Starting (?:search|Search|deterministic search|"
-    r"sequential search|presolve|CP-SAT solver)|Presolve summary:|"
+    r"sequential search|presolve|CP-SAT solver)|Presolve summary:|Task timing|"
     r"(?:Initial|Presolved) \w+ model )"
 )
 _CUT_AFTER = re.compile(r"^Problem closed by presolve\.$")

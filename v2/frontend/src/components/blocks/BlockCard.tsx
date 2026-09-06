@@ -1,4 +1,5 @@
 /** Dispatches a block reference (JSON pointer into the log) to its renderer. */
+import { isUnparsed } from '../../state/selection'
 import type { BlockRef, CpSatLog, Explanations } from '../../types'
 import { ModelBlock } from './ModelBlock'
 import { PresolveBlock, PresolveSummaryBlock } from './PresolveBlock'
@@ -21,6 +22,9 @@ export function BlockCard({ blockRef, log, explanations }: { blockRef: BlockRef;
   const data = resolve(log, blockRef.path)
   if (data === undefined || data === null) return null
   const common = { blockRef, explanations }
+  // A block kept verbatim (duplicate section, unknown text) must be shown as raw
+  // lines even when its kind says 'solver' or 'response'.
+  if (isUnparsed(blockRef)) return <TextBlock {...common} data={data as never} />
   switch (blockRef.kind) {
     case 'solver':
       return <SolverBlock {...common} data={log.solver!} />

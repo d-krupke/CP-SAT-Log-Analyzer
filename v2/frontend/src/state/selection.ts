@@ -37,6 +37,19 @@ export function blockForLine(log: CpSatLog, line: number | null): BlockRef | nul
   return null
 }
 
+/**
+ * Colour class for an indexed block. Unrecognised text wins over the original
+ * kind: a duplicated header keeps `kind: 'solver'` but must not look parsed.
+ */
+export function blockClass(ref: BlockRef): string {
+  return isUnparsed(ref) ? 'k-unparsed' : kindClass(ref.kind)
+}
+
+/** Did the parser keep this block verbatim because it could not use it? */
+export function isUnparsed(ref: BlockRef): boolean {
+  return ref.path.startsWith('/unparsed/')
+}
+
 /** Colour class per block kind, shared by the log gutter and the cards. */
 export function kindClass(kind: string): string {
   switch (kind) {
@@ -59,6 +72,8 @@ export function kindClass(kind: string): string {
       return 'k-comment'
     case 'message':
       return 'k-message'
+    case 'unparsed':
+      return 'k-unparsed'
     default:
       return 'k-unknown'
   }

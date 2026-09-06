@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from cpsatlog import parse_log
 from cpsatlog.parsers.events import parse_event
 from cpsatlog.parsers.parameters import parse_parameters
 from cpsatlog.splitter import split_into_chunks, split_lines
@@ -75,6 +76,26 @@ def test_splitter_forced_cuts() -> None:
     ]
     assert (chunks[0].start, chunks[0].end) == (1, 3)
     assert (chunks[1].start, chunks[1].end) == (4, 5)
+
+
+def test_task_timing_glued_to_the_search_block_is_cut_off() -> None:
+    """CP-SAT prints the Task timing table without a blank line before it in some runs.
+
+    Without the forced cut the whole table ends up inside the search block as unstructured
+    lines: 62 of the 295 benchmark logs lost their Task timing table that way.
+    """
+    text = (
+        "#1       0.01s best:12   next:[8,11]  default_lp\n"
+        "Task timing                    n [     min,      max]      avg\n"
+        "          'core':              1 [  4.90ms,   4.90ms]   4.90ms\n"
+    )
+    chunks = split_into_chunks(split_lines(text))
+    assert [c.first.split()[0] for c in chunks] == ["#1", "Task"]
+
+    log = parse_log(text)
+    assert log.stats.task_timing is not None
+    assert log.search is not None
+    assert [e.kind for e in log.search.events] == ["solution"]
 
 
 def test_parse_domain_shapes() -> None:

@@ -116,3 +116,45 @@ shrink_factor = 0.5          # presolved variables < factor * initial variables
 level = 'good'
 title = 'Presolve shrank the model'
 text = 'Presolve reduced the model from {initial:,} to {presolved:,} variables.'
+
+# --- Quality of the log itself -----------------------------------------------
+# These four rules are about the input rather than the solve. They are evaluated
+# first so they appear at the top of the Overview: everything below them is
+# derived from a log that is incomplete, cut off or partly unrecognised.
+
+[not_a_cpsat_log]
+level = 'bad'
+title = 'This does not look like a CP-SAT log'
+text = '''
+Nothing that CP-SAT prints was found in this text - no solver header, no model, no search and
+no response summary. Two common causes: the output of a different tool was pasted, or
+`log_search_progress` was not enabled, in which case CP-SAT prints almost nothing. Set
+`solver.parameters.log_search_progress = True` (and keep the default `log_to_stdout`) and run
+again.'''
+
+[log_truncated]           # fields: last_line
+level = 'warn'
+title = 'Log ends before the response summary'
+text = '''
+The log stops at line {last_line} without a `CpSolverResponse summary`, so the run was killed,
+is still going, or the output was cut off. Status, objective, bound and wall time are unknown;
+everything shown here is what the log contains up to that line.'''
+
+[head_missing]
+level = 'warn'
+title = 'Beginning of the log is missing'
+text = '''
+The log starts after the solver header, so the OR-Tools version, the parameters you set and
+the initial model are unknown, and the checks that depend on them are skipped. Paste the log
+from the first `Starting CP-SAT solver` line on to get the full analysis.'''
+
+[unrecognised_lines]      # fields: count, places, first_line
+min_lines = 1                # any unrecognised line is worth reporting: healthy logs have none
+level = 'warn'
+title = 'Parts of the log were not recognised'
+text = '''
+{count} line(s) in {places} place(s) could not be assigned to any known section, starting at
+line {first_line}; they are marked in the log on the right. Usually this is your own output
+mixed into the log, a line-prefix added by a logging framework, or lines clipped by a
+terminal. If it is plain CP-SAT output, the parser is missing a section - please report the
+log.'''

@@ -28,7 +28,10 @@ export function AnalysisPanel({ result, explanations }: { result: ParseResult; e
           <ProgressPlot progress={analysis.progress} />
         </Card>
       )}
-      <ParametersCard params={analysis.parameters} solver={log.solver} explanations={explanations} />
+      {/* Without a solver header there is no `Parameters:` line, so "no overrides" would be a lie. */}
+      {log.solver && (
+        <ParametersCard params={analysis.parameters} solver={log.solver} explanations={explanations} />
+      )}
       {log.warnings.length > 0 && (
         <Card kind="message" title="Parser warnings" path="/warnings">
           <ul>

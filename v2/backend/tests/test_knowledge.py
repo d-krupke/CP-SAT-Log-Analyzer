@@ -28,6 +28,11 @@ INSIGHT_FIELDS: dict[str, set[str]] = {
     "presolve_expanded": {"initial", "presolved"},
     "objective_removed_by_presolve": {"terms"},
     "presolve_shrank": {"initial", "presolved"},
+    # Quality of the log itself rather than of the solve.
+    "not_a_cpsat_log": set(),
+    "log_truncated": {"last_line"},
+    "head_missing": set(),
+    "unrecognised_lines": {"count", "places", "first_line"},
 }
 
 

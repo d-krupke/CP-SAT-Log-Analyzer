@@ -26,7 +26,11 @@ raw log next to the analysis with both directions clickable.
 
 Sections are parsed by `BlockParser` subclasses in `src/cpsatlog/parsers/` (header, model,
 presolve, events, tables, response, ...); a chunk no parser claims lands in `log.unparsed`
-instead of being dropped, so a new log format is visible rather than silently mangled.
+instead of being dropped, so a new log format is visible rather than silently mangled. The
+same holds for input that is broken rather than new: a truncated, clipped, prefixed or
+entirely foreign text parses without raising, keeps its line anchoring, and whatever could not
+be used stays in `log.unparsed` with its text. A section that appears twice (two runs in one
+file) is reported in `log.warnings` and the copy is kept there too.
 
 ## `v2/backend` - analysis and explanations
 
@@ -37,7 +41,7 @@ FastAPI with six endpoints - `parse`, `examples`, `examples/{name}`, `explanatio
 | --- | --- |
 | `analysis.py` | `analyze(log)` -> metrics, progress series, subsolver contributions, insights |
 | `metrics.py` | the Overview tiles (version, workers, gap, presolve share, solutions, bound events) and when each turns yellow or red |
-| `insights.py` | the 13 rules that produce the coloured boxes; each rule reads its threshold, level, title and text from `insights.toml` |
+| `insights.py` | the 17 rules that produce the coloured boxes; each rule reads its threshold, level, title and text from `insights.toml`. Four of them are about the log rather than the solve (not a CP-SAT log, ends before the response, head missing, unrecognised lines) and are evaluated first |
 | `explanations.py` | look-ups into the knowledge base for blocks, tables, columns, response fields, subsolvers, constraints, messages |
 | `parameters.py` | documentation for an overridden parameter: generated proto docs plus curated advice and warnings |
 | `examples.py` | the bundled example logs offered on the landing page |
@@ -63,7 +67,9 @@ React + Vite + Plotly. `AnalysisPanel` (Overview tiles, insights, progress plot,
 subsolvers, one card per log block) on the left, `LogView` with the raw log on the right, a
 `Splitter` between them, and a line index that links the two. Block cards are specialised per
 section (`blocks/ModelBlock`, `PresolveBlock`, `SearchBlock`, `ResponseBlock`, `TableBlock`,
-...); `Md.tsx` renders the Markdown that comes from the knowledge base.
+...); `Md.tsx` renders the Markdown that comes from the knowledge base. Lines the parser could
+not use are marked in both panes (`k-unparsed`: dashed border, tinted background), so a broken
+log is recognisable as such at a glance instead of looking like a complete analysis.
 
 ## Test data
 

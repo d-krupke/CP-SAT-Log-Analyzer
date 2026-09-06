@@ -43,6 +43,7 @@ def _insight(key: str, lines: list[int], **fields: Any) -> Insight:
 
 def build_insights(log: CpSatLog, progress: ProgressSeries) -> list[Insight]:
     out: list[Insight] = []
+    _insight_log_quality(log, out)
     response = log.response
     status = response.status.value if response and response.status else None
     status_lines = [response.status.line] if response and response.status else []
@@ -62,6 +63,37 @@ def build_insights(log: CpSatLog, progress: ProgressSeries) -> list[Insight]:
     _insight_model_growth(log, out)
     _insight_objective_removed(log, out)
     return out
+
+
+def _insight_log_quality(log: CpSatLog, out: list[Insight]) -> None:
+    """State what is wrong with the log itself before interpreting its numbers.
+
+    Users paste logs that were killed mid-run, cut off at the top, mixed with their own
+    prints, or are not CP-SAT logs at all. Everything derived from such a log is partial, so
+    it must be said first; the unrecognised lines are also highlighted in the raw log view.
+    """
+    looks_like_cpsat = bool(log.solver or log.initial_model or log.response or log.search)
+    unparsed_lines = sum(len(block.lines) for block in log.unparsed)
+    if not looks_like_cpsat:
+        if unparsed_lines:
+            out.append(_insight("not_a_cpsat_log", [log.unparsed[0].span.start]))
+        return
+    if log.response is None:
+        last = log.blocks[-1].span.end if log.blocks else log.num_lines
+        out.append(_insight("log_truncated", [last], last_line=last))
+    if log.solver is None:
+        first = log.blocks[0].span.start if log.blocks else 1
+        out.append(_insight("head_missing", [first]))
+    if unparsed_lines >= _rule("unrecognised_lines")["min_lines"]:
+        out.append(
+            _insight(
+                "unrecognised_lines",
+                [block.span.start for block in log.unparsed[:3]],
+                count=unparsed_lines,
+                places=len(log.unparsed),
+                first_line=log.unparsed[0].span.start,
+            )
+        )
 
 
 def _insight_stalls(
