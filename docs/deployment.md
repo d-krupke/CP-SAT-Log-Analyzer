@@ -41,7 +41,7 @@ The backend reads these environment variables; the images set `KNOWLEDGE_DIR` an
 | `KNOWLEDGE_DIR` | `/src/v2/knowledge` in the image | The TOML knowledge base. Point it at a bind mount to edit texts on a running deployment. |
 | `EXAMPLE_LOGS_DIR` | `/example_logs` in the image | The example logs offered on the landing page. |
 | `ISSUE_URL` | this repository's issue tracker | Where the *Report issue* link in the top bar points. |
-| `IMPRINT_URL` / `IMPRINT_FILE`, `PRIVACY_URL` / `PRIVACY_FILE` | unset | The operator's legal pages - see [below](#legal-pages-imprint-and-privacy). |
+| `IMPRINT_URL` / `IMPRINT_FILE`, `PRIVACY_URL` / `PRIVACY_FILE` | unset | The operator's legal pages, linked in the lower right corner - see [below](#legal-pages-imprint-and-privacy). |
 | `IMPRINT_LABEL`, `PRIVACY_LABEL` | `Impressum`, `Privacy` | Link texts of those two. |
 
 Two limits are **not** environment variables:
@@ -61,9 +61,14 @@ its own body-size limit (nginx defaults to 1 MB, which is far too small for CP-S
 
 Operating a public website in Germany and most of the EU requires an imprint (Impressum,
 § 5 DDG) and a privacy statement. Those describe **you as the operator**, not this project, so
-the app ships without them: with nothing configured the top bar shows only *Report issue*, and
-no page claims an imprint that does not exist. Configure them per deployment, in the `.env`
-next to `v2/docker-compose.yml` (`cp .env.example .env`).
+the app ships without them: with nothing configured the corner stays empty and no page claims
+an imprint that does not exist. Configure them per deployment, in the `.env` next to
+`v2/docker-compose.yml` (`cp .env.example .env`).
+
+Configured pages appear as small links pinned to the lower right corner of the window, next to
+the log, so that they are always reachable without competing with the analysis. *Report issue*
+is separate: it sits in the top bar and is always shown, pointing at this repository's issue
+tracker unless `ISSUE_URL` says otherwise.
 
 Two ways, per page:
 
@@ -92,6 +97,27 @@ curl -s http://localhost:8080/api/site           # what the frontend actually re
 What the analyzer itself does with personal data is short and worth stating in that privacy
 text: a submitted log is parsed in memory, never written to disk and never logged, and the
 service sets no cookies and stores nothing in the browser except the chosen theme.
+
+A mounted `v2/legal/imprint.md` is plain Markdown (headings, lists and links render); the
+directory is git-ignored, because its contents are yours and not part of this repository. A
+German imprint typically needs at least this - check your own case, this is not legal advice:
+
+```markdown
+## Impressum
+
+Angaben gemäß § 5 DDG
+
+Name / Firma
+Straße und Hausnummer
+PLZ Ort
+
+**Kontakt**
+E-Mail: ...
+Telefon: ...
+
+**Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV**
+Name, Anschrift wie oben
+```
 
 ## Topologies
 

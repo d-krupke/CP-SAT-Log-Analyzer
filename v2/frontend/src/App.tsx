@@ -8,7 +8,7 @@ import { loadExplanations, loadSite, parseLog, readExample } from './api'
 import { AnalysisPanel } from './components/AnalysisPanel'
 import { Landing } from './components/Landing'
 import { LogView } from './components/LogView'
-import { SiteLinks } from './components/SiteLinks'
+import { IssueLink, LegalLinks } from './components/SiteLinks'
 import { Splitter } from './components/Splitter'
 import { blockForLine, SelectionContext, type Selection, type Source } from './state/selection'
 import type { Explanations, ParseResult, SiteConfig } from './types'
@@ -126,7 +126,7 @@ export default function App() {
           <a href="https://d-krupke.github.io/cpsat-primer/" target="_blank" rel="noreferrer">
             CP-SAT Primer
           </a>
-          <SiteLinks site={site} />
+          <IssueLink site={site} />
           <button onClick={toggleTheme} title="Toggle dark/light theme">
             {theme === 'dark' ? '☀︎' : '☾'}
           </button>
@@ -144,6 +144,7 @@ export default function App() {
         ) : (
           <Landing onAnalyze={analyze} onExample={loadExample} busy={busy} initialText={text} />
         )}
+        <LegalLinks site={site} />
       </div>
     </SelectionContext.Provider>
   )

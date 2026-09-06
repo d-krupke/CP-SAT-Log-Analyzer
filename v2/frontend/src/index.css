@@ -141,6 +141,46 @@ select {
   color: var(--muted);
   font-size: 13px;
 }
+/* Outgoing links as quiet pills; the trailing arrow marks them as leaving the
+   app. "Report issue" is the one we actively want people to use, so it carries
+   the accent instead of the neutral border. */
+.topbar a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 11px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--panel-2);
+  color: var(--muted);
+  font-size: 12.5px;
+  font-weight: 500;
+  text-decoration: none;
+  transition:
+    color 0.12s,
+    border-color 0.12s,
+    background 0.12s;
+}
+.topbar a::after {
+  content: '↗';
+  font-size: 10px;
+  opacity: 0.5;
+}
+.topbar a:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.topbar a.issue {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.topbar a.issue:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
 .error {
   color: var(--bad);
   background: var(--bad-soft);
@@ -821,6 +861,38 @@ button.link {
 }
 
 /* ---- deployment chrome: legal links and their dialog (components/SiteLinks) ---- */
+/* Bottom right corner, deliberately quiet: required on every page, but not part
+   of reading a log. Full opacity on hover so they are still easy to hit. */
+.sitelinks {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 3px 9px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-right: 0;
+  border-bottom: 0;
+  border-radius: 6px 0 0 0;
+  opacity: 0.6;
+}
+.sitelinks:hover {
+  opacity: 1;
+}
+.sitelinks a,
+.sitelinks button.linky {
+  font-size: 11px;
+  color: var(--muted);
+  text-decoration: none;
+}
+.sitelinks a:hover,
+.sitelinks button.linky:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
 button.linky {
   background: none;
   border: none;
