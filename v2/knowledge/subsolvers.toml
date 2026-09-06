@@ -24,6 +24,18 @@ helper = 'Bookkeeping task, not a search.'
 
 # ---------------------------------------------------------------- exact workers
 
+[subsolvers.main]
+role = 'exact'
+summary = 'The single worker of a sequential run: your parameters, no portfolio.'
+details = '''
+With `num_workers = 1` (and no `interleave_search`, `subsolvers` or `use_lns_only`) CP-SAT
+runs exactly one full-problem worker called `main`, configured with your parameters as given.
+None of the named strategies, LNS workers or first-solution heuristics exist, so the
+`Solutions`/`Objective bounds` tables have a single row and parameters such as
+`search_branching` or `linearization_level` take effect here directly. A log whose only
+worker is `main` is a sequential run: comparing it with a parallel one shows what the
+portfolio contributes.'''
+
 [subsolvers.default_lp]
 role = 'exact'
 summary = 'Balanced default: CP propagation plus a light LP relaxation feeding bounds back.'

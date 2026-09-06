@@ -35,6 +35,11 @@ time, model size). Existing logs are skipped, so every command is resumable;
 apart (`--param linearization_level=0 --tag nolp`). `--max-instances N` picks N
 instances spread over the file sizes, not the N smallest.
 
+On a loaded machine run the batches one problem at a time in the foreground:
+`collect_all.sh` in the background was twice killed by the system's low-memory
+guard while the machine sat in ~21 GB of swap, even though the solves themselves
+stayed small. Every command is resumable, so a killed run loses nothing.
+
 ## Diversity of the corpus
 
 - 20 problem classes: scheduling (job shop, flexible job shop, RCPSP), packing

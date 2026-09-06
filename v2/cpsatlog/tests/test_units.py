@@ -97,3 +97,27 @@ def test_parse_domain_shapes() -> None:
     assert d["kind"] == "summary" and d["intervals"] == 3 and d["hi"] == 12864
     d = parse_domain("affine relations were detected.")
     assert d["kind"] == "other" and d["size"] is None
+
+
+def test_model_line_component_sizes() -> None:
+    """`compo:` on a #Model line lists connected-component sizes, not a worker name.
+
+    Found in the benchmark corpus: the sizes were read as a subsolver called `compo`, which
+    then showed up as an undocumented worker in the analysis.
+    """
+    ev = parse_event("#Model   0.01s var:485/485 constraints:263/263 compo:375,35,33,22,20", 7)
+    assert ev is not None
+    assert ev.kind == "model"
+    assert ev.model_components == [375, 35, 33, 22, 20]
+    assert not ev.model_components_truncated
+    assert ev.subsolver is None
+
+
+def test_model_line_truncated_component_sizes() -> None:
+    """With more than ten components CP-SAT appends `,...`; the flag records that."""
+    ev = parse_event(
+        "#Model   0.2s var:9/9 constraints:4/4 compo:9,8,7,6,5,4,3,2,1,1,...", 8
+    )
+    assert ev is not None
+    assert len(ev.model_components) == 10
+    assert ev.model_components_truncated

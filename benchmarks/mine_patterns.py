@@ -71,7 +71,9 @@ def main() -> int:
         if log.response and log.response.status:
             statuses[log.response.status.value] += 1
         for block in log.messages:
-            messages[re.sub(r"\d+(\.\d+)?", "N", block.text.splitlines()[0])[:70]] += 1
+            first = block.lines[0].value if block.lines else ""
+            generic = re.sub(r"\d+(\.\d+)?", "N", first)[:60]
+            messages[f"{block.message_kind}: {generic}"] += 1
 
     print(f"mined {len(files)} logs\n")
     keys = set(subsolvers)
@@ -79,7 +81,7 @@ def main() -> int:
     _report("constraint kinds seen", kinds, set(constraints))
     _report("statistics tables seen", table_names, known_tables)
     print("\nstatuses:", ", ".join(f"{k}={v}" for k, v in statuses.most_common()))
-    print("\nmost common messages:")
+    print("\nmost common messages (kind: text with numbers masked):")
     for text, count in messages.most_common(15):
         print(f"  {count:5d}x {text}")
     return 0

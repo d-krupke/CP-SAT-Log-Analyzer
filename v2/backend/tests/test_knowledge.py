@@ -90,6 +90,7 @@ def test_labels_from_the_benchmark_corpus_are_documented() -> None:
     names. Each must reach a doc, otherwise the subsolver table shows a bare name.
     """
     for name in (
+        "main",
         "bool_core",
         "bool_max_hs",
         "am1_presolve",

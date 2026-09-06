@@ -6,11 +6,14 @@ Formats (from ``cp_model_solver_logging.cc`` / ``synchronization.cc``):
 * ``#Bound   1.30s best:inf   next:[8,14]     max_lp initial_propagation``
 * ``#Bound   0.66s best:inf   next:[]         objective_lb_search`` (empty when lb > ub)
 * ``#Model   0.26s var:125/126 constraints:162/162 [skipped_logs=5]``
+* ``#Model   0.01s var:485/485 constraints:263/263 compo:375,35,33,22,20``
 * ``#Done    2.98s objective_lb_search_no_lp``
 * ``#1       0.05s no_lp`` (satisfaction problems: no objective)
 
 The subsolver name is the leading ``[A-Za-z0-9_]`` run of the message, exactly
-as CP-SAT itself extracts it for the ``Solutions`` table.
+as CP-SAT itself extracts it for the ``Solutions`` table. ``#Model`` lines carry no
+worker name, so nothing is extracted from them (``compo:`` used to be read as a
+worker called ``compo``).
 """
 
 from __future__ import annotations
@@ -29,6 +32,7 @@ _MODEL = re.compile(
     r"^var:(?P<v>\d+)/(?P<vt>\d+)\s+constraints:(?P<c>\d+)/(?P<ct>\d+)\s*(?P<rest>.*)$"
 )
 _SKIPPED = re.compile(r"\[skipped_logs=(?P<n>\d+)\]")
+_COMPO = re.compile(r"compo:(?P<sizes>\d+(?:,\d+)*)(?P<trunc>,\.\.\.)?")
 _TAG = re.compile(r"\[(?P<tag>[a-z_]+)\]")
 _SUBSOLVER = re.compile(r"^(?P<name>[A-Za-z0-9_]+)")
 
@@ -64,13 +68,17 @@ def parse_event(line: str, line_no: int) -> SearchEvent | None:
         event.model_constraints = parse_int(mm.group("c"))
         event.model_constraints_total = parse_int(mm.group("ct"))
         rest = mm.group("rest").strip()
+        if compo := _COMPO.search(rest):
+            event.model_components = [int(n) for n in compo.group("sizes").split(",")]
+            event.model_components_truncated = compo.group("trunc") is not None
+            rest = _COMPO.sub("", rest).strip()
 
     if s := _SKIPPED.search(rest):
         event.skipped_logs = int(s.group("n"))
         rest = _SKIPPED.sub("", rest).strip()
     event.tags = [t.group("tag") for t in _TAG.finditer(rest)]
     event.message = rest
-    if sub := _SUBSOLVER.match(rest):
+    if event.kind != "model" and (sub := _SUBSOLVER.match(rest)):
         event.subsolver = sub.group("name")
     return event
 

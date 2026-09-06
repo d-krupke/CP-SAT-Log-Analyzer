@@ -63,6 +63,13 @@ class SearchEvent(BaseModel):
     model_vars_total: int | None = None
     model_constraints: int | None = None
     model_constraints_total: int | None = None
+    model_components: list[int] = Field(
+        default_factory=list,
+        description="'compo:' on a #Model line: sizes of the connected components, descending",
+    )
+    model_components_truncated: bool = Field(
+        default=False, description="True when CP-SAT printed only the 10 largest components"
+    )
 
     def bound(self, sense: ObjectiveSense | None) -> float | None:
         """The proven bound implied by ``next:[lb,ub]`` for the given objective sense."""
