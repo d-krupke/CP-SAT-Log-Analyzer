@@ -48,6 +48,23 @@ test.describe('narrow screen', () => {
     expect(sizes).toEqual(['12px'])
   })
 
+  test('the landing page scrolls', async ({ page }) => {
+    // The paste box, the buttons and the example list are taller than a phone,
+    // and unlike the two panes they scroll the page itself: anything that clips
+    // the app shell here makes the examples unreachable.
+    await page.goto('/')
+    await expect(page.getByRole('heading', { name: 'Or explore an example' })).toBeVisible()
+    await page.waitForTimeout(200)
+    const room = await page.evaluate(() => {
+      const el = document.scrollingElement!
+      return el.scrollHeight - el.clientHeight
+    })
+    expect(room).toBeGreaterThan(50)
+    await page.evaluate(() => window.scrollBy(0, 400))
+    await page.waitForTimeout(200)
+    expect(await page.evaluate(() => document.scrollingElement!.scrollTop)).toBeGreaterThan(50)
+  })
+
   test('the panes stack and the divider drags vertically', async ({ page }) => {
     await analyze(page)
     const box = await page.locator('.splitter').boundingBox()

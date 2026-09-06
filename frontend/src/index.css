@@ -975,10 +975,9 @@ button.linky:hover {
      it is too much to keep pinned here, so it slides away while you scroll down a
      pane and comes back on the way up (useHideOnScroll sets .bar-hidden and the
      --bar-h it moves by; on the desktop layout the class has no rule and the bar
-     stays). */
-  .app {
-    overflow: hidden;
-  }
+     stays). The negative margin lifts it past the top of the viewport, which is
+     what hides it - do not clip .app to do that job: the landing page is taller
+     than a phone and scrolls the page itself, so a clipped shell strands it. */
   .topbar {
     gap: 6px 8px;
     padding: 6px 10px;
