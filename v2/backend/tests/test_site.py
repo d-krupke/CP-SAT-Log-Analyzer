@@ -67,7 +67,7 @@ def test_a_markdown_file_is_served_as_page_content(
     monkeypatch.setenv("IMPRINT_FILE", str(page))
     assert site_config().pages[0].markdown == "# Impressum\n\nAngaben gemäß § 5 DDG."
     page.write_text("# Impressum\n\nNeue Anschrift.\n")
-    assert site_config().pages[0].markdown.endswith("Neue Anschrift.")
+    assert site_config().pages[0].markdown == "# Impressum\n\nNeue Anschrift."
 
 
 def test_a_url_wins_over_a_file(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
