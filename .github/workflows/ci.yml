@@ -32,6 +32,15 @@ jobs:
       - run: uv run ruff format --check .
       - run: uv run ty check .
       - run: uv run pytest -q
+      # The lock file resolves to the newest pydantic, so a wrong lower bound in
+      # pyproject.toml stays invisible until a user pins an older one. Run the
+      # suite against the floor we advertise as well. test_latest_version.py is
+      # excluded because it asserts the *newest* OR-Tools, which is the opposite
+      # question.
+      - name: Tests against the oldest supported dependencies
+        run: |
+          uv run --isolated --resolution lowest-direct --group dev \
+            pytest -q --ignore=tests/test_latest_version.py
 
   backend:
     name: backend

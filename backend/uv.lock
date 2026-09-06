@@ -67,6 +67,7 @@ source = { editable = "." }
 dependencies = [
     { name = "cpsatlog" },
     { name = "fastapi" },
+    { name = "pydantic" },
     { name = "uvicorn", extra = ["standard"] },
 ]
 
@@ -82,6 +83,7 @@ dev = [
 requires-dist = [
     { name = "cpsatlog", editable = "../cpsatlog" },
     { name = "fastapi", specifier = ">=0.115" },
+    { name = "pydantic", specifier = ">=2.10" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.30" },
 ]
 
@@ -102,14 +104,14 @@ dependencies = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "pydantic", specifier = ">=2.7" }]
+requires-dist = [{ name = "pydantic", specifier = ">=2.10" }]
 
 [package.metadata.requires-dev]
 dev = [
     { name = "ortools", specifier = ">=9.10" },
     { name = "pytest", specifier = ">=8" },
     { name = "ruff", specifier = ">=0.6" },
-    { name = "ty" },
+    { name = "ty", specifier = ">=0.0.78" },
 ]
 
 [[package]]

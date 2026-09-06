@@ -7,13 +7,24 @@ requires-python = ">=3.12"
 license = { text = "MIT" }
 authors = [{ name = "Dominik Krupke" }]
 keywords = ["cp-sat", "or-tools", "log", "parser", "pydantic"]
-dependencies = ["pydantic>=2.7"]
+# Only pydantic, and 2.10 is a hard floor: the schema declares its generics with
+# PEP 695 syntax (`class Loc[T](BaseModel)`), and pydantic accepts a `Loc[str]`
+# instance where a `Loc[str]` is expected only from 2.10 on. Older versions parse
+# simple logs but raise ValidationError as soon as a model holds `list[Loc[str]]`.
+dependencies = ["pydantic>=2.10"]
+
+[project.urls]
+Homepage = "https://github.com/d-krupke/CP-SAT-Log-Analyzer"
+Repository = "https://github.com/d-krupke/CP-SAT-Log-Analyzer"
+Issues = "https://github.com/d-krupke/CP-SAT-Log-Analyzer/issues"
 
 [dependency-groups]
 dev = [
     "pytest>=8",
     "ruff>=0.6",
-    "ty",
+    # Floors, not just names: `--resolution lowest-direct` (see ci.yml) would
+    # otherwise reach for the first release ever published of an unpinned tool.
+    "ty>=0.0.78",
     "ortools>=9.10",
 ]
 

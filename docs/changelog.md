@@ -7,6 +7,14 @@ Notable changes, newest first. Dates are the day the work landed on `main`.
 (Entries before the flatten name paths under the `v2/` directory the rewrite grew up in;
 drop that prefix to find the file today.)
 
+* **2026-09-06** - `cpsatlog` declared `pydantic>=2.7` but needs **2.10**: its schema uses PEP
+  695 generics (`class Loc[T](BaseModel)`), and before 2.10 pydantic does not accept a `Loc[str]`
+  instance where a `Loc[str]` is declared - 159 of the 921 parser tests fail on 2.9. The lock
+  file always resolved to the newest pydantic, which is why nobody saw it, so CI now also runs
+  the parser suite with `--resolution lowest-direct` against the floor we advertise. The backend
+  imports pydantic in nine modules and had never declared it either (it came in through
+  fastapi); it does now, with the same floor.
+
 * **2026-09-06** - Public instance at <https://cpsat-loganalyzer.krupke-algorithms.de/>, which
   is what the README now points at first; `docs/deployment.md` describes it as the reference
   deployment. The browser tab said "frontend" - the title Vite scaffolds - and now says

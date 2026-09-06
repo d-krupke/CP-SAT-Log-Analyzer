@@ -6,6 +6,9 @@ requires-python = ">=3.12"
 dependencies = [
     "cpsatlog",
     "fastapi>=0.115",
+    # Imported directly (request/response models), not just pulled in by fastapi
+    # and cpsatlog. Same floor as cpsatlog, whose models this app passes around.
+    "pydantic>=2.10",
     "uvicorn[standard]>=0.30",
 ]
 
