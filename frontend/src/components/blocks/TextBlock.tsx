@@ -28,4 +28,3 @@ export function TextBlock({ blockRef, data, explanations }: { blockRef: BlockRef
     </Card>
   )
 }
-
