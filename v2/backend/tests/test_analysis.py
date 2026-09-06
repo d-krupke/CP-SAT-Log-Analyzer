@@ -14,6 +14,7 @@ from app.analysis import analyze
 from app.knowledge import load
 
 LNS_TITLE = load("insights")["lns_closed_quickly"]["title"]
+OBJECTIVE_TITLE = load("insights")["objective_removed_by_presolve"]["title"]
 
 
 def test_lns_closed_percentages_fire_the_insight() -> None:
@@ -47,3 +48,54 @@ def test_low_closed_percentages_do_not_fire_the_insight() -> None:
     )
     titles = [i.title for i in analyze(log).insights]
     assert LNS_TITLE not in titles
+
+
+def test_objective_removed_by_presolve_fires() -> None:
+    """A presolved model line without objective terms means presolve fixed the objective.
+
+    From the benchmark corpus (e.g. `binpacking/N1C1W1_A`): the initial line reports
+    `(#ints: 1 in objective)` and the presolved one prints the empty form `( in objective)`.
+    CP-SAT then drops every objective-based worker and all LNS neighbourhoods, which is
+    invisible in the log unless the portfolio is compared against a normal run.
+    """
+    log = parse_log(
+        "Starting CP-SAT solver v9.15.6755\n"
+        "\n"
+        "Initial optimization model '': (model_fingerprint: 0x1)\n"
+        "#Variables: 976 (#ints: 1 in objective) (925 primary variables)\n"
+        "\n"
+        "Presolved optimization model '': (model_fingerprint: 0x2)\n"
+        "#Variables: 278 ( in objective) (254 primary variables)\n"
+    )
+    titles = [i.title for i in analyze(log).insights]
+    assert OBJECTIVE_TITLE in titles
+
+
+def test_objective_kept_by_presolve_stays_quiet() -> None:
+    """The normal case: the presolved model still optimises, so the insight must not fire."""
+    log = parse_log(
+        "Starting CP-SAT solver v9.15.6755\n"
+        "\n"
+        "Initial optimization model '': (model_fingerprint: 0x1)\n"
+        "#Variables: 976 (#ints: 1 in objective) (925 primary variables)\n"
+        "\n"
+        "Presolved optimization model '': (model_fingerprint: 0x2)\n"
+        "#Variables: 278 (#ints: 1 in objective) (254 primary variables)\n"
+    )
+    titles = [i.title for i in analyze(log).insights]
+    assert OBJECTIVE_TITLE not in titles
+
+
+def test_satisfaction_model_does_not_trigger_the_objective_insight() -> None:
+    """A model that never had an objective must not look like one presolve emptied."""
+    log = parse_log(
+        "Starting CP-SAT solver v9.15.6755\n"
+        "\n"
+        "Initial satisfaction model '': (model_fingerprint: 0x1)\n"
+        "#Variables: 256 (256 primary variables)\n"
+        "\n"
+        "Presolved satisfaction model '': (model_fingerprint: 0x2)\n"
+        "#Variables: 150 (150 primary variables)\n"
+    )
+    titles = [i.title for i in analyze(log).insights]
+    assert OBJECTIVE_TITLE not in titles

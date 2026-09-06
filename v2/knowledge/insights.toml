@@ -98,6 +98,19 @@ The presolved model has {presolved:,} variables versus {initial:,} initially. Pr
 expanded high-level constraints (e.g. AllDifferent, element, tables) into Booleans the
 propagators understand; this is normal but shows where the search effort goes.'''
 
+[objective_removed_by_presolve]   # fields: terms
+level = 'info'
+title = 'Presolve fixed the objective'
+text = '''
+The objective had {terms:,} variables in the initial model and none in the presolved one, so
+presolve pinned its value to a constant and the search only had to find a matching solution.
+This also reshapes the portfolio: every worker that works on the objective is gone (`core`,
+`lb_tree_search`, `objective_lb_search`, `objective_shaving*`, `pseudo_costs`) and so is every
+LNS neighbourhood (`*_lns`), because a neighbourhood needs an objective to improve. What runs
+instead are the plain exact workers plus `ls`, `feasibility_pump` and `rins/rens`, and a
+strategy may be repeated (`default_lp(2)`) to fill the worker budget. If such a run ends
+UNKNOWN, the difficulty is pure feasibility, not optimisation.'''
+
 [presolve_shrank]         # fields: initial, presolved
 shrink_factor = 0.5          # presolved variables < factor * initial variables
 level = 'good'

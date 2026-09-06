@@ -60,6 +60,7 @@ def build_insights(log: CpSatLog, progress: ProgressSeries) -> list[Insight]:
     _insight_response_counters(log, out)
     _insight_lns(log, out)
     _insight_model_growth(log, out)
+    _insight_objective_removed(log, out)
     return out
 
 
@@ -156,6 +157,30 @@ def _percent(cell: Any) -> float | None:
         except ValueError:
             return None
     return None
+
+
+def _objective_terms(model: Any) -> int:
+    """Objective variables the model line reports (`(#bools: 80 in objective)`)."""
+    total = 0
+    for field in (model.num_bools_in_objective, model.num_ints_in_objective):
+        if field is not None:
+            total += field.value
+    return total
+
+
+def _insight_objective_removed(log: CpSatLog, out: list[Insight]) -> None:
+    """Presolve pinned the objective to a constant: the presolved line has no objective terms.
+
+    Seen on six benchmark logs (bin packing, 2D bin packing, graph colouring, dominating set).
+    It is worth pointing out because the portfolio silently changes shape: the objective-based
+    workers and every LNS neighbourhood are dropped.
+    """
+    a, b = log.initial_model, log.presolved_model
+    if not (a and b):
+        return
+    terms = _objective_terms(a)
+    if terms and not _objective_terms(b):
+        out.append(_insight("objective_removed_by_presolve", [b.span.start], terms=terms))
 
 
 def _insight_model_growth(log: CpSatLog, out: list[Insight]) -> None:

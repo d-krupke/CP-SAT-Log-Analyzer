@@ -26,6 +26,7 @@ INSIGHT_FIELDS: dict[str, set[str]] = {
     "per_worker_counters": {"response_conflicts", "max_conflicts"},
     "lns_closed_quickly": {"count", "total"},
     "presolve_expanded": {"initial", "presolved"},
+    "objective_removed_by_presolve": {"terms"},
     "presolve_shrank": {"initial", "presolved"},
 }
 

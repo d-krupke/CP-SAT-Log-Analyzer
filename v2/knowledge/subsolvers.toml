@@ -422,9 +422,11 @@ role = 'lns'
 summary = 'Scheduling LNS: frees a random set of intervals (their start/size/end variables).'
 details = '''
 Only created when the model contains NoOverlap or Cumulative constraints *and* the presolved
-model still has an objective: every neighbourhood generator needs an incumbent to improve, so
-satisfaction models get no `*_lns` workers at all (only `feasibility_pump` and `rins/rens`
-remain in the interleaved list). Everything else keeps the incumbent schedule.'''
+model still has objective variables: every neighbourhood generator needs an objective to
+improve. A satisfaction model therefore gets no `*_lns` worker at all, and its interleaved list
+holds only `feasibility_pump` and `rins/rens`. If presolve pinned the objective of an
+optimisation model to a constant, the neighbourhoods go too but `ls` stays, because that worker
+only checks whether an objective was declared. Everything else keeps the incumbent schedule.'''
 
 [subsolvers.scheduling_time_window_lns]
 role = 'lns'

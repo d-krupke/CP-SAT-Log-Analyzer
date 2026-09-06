@@ -117,3 +117,8 @@ Corrected because the logs contradicted the text:
 
 `Setting number of shared tree workers to N` is now parsed into the solver header instead of
 being kept as a free-form line.
+
+The audit also produced one new insight, `objective_removed_by_presolve`: six logs have an
+initial objective and a presolved line printing the empty form `( in objective)`, which silently
+removes the objective-based workers and every LNS neighbourhood from the portfolio. The rule
+fires on exactly those six logs and on none of the other 289.
