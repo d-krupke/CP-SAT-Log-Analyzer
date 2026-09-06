@@ -4,6 +4,13 @@ Notable changes, newest first. Dates are the day the work landed on `main`.
 
 ## v2 stack (`v2/`)
 
+* **2026-09-06** - The insight boxes moved from `knowledge/insights.toml` into code: one
+  small class per box under `v2/backend/app/insights/triggers/`, loaded by import, holding its
+  own threshold, level, title and text next to the check that fires it. A TOML section could
+  only be "a number and a format string" and gave no hint of what else a rule *could* look at;
+  a class gets the whole analysis and writes its own sentence. Dropped *Summary counters are
+  per worker* (documentation rather than an observation about the log - the Response card
+  already says it) and reworded the boxes that drew a conclusion the log does not support.
 * **2026-09-06** - Layout pass on the cards: the parts of a card are headed sections instead of
   nested `<details>` (a card is already collapsible as a whole), a collapsed card shows a
   one-line summary (`52 steps · 0.01 s`, `14 rules`) instead of a bare bar, the presolved model

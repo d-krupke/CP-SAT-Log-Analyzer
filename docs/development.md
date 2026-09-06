@@ -42,11 +42,12 @@ lines, a split is due past ~500).
 | `v2/cpsatlog/tests/test_hints.py` | every wording of the solution-hint lines is classified, and a hint line inside the presolve block is still found |
 | `v2/cpsatlog/tests/test_latest_version.py` | the parser against a log produced by the installed OR-Tools |
 | `v2/backend/tests/test_api.py` | every endpoint, every example through the HTTP layer |
-| `v2/backend/tests/test_analysis.py` | one hand-written log per insight rule |
+| `v2/backend/tests/test_analysis.py` | one hand-written log per insight trigger |
+| `v2/backend/tests/test_insights.py` | the trigger framework: discovery, display order, the invariants of a box, and that a trigger which raises is contained |
 | `v2/backend/tests/test_hints.py` | `build_hint_report`: the verdict per wording, the `complete_hint` evidence, and the vacuous line on a model with no variables |
-| `v2/backend/tests/test_broken.py` | analysis and API on damaged logs, and the four log-quality insights |
+| `v2/backend/tests/test_broken.py` | analysis and API on damaged logs, and the four log-quality triggers |
 | `v2/backend/tests/test_knowledge.py` | the knowledge base itself: required sections, documented labels, regressions on wrong claims |
-| `v2/backend/tests/test_corpus.py` | `analyze()` on all 295 corpus logs: no crash, insight texts render, every worker and parameter documented |
+| `v2/backend/tests/test_corpus.py` | `analyze()` on all 295 corpus logs: no crash, no trigger blows up, every worker and parameter documented |
 
 Write the test with the change - the corpus suites are what catch the mistakes that only real
 logs produce.

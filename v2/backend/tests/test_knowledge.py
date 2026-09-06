@@ -1,62 +1,21 @@
 """The knowledge base (v2/knowledge/*.toml) must load and drive the API texts.
 
 These tests are the safety net for CP-SAT experts editing the TOML files: a typo
-that breaks a file, a missing section or an insight text whose placeholders do
-not match the rule's fields fails here (and in ``python -m app.knowledge``).
+that breaks a file or a missing section fails here (and in
+``python -m app.knowledge``). The insight boxes are not in here - they are
+Python classes, covered by ``test_insights.py``.
 """
 
 from __future__ import annotations
-
-import string
 
 from app import knowledge
 from app.explanations import all_explanations, describe_subsolver
 from app.parameters import describe_parameter
 
-# Fields each insight rule passes to str.format (mirrors insights.py).
-INSIGHT_FIELDS: dict[str, set[str]] = {
-    "solved_by_presolve": set(),
-    "not_proven_optimal": {"gap"},
-    "no_solution": set(),
-    "infeasible": set(),
-    "solutions_stalled": {"last_time", "wall"},
-    "bound_stalled": {"last_time", "wall"},
-    "conflict_heavy": {"worker", "conflicts", "branches"},
-    "feasible_descent": {"worker", "conflicts", "branches"},
-    "per_worker_counters": {"response_conflicts", "max_conflicts"},
-    "lns_closed_quickly": {"count", "total"},
-    "presolve_expanded": {"initial", "presolved"},
-    "objective_removed_by_presolve": {"terms"},
-    "presolve_shrank": {"initial", "presolved"},
-    # The solution hint (hints.py -> insights.py::_insight_hint).
-    "hint_used": set(),
-    "hint_accepted": set(),
-    "hint_infeasible": set(),
-    "hint_incomplete": {"hinted", "active"},
-    "hint_outside_domain": set(),
-    "hint_breaks_assumptions": set(),
-    "hint_ignored": set(),
-    "hint_line_without_a_hint": set(),
-    # Quality of the log itself rather than of the solve.
-    "not_a_cpsat_log": set(),
-    "log_truncated": {"last_line"},
-    "head_missing": set(),
-    "unrecognised_lines": {"count", "places", "first_line"},
-}
-
 
 def test_all_files_validate() -> None:
     """Every TOML file parses and has its required sections (what the CLI check does)."""
     assert knowledge.validate() == []
-
-
-def test_insight_texts_use_known_fields() -> None:
-    """A placeholder in insights.toml that the rule does not provide would crash at runtime."""
-    rules = knowledge.load("insights")
-    assert set(rules) == set(INSIGHT_FIELDS), "insights.py and insights.toml disagree on rules"
-    for key, rule in rules.items():
-        used = {f for _, f, _, _ in string.Formatter().parse(rule["text"]) if f}
-        assert used <= INSIGHT_FIELDS[key], f"{key}: unknown placeholders {used}"
 
 
 def test_subsolver_lookup_exact_prefix_pattern() -> None:
@@ -160,7 +119,6 @@ def test_response_counters_are_not_attributed_to_the_first_full_worker() -> None
     fields = knowledge.load("response_fields")["response_fields"]
     texts = [fields[f] for f in ("conflicts", "branches")]
     texts.append(knowledge.load("blocks")["blocks"]["response"])
-    texts.append(knowledge.load("insights")["per_worker_counters"]["text"])
     for text in texts:
         assert "first full worker" not in text, text
     assert "finished first" in texts[0] or "finished first" in texts[-1]

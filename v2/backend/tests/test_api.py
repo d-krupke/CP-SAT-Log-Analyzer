@@ -95,13 +95,6 @@ def test_parse_915_analysis() -> None:
     assert any(s["name"] == "fj_restart" and s["solutions"] >= 1 for s in analysis["subsolvers"])
 
 
-def test_parse_98_07_summary_counter_insight() -> None:
-    """98_07: solution returned by a helper -> summary conflicts far below core's; insight fires."""
-    body = client.post("/api/parse", json={"text": example_text("98_07.txt")}).json()
-    titles = {i["title"] for i in body["analysis"]["insights"]}
-    assert "Summary counters are per worker" in titles
-
-
 def test_explanations_and_parameters() -> None:
     ex = client.get("/api/explanations").json()
     assert "search_stats" in ex["tables"]

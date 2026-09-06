@@ -22,15 +22,14 @@ is and what to look for. Tables and their columns, constraint kinds (`kNoOverlap
 **Points out what matters.** An Overview card scores the run - OR-Tools version, worker count,
 final gap, presolve share of the wall time, solutions and bound improvements, and whether a
 solution hint was given and used - and colors a
-tile when something deserves attention. On top of that, twenty-five insight rules look for
+tile when something deserves attention. On top of that, two dozen insight triggers look for
 specific situations and say what they imply, for example:
 
 * *Not proven optimal* - and whether solutions or bounds stalled first;
 * *Hint used as the first solution* - or why your hint was rejected;
 * *Presolve expanded the model* - a global constraint was unrolled into thousands of Booleans;
 * *Presolve fixed the objective* - the portfolio then loses every objective worker and all LNS;
-* *Summary counters are per worker* - the `conflicts` in the response are one worker's, not the
-  portfolio's total;
+* *Log ends before the response summary* - so everything below it is partial;
 * *LNS neighborhoods closed quickly*, *conflict-heavy search*, *solved by presolve*, ...
 
 **Says what became of your hint.** Whether a solution hint reached the solver, whether it was
@@ -97,7 +96,10 @@ code:
 
 * **Explanations.** All CP-SAT knowledge is plain TOML in
   [`v2/knowledge/`](v2/knowledge/README.md) - texts, parameter advice, subsolver descriptions,
-  insight thresholds. Correcting or sharpening a text needs no Python.
+  table columns. Correcting or sharpening a text needs no Python.
+* **Insights.** A new colored box is one small class in
+  [`v2/backend/app/insights/triggers/`](v2/backend/app/insights/): it gets the parsed log and
+  either stays quiet or writes its sentence. `base.py` shows the shape.
 * **Logs.** A log the parser mishandles, or one that shows an interesting pathology, is a
   useful issue by itself.
 

@@ -1,9 +1,9 @@
 """Tests for the derived analysis (``app.analysis``) that need a hand-written log.
 
 Created 2026-09-06 while mining the local benchmark corpus (``benchmarks/logs``): running the
-analysis over 295 real logs showed that one insight rule could never fire, because it expected
-a number where CP-SAT prints a percentage. Tests here build the smallest log that triggers a
-rule, so a threshold or a cell format can be checked without a full example log.
+analysis over 295 real logs showed that one insight trigger could never fire, because it
+expected a number where CP-SAT prints a percentage. Tests here build the smallest log that
+fires a trigger, so a threshold or a cell format can be checked without a full example log.
 """
 
 from __future__ import annotations
@@ -11,10 +11,11 @@ from __future__ import annotations
 from cpsatlog import parse_log
 
 from app.analysis import analyze
-from app.knowledge import load
+from app.insights.triggers.lns import LnsClosedQuickly
+from app.insights.triggers.presolve import ObjectiveRemovedByPresolve
 
-LNS_TITLE = load("insights")["lns_closed_quickly"]["title"]
-OBJECTIVE_TITLE = load("insights")["objective_removed_by_presolve"]["title"]
+LNS_TITLE = LnsClosedQuickly.title
+OBJECTIVE_TITLE = ObjectiveRemovedByPresolve.title
 
 
 def test_lns_closed_percentages_fire_the_insight() -> None:

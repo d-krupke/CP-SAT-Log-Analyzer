@@ -1,16 +1,17 @@
 """The analysis must survive every log of the committed benchmark corpus (295 real logs).
 
-Created 2026-09-06: the insight rules and the knowledge texts were audited against the
+Created 2026-09-06: the insight triggers and the knowledge texts were audited against the
 local corpus by hand (see ``benchmarks/README.md``); this test keeps that audit alive.
 Its job is coverage, not exact values - the hand-written logs in ``test_analysis.py``
-pin down single rules, while this one makes sure no real log makes ``analyze`` raise,
-leaves an insight text with an unfilled placeholder, or shows a worker the knowledge
-base cannot name.
+pin down single triggers, while this one makes sure no real log makes ``analyze`` raise,
+makes a trigger blow up, or shows a worker the knowledge base cannot name.
 
 Skipped entirely when the archive is not present; see ``v2/corpus/README.md``.
 """
 
 from __future__ import annotations
+
+import logging
 
 import pytest
 from cpsatlog import parse_log
@@ -25,14 +26,17 @@ NAMES = corpus_names()
 
 
 @pytest.mark.parametrize("name", NAMES)
-def test_analysis_runs_and_renders(name: str) -> None:
+def test_analysis_runs_and_renders(name: str, caplog: pytest.LogCaptureFixture) -> None:
     """Every log analyzes, and every insight/metric it produces is presentable.
 
-    An unfilled ``{field}`` in an insight text means the rule and ``insights.toml`` disagree
-    about the available format fields - the kind of mistake that only shows on real logs.
+    ``build_insights`` swallows a trigger that raises so that one bad box cannot take down the
+    whole analysis; the warning it logs instead is turned back into a failure here, because a
+    trigger meeting an unexpected log shape is exactly what real logs are for.
     """
     logs, _ = load_corpus()
-    analysis = analyze(parse_log(logs[name]))
+    with caplog.at_level(logging.WARNING, logger="app.insights.base"):
+        analysis = analyze(parse_log(logs[name]))
+    assert caplog.records == [], (name, [r.getMessage() for r in caplog.records])
     for insight in analysis.insights:
         assert insight.title, name
         assert insight.text.strip(), (name, insight.title)

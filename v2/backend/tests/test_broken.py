@@ -2,9 +2,9 @@
 
 Created 2026-09-06 together with the parser's robustness tests. Two things matter here:
 ``analyze()` must not raise on any of these inputs, and the reader must be *told* what is
-wrong instead of silently getting an analysis of half a log. The four log-quality insights
-(`not_a_cpsat_log`, `log_truncated`, `head_missing`, `unrecognised_lines`) are that signal;
-they are asserted per case below, including that they stay quiet on a healthy log.
+wrong instead of silently getting an analysis of half a log. The four log-quality triggers
+(``app/insights/triggers/log_quality.py``) are that signal; they are asserted per case below,
+including that they stay quiet on a healthy log.
 """
 
 from __future__ import annotations
@@ -16,7 +16,12 @@ from cpsatlog import parse_log
 from fastapi.testclient import TestClient
 
 from app.analysis import analyze
-from app.knowledge import load
+from app.insights.triggers.log_quality import (
+    HeadMissing,
+    LogTruncated,
+    NotACpSatLog,
+    UnrecognizedLines,
+)
 from app.main import app
 
 HEALTHY = (
@@ -25,10 +30,6 @@ HEALTHY = (
 client = TestClient(app)
 
 NOT_A_LOG = "Hello, this is not a log at all.\nJust some text somebody pasted.\n"
-
-
-def title(key: str) -> str:
-    return load("insights")[key]["title"]
 
 
 def truncate(text: str, fraction: float) -> str:
@@ -97,35 +98,35 @@ def titles_of(text: str) -> set[str]:
 
 def test_foreign_text_says_it_is_not_a_cpsat_log() -> None:
     """Pasting the wrong file must produce a clear statement, not an empty analysis."""
-    assert title("not_a_cpsat_log") in titles_of(NOT_A_LOG)
+    assert NotACpSatLog.title in titles_of(NOT_A_LOG)
 
 
 def test_truncated_log_is_reported_as_incomplete() -> None:
     """Without the response summary the numbers below are partial; say so."""
     titles = titles_of(truncate(HEALTHY, 0.5))
-    assert title("log_truncated") in titles
-    assert title("not_a_cpsat_log") not in titles
+    assert LogTruncated.title in titles
+    assert NotACpSatLog.title not in titles
 
 
 def test_missing_head_is_reported() -> None:
     """Only the tail was pasted: version, parameters and the model are unknown."""
     titles = titles_of(drop_head(HEALTHY, 40))
-    assert title("head_missing") in titles
-    assert title("log_truncated") not in titles  # the response is there
+    assert HeadMissing.title in titles
+    assert LogTruncated.title not in titles  # the response is there
 
 
-def test_unrecognised_lines_are_reported_with_their_count() -> None:
+def test_unrecognized_lines_are_reported_with_their_count() -> None:
     """Own prints inside the log are kept, highlighted and counted."""
     log = parse_log(interleave(HEALTHY, 37))
     unparsed = sum(len(block.lines) for block in log.unparsed)
     assert unparsed > 0
-    insight = next(i for i in analyze(log).insights if i.title == title("unrecognised_lines"))
+    insight = next(i for i in analyze(log).insights if i.title == UnrecognizedLines.title)
     assert str(unparsed) in insight.text
     assert insight.lines and insight.lines[0] == log.unparsed[0].span.start
 
 
 def test_a_healthy_log_reports_no_log_problem() -> None:
-    """The four log-quality insights must stay quiet on a complete, fully parsed log."""
+    """The four log-quality triggers must stay quiet on a complete, fully parsed log."""
     titles = titles_of(HEALTHY)
-    for key in ("not_a_cpsat_log", "log_truncated", "head_missing", "unrecognised_lines"):
-        assert title(key) not in titles
+    for trigger in (NotACpSatLog, LogTruncated, HeadMissing, UnrecognizedLines):
+        assert trigger.title not in titles

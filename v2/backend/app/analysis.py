@@ -2,9 +2,9 @@
 
 The parser (``cpsatlog``) only structures the log; the ``app`` modules interpret
 it for the UI. Everything carries the line numbers it was derived from so the
-frontend can highlight the evidence. Overview tiles live in ``metrics.py``,
-insights in ``insights.py``, the solution hint in ``hints.py``; their texts and
-thresholds in ``v2/knowledge/``.
+frontend can highlight the evidence. Overview tiles live in ``metrics.py`` (with
+their texts in ``v2/knowledge/metrics.toml``), the insight boxes in the
+``insights`` package (one class per box), the solution hint in ``hints.py``.
 """
 
 from __future__ import annotations

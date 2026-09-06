@@ -1,9 +1,10 @@
 """Loader for the editable knowledge base in ``v2/knowledge/*.toml``.
 
 Created with the v2 analyzer so that all CP-SAT domain knowledge (explanations,
-parameter advice, insight thresholds and texts, subsolver descriptions, ...)
-lives in plain TOML files that a CP-SAT expert can edit without touching code.
-See ``v2/knowledge/README.md`` for the file map.
+parameter advice, subsolver descriptions, table columns, ...) lives in plain
+TOML files that a CP-SAT expert can edit without touching code. The insight
+boxes are the exception - they are Python classes, see ``app/insights``. See
+``v2/knowledge/README.md`` for the file map.
 
 Usage::
 
@@ -37,7 +38,6 @@ REQUIRED: dict[str, tuple[str, ...]] = {
     "model": ("domain_size",),
     "messages": ("messages",),
     "parameters": ("safe", "unknown", "advice", "warning"),
-    "insights": (),
     "metrics": (),
     "examples": ("examples",),
 }
@@ -78,7 +78,6 @@ def validate() -> list[str]:
             if key not in data:
                 problems.append(f"{path}: missing section [{key}]")
     problems.extend(_validate_subsolvers())
-    problems.extend(_validate_insights())
     problems.extend(_validate_model_indicators())
     return problems
 
@@ -98,21 +97,6 @@ def _validate_subsolvers() -> list[str]:
                 out.append(f"subsolvers.toml: {key} lacks '{field}'")
         if entry.get("role") not in roles:
             out.append(f"subsolvers.toml: {key} has unknown role {entry.get('role')!r}")
-    return out
-
-
-def _validate_insights() -> list[str]:
-    try:
-        data = load("insights")
-    except Exception:  # noqa: BLE001
-        return []
-    out = []
-    for key, rule in data.items():
-        for field in ("level", "title", "text"):
-            if not rule.get(field):
-                out.append(f"insights.toml: [{key}] lacks '{field}'")
-        if rule.get("level") not in {"info", "good", "warn", "bad"}:
-            out.append(f"insights.toml: [{key}] has unknown level {rule.get('level')!r}")
     return out
 
 

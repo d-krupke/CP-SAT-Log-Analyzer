@@ -13,6 +13,7 @@ from cpsatlog import parse_log
 
 from app.analysis import analyze
 from app.hints import build_hint_report
+from app.insights.triggers.hint import HintUsedAsFirstSolution, VacuousHintLine
 from app.knowledge import load
 
 HEADER = "Starting CP-SAT solver v9.15.0\n\n"
@@ -110,8 +111,8 @@ def test_hint_line_without_a_hint_is_not_counted_as_a_hint() -> None:
     assert report.status == "vacuous"
     assert not report.provided
     assert report.has_evidence  # the card still explains the line
-    insight = load("insights")["hint_line_without_a_hint"]["title"]
-    assert insight in [i.title for i in analyze(parse_log(HEADER + _VACUOUS)).insights]
+    titles = [i.title for i in analyze(parse_log(HEADER + _VACUOUS)).insights]
+    assert VacuousHintLine.title in titles
 
 
 _VACUOUS = (
@@ -127,7 +128,7 @@ def test_used_hint_fires_the_good_insight() -> None:
     """The Overview must say it in words, not only in the hint card."""
     log = parse_log(HEADER + "#1       0.03s best:42    next:[13,41]    complete_hint\n")
     titles = [i.title for i in analyze(log).insights]
-    assert load("insights")["hint_used"]["title"] in titles
+    assert HintUsedAsFirstSolution.title in titles
 
 
 def _tile(body: str):  # noqa: ANN202 - Metric, kept short for readability

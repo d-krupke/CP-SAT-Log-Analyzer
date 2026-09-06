@@ -1,10 +1,15 @@
 # Editing the CP-SAT knowledge of the analyzer
 
-Everything the analyzer *says* about a log lives in this directory as plain
-[TOML](https://toml.io) files. You do not need to know Python, TypeScript or
-React to change a text, add a subsolver, tune a threshold or explain a new
+Almost everything the analyzer *says* about a log lives in this directory as
+plain [TOML](https://toml.io) files. You do not need to know Python, TypeScript
+or React to change a text, add a subsolver, tune a threshold or explain a new
 table column. The code only decides *where* a text is shown; the files here
 decide *what* it says.
+
+The exception is the colored insight boxes of the Overview. Those fire on a
+condition rather than on a section of the log, so each one is a small Python
+class in `v2/backend/app/insights/triggers/` that holds its own threshold and
+wording - see "Adding things" below.
 
 ## Which file do I edit?
 
@@ -19,7 +24,6 @@ decide *what* it says.
 | the domain-size levels (Boolean/small/medium/large) and texts of the model cards | `model.toml` | `[domain_size]`, `[[domain_size.level]]` |
 | the explanation of a solver message (`Problem closed by presolve.`, every `hint_*` verdict, ...) | `messages.toml` | `[messages]` |
 | advice for an overridden parameter, which parameters get a warning and the warning text | `parameters.toml` | `[advice]`, `safe`, `[[warning]]` |
-| an insight box in the Overview: its threshold, level, title or text | `insights.toml` | one section per rule |
 | when a tile in the Overview turns yellow/red and its hint | `metrics.toml` | one section per tile |
 | the description of an example log offered on the landing page | `examples.toml` | `[examples]` |
 | the description of a retired example log (`example_logs/archive/`, test material only) | `examples.toml` | `[archived]` |
@@ -45,8 +49,7 @@ sat_parameters.proto") is *not* here: it is generated from OR-Tools into
   ```
 
 - Inside `'''...'''` you cannot use three single quotes; everything else
-  (backslashes, quotes, `{`) is taken literally. Only `insights.toml` uses
-  `{placeholders}`; see the comments there for the fields each rule provides.
+  (backslashes, quotes, braces) is taken literally - there are no placeholders.
 - Keys with unusual characters must be quoted: `"DUAL_F." = '...'`,
   `"Cuts/Call" = '...'`.
 
@@ -64,9 +67,12 @@ sat_parameters.proto") is *not* here: it is generated from OR-Tools into
 - **A new parameter warning**: append a `[[warning]]` rule to
   `parameters.toml`. Rules are checked top to bottom, the first match wins,
   and parameters listed in `safe` never warn.
-- **A new insight rule** needs a few lines of Python in
-  `v2/backend/app/insights.py` (deciding when it fires and which log lines are
-  its evidence) plus a section in `insights.toml` for its texts.
+- **A new insight box** (the colored observations in the Overview) is *not*
+  here: it is a small Python class in `v2/backend/app/insights/triggers/`,
+  because deciding *when* to say something needs more than a threshold. The
+  class holds its own threshold, level, title and text right next to the check;
+  `v2/backend/app/insights/base.py` shows the shape and the house rules for the
+  wording.
 
 ## Checking your edit
 
