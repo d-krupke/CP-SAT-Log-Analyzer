@@ -152,6 +152,9 @@ def _hint_metric(hint: HintReport, cfg: dict) -> Metric:
     value, level = _HINT_TILE[key]
     if hint.status == "incomplete" and hint.hinted is not None and hint.active is not None:
         value += f"\n{hint.hinted:,} of {hint.active:,} vars"
+    elif hint.objective is not None:
+        # What the hint was worth: the number to compare with the final objective.
+        value += f"\nobjective {fmt(hint.objective)}"
     return Metric(
         key="hint",
         label="Hint",

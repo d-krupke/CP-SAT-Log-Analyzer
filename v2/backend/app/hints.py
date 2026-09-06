@@ -76,7 +76,7 @@ class HintReport(BaseModel):
 
 def build_hint_report(log: CpSatLog) -> HintReport:
     notes = sorted(log.hints, key=lambda n: n.line)
-    used_line = _complete_hint_line(log)
+    used_line, used_objective = _complete_hint(log)
     verdicts = [n for n in notes if n.kind in _VERDICTS and not _is_vacuous(log, n)]
     status = _status(notes, verdicts, used_line)
     fixing = _last(notes, "hint_fixed_variables")
@@ -92,6 +92,10 @@ def build_hint_report(log: CpSatLog) -> HintReport:
     feasible = _last(verdicts, "hint_complete_feasible")
     if feasible is not None:
         report.objective = feasible.numbers.get("objective")
+    # Only the pre-presolve line states the objective, and only for an optimization
+    # model; the `complete_hint` solution carries it in every other case.
+    if report.objective is None:
+        report.objective = used_objective
     incomplete = _last(verdicts, "hint_incomplete")
     if incomplete is not None:
         report.hinted = int(incomplete.numbers["hinted"])
@@ -136,19 +140,19 @@ def _after_presolve(log: CpSatLog, line: int) -> bool:
     return model is not None and line >= model.span.start
 
 
-def _complete_hint_line(log: CpSatLog) -> int | None:
-    """Line of the solution CP-SAT took straight from the hint, if there is one.
+def _complete_hint(log: CpSatLog) -> tuple[int | None, float | None]:
+    """Line and objective of the solution CP-SAT took straight from the hint, if there is one.
 
     The hint enters the pool under the worker name ``complete_hint``; it shows up as a ``#1``
-    event and in the final ``Solutions`` table.
+    event (with its objective) and in the final ``Solutions`` table (without one).
     """
     if log.search:
         for event in log.search.events:
             if event.kind == "solution" and event.subsolver == COMPLETE_HINT:
-                return event.line
+                return event.line, event.objective
     table = log.stats.solutions
     if table is not None:
         row = table.row(COMPLETE_HINT)
         if row is not None:
-            return row.line
-    return None
+            return row.line, None
+    return None, None

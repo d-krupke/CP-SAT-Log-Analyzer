@@ -149,7 +149,7 @@ def test_overview_states_that_there_was_no_hint() -> None:
 
 def test_overview_tile_reports_a_used_hint_as_good() -> None:
     tile = _tile("#1       0.03s best:42    next:[13,41]    complete_hint\n")
-    assert (tile.value, tile.level) == ("used", "good")
+    assert (tile.value, tile.level) == ("used\nobjective 42", "good")
     assert tile.line == 3
 
 
@@ -171,3 +171,25 @@ def test_every_hint_outcome_has_a_tile_text() -> None:
 
     texts = load("metrics")["hint"]
     assert set(_HINT_TILE) <= set(texts), set(_HINT_TILE) - set(texts)
+
+
+def test_the_objective_of_a_used_hint_comes_from_its_solution() -> None:
+    """No line states the objective after presolve, but the `complete_hint` event does.
+
+    The number is what makes the tile useful: it is the value to compare with the final
+    objective, i.e. how much of the result the hint already brought along.
+    """
+    report = _report("#1       0.03s best:42    next:[13,41]    complete_hint\n")
+    assert report.objective == 42
+    assert _tile("#1       0.03s best:42    next:[13,41]    complete_hint\n").value == (
+        "used\nobjective 42"
+    )
+
+
+def test_a_stated_hint_objective_wins_over_the_solution_event() -> None:
+    """Both sources agree in practice; the line is the one CP-SAT computed for the hint."""
+    report = _report(
+        "The solution hint is complete and is feasible. Its objective value is 1146.\n"
+        "#1       0.01s best:1146  next:[906,1145]  complete_hint\n"
+    )
+    assert report.objective == 1146
