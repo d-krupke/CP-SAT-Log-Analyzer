@@ -1,133 +1,121 @@
-# CP-SAT-Log-Analyzer
+# CP-SAT Log Analyzer
 
-Dive into the world of constraint programming with ease using our CP-SAT Log
-Analyzer. This tool transforms the dense and detailed logs of CP-SAT into clear,
-readable formats, complemented by intuitive visualizations of key metrics.
-Whether you're tuning your model or exploring data, our analyzer simplifies and
-enlightens your journey with CP-SAT. Let us make complex logs simple and
-actionable!
+CP-SAT's search log is dense, long, and full of information that only makes sense if you know
+the solver's internals. This tool turns it into something you can read: parsed, explained,
+plotted, and annotated with what the numbers actually mean for *your* model.
 
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://cpsat-log-analyzer.streamlit.app/)
 
+Paste a log, upload a file, or click one of the bundled examples. Nothing is stored - your log
+is parsed and thrown away.
+
 _This project is not affiliated with Google._
 
-## Easy Upload
+## What it does
 
-Various ways to quickly upload your log files, and multiple examples to get you
-started. If you have you log file uploaded somewhere, you can also create a link
-to it that you can share with others. There are some simple security measures in
-place to prevent abuse. Please let me know if they are too restrictive.
+The features below describe the current stack in [`v2/`](v2/README.md), which you run with one
+`docker compose up`. The hosted Streamlit link is the earlier implementation: it explains the
+log, plots the progress and renders the tables, but has no insight rules, no parameter review
+and no line-anchored linking.
 
-![Upload](./.assets/log_upload.png)
+**Explains every section of the log.** Solver header, initial and presolved model, presolve
+passes, search events, statistics tables, response summary - each gets a text that says what it
+is and what to look for. Tables and their columns, constraint kinds (`kNoOverlap2D`,
+`kAllDiff`, ...), solver messages and every response field are documented too.
 
-## Overview
+**Points out what matters.** An Overview card scores the run - OR-Tools version, worker count,
+final gap, presolve share of the wall time, solutions and bound improvements - and colours a
+tile when something deserves attention. On top of that, thirteen insight rules look for
+specific situations and say what they imply, for example:
 
-The overview page gives you a quick overview of the most important metrics of
-your log file.
+* *Not proven optimal* - and whether solutions or bounds stalled first;
+* *Presolve expanded the model* - a global constraint was unrolled into thousands of Booleans;
+* *Presolve fixed the objective* - the portfolio then loses every objective worker and all LNS;
+* *Summary counters are per worker* - the `conflicts` in the response are one worker's, not the
+  portfolio's total;
+* *LNS neighbourhoods closed quickly*, *conflict-heavy search*, *solved by presolve*, ...
+
+**Plots the progress.** Incumbent objective and proven bound over time, interactive, and every
+point links back to the log line that produced it.
+
+**Attributes the work.** Which subsolver found the solutions, which raised the bound, and what
+each of the ~20 workers in CP-SAT's portfolio (`default_lp`, `core`, `fs_random_no_lp`,
+`graph_arc_lns`, `shared_tree`, ...) is actually for.
+
+**Reviews your parameters.** Every overridden parameter is shown with its official
+documentation, practical advice, and a warning when it quietly disables part of the portfolio -
+`interleave_search`, `use_lns_only`, `linearization_level`, `FIXED_SEARCH` and friends have
+consequences that the log alone does not spell out.
+
+**Keeps the evidence.** Every parsed value knows the line it came from, so the analysis and the
+raw log sit side by side, linked in both directions - no claim without the line that supports
+it.
+
+**Speaks CP-SAT 9.3 to 9.15**, including the older log formats, and is checked against 295 real
+logs from public instance libraries on every test run.
 
 ![Overview](./.assets/overview.png)
+<sup>The overview of the hosted Streamlit version.</sup>
+
+## Try it
+
+* **Hosted:** <https://cpsat-log-analyzer.streamlit.app/> - the Streamlit implementation, no
+  installation, [documented separately](docs/legacy-streamlit-app.md).
+* **Locally, the current stack:**
+
+  ```sh
+  git clone https://github.com/d-krupke/CP-SAT-Log-Analyzer.git
+  cd CP-SAT-Log-Analyzer/v2
+  docker compose up --build
+  # open http://localhost:8080
+  ```
+
+Deploying it for others, configuration, sizing and operations:
+[docs/deployment.md](docs/deployment.md).
 
 ## Documentation
 
-The logs are not only parsed and displayed, but also explained. Hovering over
-the question mark next to a metric will give you a short explanation of what it
-means. The individual parts of the log are annotated with a basic explanation.
+| Read this | For |
+| --- | --- |
+| [docs/deployment.md](docs/deployment.md) | running it for other people |
+| [docs/development.md](docs/development.md) | local setup, tests, editing the explanations |
+| [docs/architecture.md](docs/architecture.md) | how the parser, backend, knowledge base and UI fit together |
+| [docs/README.md](docs/README.md) | index, including the per-component READMEs |
 
-![Documentation](./.assets/documentation.png)
-
-## Plotting
-
-Some important time series are plotted to give you a better understanding of
-what is going on in your log file. It is interactive, and you can zoom in and
-out. The hover-text gives you context on what you are looking at.
-
-![Plotting](./.assets/plotting.png)
-
-## Tabular Data
-
-The log contains a lot of tabular data. We parse them into nice interactive
-tables.
-
-![Tabular Data](./.assets/tables.png)
+Two implementations live in this repository: the **Streamlit app** in the root (`app.py`,
+`cpsat_log_parser/`), which is what the hosted link serves, and the **v2 stack** in `v2/`
+(`cpsatlog` parser library + FastAPI backend + React frontend), which is where development
+happens.
 
 ## Contributing
 
-We welcome contributions to this project. If you have any suggestions or
-encounter any bugs, please open an issue. If you want to contribute code, please
-open a pull request. We will review it as soon as possible.
+Issues and pull requests are welcome. Two things are easy to contribute without touching much
+code:
 
-## Development
+* **Explanations.** All CP-SAT knowledge is plain TOML in
+  [`v2/knowledge/`](v2/knowledge/README.md) - texts, parameter advice, subsolver descriptions,
+  insight thresholds. Correcting or sharpening a text needs no Python.
+* **Logs.** A log the parser mishandles, or one that shows an interesting pathology, is a
+  useful issue by itself.
 
-You can run this project locally by cloning it and running the following
-commands:
+Before opening a pull request, run the suites listed in
+[docs/development.md](docs/development.md).
 
-```bash
-pip install -r requirements.txt
-streamlit run app.py
-```
+## Authors
 
-### Project Structure
+Developed by [Dominik Krupke](https://github.com/d-krupke/), Algorithms Group, TU
+Braunschweig. There is no funding for this project; it is mainly developed in spare time. If
+you want to support it, contribute or get in touch.
 
-This project has a relatively simple structure, consisting of two main parts:
+## Related projects
 
-1. The streamlit app with entry point `app.py` and implementation in `./_app`.
-2. The parser and log documentation in `cpsat_log_parser`.
+1. [OR-Tools](https://github.com/google/or-tools/) - Google's Operations Research tools,
+   containing the CP-SAT solver this project was written for.
+2. [CP-SAT Primer](https://github.com/d-krupke/cpsat-primer) - a primer on constraint
+   programming with CP-SAT; this analyzer complements it.
+3. [gurobi-logtools](https://github.com/Gurobi/gurobi-logtools) - Gurobi's log analyzer, the
+   original inspiration.
 
-If you want to improve the parsing or documentation of a block of the log, you
-can do so by just editing the corresponding file in `cpsat_log_parser/blocks`.
-Every block has its own file with a name corresponding to the block name.
+## License
 
-If you want to add a new block, you can do so by creating a new file in
-`cpsat_log_parser/blocks`. The file should contain a class with the same name as
-the block. This class should inherit from `LogBlock` and implement a static
-`matches`-method that returns `True` if the passed part of the log matches the
-block. The `get_title` and `get_help` methods should return a title and help
-text for the block. For tables, there already is a `TableBlock` which is able to
-return the table as a pandas DataFrame and the front-end will know to display it
-as a table. If your block is more complex and wants to display plots or other
-things, you will have to add a special section to the front-end. For the block
-to be found, you will also have to add it to the `ALL_BLOCKS` in
-`cpsat_log_parser/blocks/__init__.py`. The parser will then automatically try to
-use it. Note that the order of the list is important, as the first block that
-matches will be used. The `LogBlock` should always be the last as it matches
-everything.
-
-### Roadmap
-
-Here are some ideas for future improvements:
-
-- [ ] Implement the ability to upload multiple log files and compare them.
-- [ ] Extend the documentation of the blocks. Currently, I only wrote some
-      documentation for the most important blocks, sometimes by just copying
-      from the CP-SAT Primer and letting ChatGPT quickly make it more readable.
-- [ ] A more extensive list of examples. I have some nice examples, where you
-      can actually see issues in different parts of the log, highlighting their
-      importance.
-
-### Authors
-
-This project is developed by [Dominik Krupke](https://github.com/d-krupke/),
-Postdoctoral Researcher at the Algorithms Group of the Technische Universität
-Braunschweig. There is no funding for this project, and it is mainly developed
-in my free time. If you want to support this project, please consider
-contributing or contacting me for other ways to support it.
-
-## Related Projects
-
-1. [OR-Tools](https://github.com/google/or-tools/): Google's Operations Research
-   Tools containing the CP-SAT solver, for which this project was created.
-2. [CP-SAT Primer](https://github.com/d-krupke/cpsat-primer): A primer on
-   constraint programming with CP-SAT. This project was created to complement
-   this primer.
-3. [gurobi-logtools](https://github.com/Gurobi/gurobi-logtools): Gurobi's log
-   analyzer which is the inspiration for this project. However, this project is
-   still very different from Gurobi's log analyzer.
-
-## Changes
-
-- 2024-10-31: Added a log history to quickly switch back to previous logs.
-- 2024-10-31: Fixed parsing when the model was solved in presolve.
-- 2024-09-05: Improved the parsing of the parameters.
-- 2024-09-05: No longer warn if status is `OPTIMAL`, but there is a gap, as
-  CP-SAT considers everything as optimal if you specified a tolerance. This is
-  different to other solvers. Don't want to confuse users.
+MIT, see [LICENSE](LICENSE).

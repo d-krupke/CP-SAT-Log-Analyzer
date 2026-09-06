@@ -1,0 +1,217 @@
+# Deployment
+
+How to run the analyzer for other people. Everything here is about the **v2 stack**
+(`v2/`: FastAPI backend + React frontend); the legacy Streamlit app that is currently public
+is covered [at the end](#legacy-streamlit-app).
+
+The service is **stateless**: no database, no volumes, no accounts, and no log is ever written
+to disk. A submitted log lives in memory for the duration of the request. That makes
+deployment simple and scaling a matter of running more replicas behind a load balancer.
+
+## Quick start (Docker Compose)
+
+```sh
+cd v2
+docker compose up --build -d      # first run builds both images
+# open http://localhost:8080
+```
+
+Two containers:
+
+| Container | Image size | Idle memory | Role |
+| --- | --- | --- | --- |
+| `frontend` | 49.7 MB | ~24 MB | nginx 1.27: serves the built UI on port 80 (published as 8080) and proxies `/api/` to the backend |
+| `backend` | 165 MB | ~40 MB | uvicorn + FastAPI on port 8000, **not published to the host** - only the frontend reaches it |
+
+Because the browser talks to the backend through the frontend's own origin, CORS does not come
+into play in this topology.
+
+Stop with `docker compose down`. To publish on another port, change the `ports` mapping of the
+`frontend` service (`"8080:80"`).
+
+## Configuration
+
+The backend reads four environment variables; the images set the last two already.
+
+| Variable | Default | Effect |
+| --- | --- | --- |
+| `CORS_ORIGINS` | `*` | Comma-separated allowed origins. Only relevant when the UI is served from a different origin than the API (the dev server, or a split deployment). Set it to your real origin then. |
+| `STATIC_DIR` | unset | Directory with a built frontend. If it exists, the backend serves the UI itself - see [single container](#single-container). |
+| `KNOWLEDGE_DIR` | `/src/v2/knowledge` in the image | The TOML knowledge base. Point it at a bind mount to edit texts on a running deployment. |
+| `EXAMPLE_LOGS_DIR` | `/example_logs` in the image | The example logs offered on the landing page. |
+
+Two limits are **not** environment variables:
+
+* `MAX_LOG_BYTES = 20 * 1024 * 1024` in `v2/backend/app/main.py` - larger requests get
+  HTTP 413.
+* `client_max_body_size 32m` and `proxy_read_timeout 120s` in `v2/frontend/nginx.conf`.
+
+Raise both together if you need to accept bigger logs, and remember that any outer proxy has
+its own body-size limit (nginx defaults to 1 MB, which is far too small for CP-SAT logs).
+
+## Topologies
+
+### Two containers (default)
+
+What `docker compose up` gives you. Recommended: nginx is better at serving static files and
+at absorbing slow clients than uvicorn.
+
+### Single container
+
+The backend can serve the built UI on its own, which is convenient for platforms that run one
+container per service:
+
+```sh
+cd v2/frontend && npm ci && npm run build          # produces dist/
+docker run -d -p 8000:8000 \
+  -e STATIC_DIR=/static -v "$PWD/dist:/static:ro" v2-backend
+# open http://localhost:8000
+```
+
+(`v2-backend` is the image name `docker compose build` produces; build it by hand with
+`docker build -f v2/backend/Dockerfile -t v2-backend .` from the repository root.)
+
+Unknown paths fall back to `index.html`, so the client-side routes and deep links
+(`?example=915_01`) work. In this mode nginx's body limit does not apply, but
+`MAX_LOG_BYTES` still does.
+
+### Behind your own reverse proxy
+
+Terminate TLS outside and forward everything to the `frontend` container. Requirements:
+
+* forward `/` **and** `/api/` to the same upstream (the UI calls `/api` on its own origin),
+* allow a body of at least 32 MB (`client_max_body_size 32m` in nginx, `proxy-body-size` in an
+  ingress annotation),
+* allow a response that takes a few seconds and can be large (see [sizing](#sizing-and-limits)),
+* publish the container port on loopback only (`127.0.0.1:8080:80`) so nothing bypasses the
+  proxy.
+
+No websockets, no sticky sessions, no shared state.
+
+## Production checklist
+
+```yaml
+# v2/docker-compose.prod.yml
+# docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+services:
+  backend:
+    restart: unless-stopped
+    mem_limit: 2g
+    environment:
+      CORS_ORIGINS: "https://logs.example.com"   # only needed for a split origin
+  frontend:
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:80"
+```
+
+* **Restart policy.** The default compose file has none; add `restart: unless-stopped`.
+* **Memory limit.** Give the backend at least 1 GB, 2 GB if strangers can submit logs; see
+  below for why.
+* **No volumes needed.** Nothing is written, so the containers can run with a read-only root
+  filesystem.
+* **No authentication.** The API is open by design. If the deployment should not be public,
+  put it behind your proxy's auth.
+* **Nothing to back up.** Redeploying from the repository restores everything.
+
+## Sizing and limits
+
+Measured on the benchmark corpus (`v2/corpus/`, one process, no concurrency):
+
+| Log | Parse + analyze | JSON response | Peak process memory |
+| --- | --- | --- | --- |
+| 40 KB, 8 workers, 219 solutions (typical) | 0.1 s | 0.2 MB | tens of MB |
+| 7.4 MB, `enumerate_all_solutions`, 292,399 solution events (worst in the corpus) | 2 s | **114 MB** | ~0.8 GB |
+
+Two consequences:
+
+* The response is not bounded by the 20 MB request cap: a log whose search section is
+  hundreds of thousands of events long produces a response two orders of magnitude larger than
+  the log. Such a log will also strain the browser. If you expose the service publicly and
+  care about worst-case load, lower `MAX_LOG_BYTES` rather than relying on the request size.
+* Sizing rule of thumb: peak memory is roughly a hundred times the log size. One CPU core per
+  concurrent request is enough; parsing is single-threaded and CPU-bound.
+
+## Editing the knowledge base on a running deployment
+
+All explanations, parameter advice and insight thresholds live in `v2/knowledge/*.toml`, which
+is **baked into the backend image**. Two ways to change a text in production:
+
+1. **Rebuild** (`docker compose build backend && docker compose up -d backend`) - the normal
+   path, keeps image and repository in sync.
+2. **Bind-mount** the directory and edit in place:
+
+   ```yaml
+   backend:
+     volumes:
+       - ../v2/knowledge:/knowledge:ro
+     environment:
+       KNOWLEDGE_DIR: /knowledge
+   ```
+
+   The loader re-reads a file when its modification time changes, so an edit is live on the
+   next request - no restart. Validate an edit first with
+   `cd v2/backend && uv run python -m app.knowledge`, which fails loudly on a broken file
+   instead of showing an empty text in the UI.
+
+The example logs behave the same way through `EXAMPLE_LOGS_DIR`.
+
+## Operating it
+
+**Health.** `GET /api/health` returns `{"status": "ok"}`. The compose file already gives the
+backend a healthcheck (every 30 s, 5 s timeout, 3 retries); point your orchestrator's probes
+at the same endpoint.
+
+**Smoke test after a deploy:**
+
+From the repository root:
+
+```sh
+curl -sf http://localhost:8080/api/health
+curl -s http://localhost:8080/api/examples | head -c 200      # 10 examples expected
+curl -s -X POST http://localhost:8080/api/parse \
+  -H 'Content-Type: application/json' \
+  --data "$(python3 -c 'import json;print(json.dumps({"text":open("example_logs/915_01.txt").read()}))')" \
+  | head -c 200
+```
+
+**Logs.** Both containers log to stdout (`docker compose logs -f backend`). The backend logs
+uvicorn access lines only; log contents are never logged.
+
+**What to rebuild after a change:**
+
+| Changed | Rebuild |
+| --- | --- |
+| `v2/knowledge/*.toml`, `example_logs/` | `backend` (or bind-mount, see above) |
+| `v2/backend/app/`, `v2/cpsatlog/` | `backend` |
+| `v2/frontend/src/` | `frontend` |
+| `v2/frontend/nginx.conf` | `frontend` |
+
+**Rollback.** `git checkout <previous commit> && docker compose up --build -d`. There is no
+migration and no state, so a rollback is complete.
+
+**Build context.** The backend image is built from the **repository root** (see
+`v2/docker-compose.yml`), because it needs `v2/cpsatlog`, `v2/knowledge` and `example_logs`
+next to the app. Keep that in mind when building the image by hand:
+`docker build -f v2/backend/Dockerfile .` from the root.
+
+## Continuous integration
+
+`.github/workflows/pytest.yml` currently tests the **legacy** app only (flake8 plus
+`pytest -s tests`, on every push and weekly on Friday). The v2 suites
+(`v2/cpsatlog`, `v2/backend`, both with `ruff` and `ty`) are not wired into CI yet - run them
+locally before deploying, see [development.md](development.md).
+
+## Legacy Streamlit app
+
+The publicly deployed version is still the Streamlit app in the repository root
+(<https://cpsat-log-analyzer.streamlit.app/>), deployed from `app.py` by Streamlit Community
+Cloud, which installs `requirements.txt` and runs `streamlit run app.py` for you. Locally:
+
+```sh
+pip install -r requirements.txt
+streamlit run app.py
+```
+
+It shares no code with `v2/` and needs no configuration. Its structure and features are
+described in [legacy-streamlit-app.md](legacy-streamlit-app.md).

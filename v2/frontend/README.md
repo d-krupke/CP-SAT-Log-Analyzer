@@ -1,32 +1,32 @@
-# React + TypeScript + Vite
+# Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+React + TypeScript + Vite + Plotly UI of the analyzer. Two panes: the analysis on the left, the
+raw log on the right, linked in both directions - clicking a value scrolls the log to the line
+it came from, clicking a log line highlights what was derived from it.
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install
+npm run dev     # http://localhost:5173, /api proxied to http://localhost:8000
+npm run build   # tsc -b && vite build  ->  dist/
+npm run lint    # oxlint
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+The dev server needs the backend running (`uv run uvicorn app.main:app --port 8000` in
+`../backend`); point it elsewhere with `VITE_PROXY_TARGET`. `?example=915_01` in the URL
+deep-links a bundled example.
+
+## Layout
+
+| Path | What |
+| --- | --- |
+| `src/api.ts`, `src/types.ts` | the backend contract: fetch helpers and the mirrored response types |
+| `src/knowledge.ts` | loads `/api/explanations` once and looks texts up by key |
+| `src/state/selection.ts` | the shared selection (which line, which block) that links the two panes |
+| `src/components/AnalysisPanel.tsx` | left pane: overview, insights, plot, subsolvers, parameters, per-block cards |
+| `src/components/blocks/` | one component per log section, plus `TableBlock` for the statistics tables |
+| `src/components/LogView.tsx` | right pane: the raw log, one anchored element per line |
+| `src/components/Landing.tsx` | paste / upload / pick an example |
+
+Nothing about CP-SAT is hard-coded here: all texts come from the backend's knowledge base
+([`../knowledge/README.md`](../knowledge/README.md)), so wording changes need no frontend
+change. See [`../../docs/architecture.md`](../../docs/architecture.md) for the whole picture.

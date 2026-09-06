@@ -89,7 +89,7 @@ export default function App() {
     [analyze],
   )
 
-  // ?example=98_02 deep link
+  // ?example=915_01 deep link
   useEffect(() => {
     const name = new URLSearchParams(window.location.search).get('example')
     if (name) loadExample(name)
