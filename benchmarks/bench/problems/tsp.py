@@ -1,4 +1,4 @@
-"""Travelling salesman instances from TSPLIB95, modelled with ``add_circuit``.
+"""Traveling salesman instances from TSPLIB95, modeled with ``add_circuit``.
 
 Created 2026-09-06 for the CP-SAT log benchmark harness: TSP is the canonical
 ``add_circuit`` workload, so its logs show what routing-style search looks like

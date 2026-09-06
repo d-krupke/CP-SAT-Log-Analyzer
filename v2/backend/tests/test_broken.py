@@ -76,7 +76,7 @@ def test_analysis_survives_damaged_logs(name: str) -> None:
 
 @pytest.mark.parametrize("name", list(DAMAGED))
 def test_api_parses_damaged_logs(name: str) -> None:
-    """The HTTP layer must answer 200 with a serialisable analysis, not a 500."""
+    """The HTTP layer must answer 200 with a serializable analysis, not a 500."""
     if not DAMAGED[name].strip():
         assert client.post("/api/parse", json={"text": DAMAGED[name]}).status_code == 400
         return

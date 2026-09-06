@@ -14,10 +14,10 @@
 [examples]
 915_01 = '''
 Knapsack with integer quantities and an AllDifferent side constraint: a small, quick
-optimisation run - the best log to read first.'''
+optimization run - the best log to read first.'''
 915_jobshop_8workers = '''
 Job-shop scheduling (ta61) with the default 8-worker portfolio: 219 improving solutions, most
-of them from the LNS neighbourhoods, and the 60 s limit stops the run with a small gap left.'''
+of them from the LNS neighborhoods, and the 60 s limit stops the run with a small gap left.'''
 915_jobshop_1worker = '''
 One worker on a job-shop instance (la26): a single `main` subsolver with exactly your
 parameters - no portfolio, no LNS, no first-solution helpers, and 157 solutions found by that
@@ -30,7 +30,7 @@ solution.'''
 `use_lns_only` on a set-covering instance: no exact worker runs, 22 subsolvers are filtered
 out and the bound never leaves 0 - good solutions, no proof.'''
 915_coloring_objective_fixed = '''
-Graph colouring where presolve pins the objective to 11 colours: the portfolio then has no
+Graph coloring where presolve pins the objective to 11 colors: the portfolio then has no
 objective workers (`core`, `pseudo_costs`, ...) and no LNS at all, only feasibility work.'''
 915_qap_presolve_blowup = '''
 QAP with `linearization_level=0` where presolve expands 1,275 variables (AllDifferent plus
@@ -41,7 +41,7 @@ Langford pairing L(2,18), proven infeasible immediately - and a case where the p
 is *larger* than the initial one because AllDifferent is expanded into Booleans.'''
 915_nqueens_time_limit = '''
 500 queens as a pure satisfaction problem: no solution within 60 s (UNKNOWN), so all the
-difficulty is feasibility rather than optimisation.'''
+difficulty is feasibility rather than optimization.'''
 915_minizinc_radiation = '''
 A FlatZinc model (MiniZinc Challenge `radiation`) solved through the `cp-sat` backend: presolve
 removes two thirds of the 47,213 variables, then LNS produces 57 improving solutions.'''

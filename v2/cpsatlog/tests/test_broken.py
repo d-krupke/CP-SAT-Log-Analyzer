@@ -51,7 +51,7 @@ def test_block_index_stays_sorted_disjoint_and_complete(damaged: tuple[str, str]
 
 
 def test_unparsed_blocks_are_reachable_and_keep_their_text(damaged: tuple[str, str]) -> None:
-    """Unrecognised text must be shown, so it needs both an index entry and its lines."""
+    """Unrecognized text must be shown, so it needs both an index entry and its lines."""
     name, text = damaged
     log = parse_log(text)
     lines = split_lines(text)

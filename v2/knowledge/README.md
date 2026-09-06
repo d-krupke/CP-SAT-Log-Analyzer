@@ -38,7 +38,7 @@ sat_parameters.proto") is *not* here: it is generated from OR-Tools into
   ```toml
   [subsolvers.core]
   role = 'exact'
-  summary = 'Core-guided optimisation: lifts the lower bound through unsat cores.'
+  summary = 'Core-guided optimization: lifts the lower bound through unsat cores.'
   details = '''
   `optimize_with_core = true`, no LP. Assumes every objective term at its best
   value and asks the SAT core for a solution ...'''

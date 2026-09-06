@@ -33,7 +33,7 @@ def load_corpus() -> tuple[dict[str, str], dict[str, dict]]:
 
 
 def corpus_names() -> list[str]:
-    """Log names for parametrisation; empty when the archive is not checked out."""
+    """Log names for parametrization; empty when the archive is not checked out."""
     if not ARCHIVE.is_file():
         return []
     return sorted(load_corpus()[0])

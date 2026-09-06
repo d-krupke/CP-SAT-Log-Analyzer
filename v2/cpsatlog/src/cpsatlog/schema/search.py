@@ -51,7 +51,7 @@ class SearchEvent(BaseModel):
     objective: float | None = Field(default=None, description="best: value (None for 'inf')")
     objective_infinite: str | None = Field(
         default=None,
-        description="'inf' (minimisation) or '-inf' (maximisation) before any solution",
+        description="'inf' (minimization) or '-inf' (maximization) before any solution",
     )
     next_lb: float | None = None
     next_ub: float | None = None

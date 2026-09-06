@@ -44,7 +44,7 @@ stayed small. Every command is resumable, so a killed run loses nothing.
 
 - 20 problem classes: scheduling (job shop, flexible job shop, RCPSP), packing
   (1D bin packing, 2D bin packing, strip packing), routing (TSP, CVRP), graphs
-  (colouring, max clique, dominating set), OR-Library (set covering,
+  (coloring, max clique, dominating set), OR-Library (set covering,
   multi-knapsack, GAP, QAP) and pure satisfaction puzzles (sudoku, n-queens,
   Langford, Golomb ruler, Costas arrays).
 - 30 MiniZinc Challenge families, which show what compiler-generated models look
@@ -87,7 +87,7 @@ uv run python pack_corpus.py       # -> ../v2/corpus/benchmark_logs.tar.xz (~0.9
 ```
 
 Re-run it after every batch and commit the archive; it is byte-reproducible, so an unchanged
-corpus produces no diff. The archive carries the `.txt` logs plus a normalised `index.json`
+corpus produces no diff. The archive carries the `.txt` logs plus a normalized `index.json`
 (problem, instance, parameters, version, status, objective, bound, walltime, model size,
 source URL) instead of the raw sidecars, because the MiniZinc sidecars embed the full
 solution output of third-party models. The instances themselves stay local - they may be
@@ -116,7 +116,7 @@ each one that failed was traced to the OR-Tools sources before the text was chan
 
 Confirmed by the logs:
 
-- Full workers per `num_workers`: 1 -> `main` only, 8 -> 6, 16 -> 11 (optimisation).
+- Full workers per `num_workers`: 1 -> `main` only, 8 -> 6, 16 -> 11 (optimization).
   Satisfaction at 16 gives 13, six of them `shared_tree`, which is exactly the automatic
   rule `(num_workers - 8) * 3 / 4 > 4`.
 - `fixed` is in the roster if and only if the model has a decision strategy or scheduling
@@ -143,7 +143,7 @@ Corrected because the logs contradicted the text:
 - Full workers run once only without `interleave_search`; with it `n` counts batches.
 - `core` is dropped when the objective has at most one variable, which includes objectives
   that presolve removes entirely (`( in objective)`); the other objective-based workers and
-  all LNS neighbourhoods go with it.
+  all LNS neighborhoods go with it.
 - The portfolio line repeats a strategy (`default_lp(2)`, `fj(2)`, `shared_tree(6)`) when the
   roster is shorter than the worker budget.
 
@@ -152,5 +152,5 @@ being kept as a free-form line.
 
 The audit also produced one new insight, `objective_removed_by_presolve`: six logs have an
 initial objective and a presolved line printing the empty form `( in objective)`, which silently
-removes the objective-based workers and every LNS neighbourhood from the portfolio. The rule
+removes the objective-based workers and every LNS neighborhood from the portfolio. The rule
 fires on exactly those six logs and on none of the other 289.

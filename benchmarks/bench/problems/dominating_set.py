@@ -3,16 +3,16 @@
 Created 2026-09-06 for the CP-SAT log benchmarks. Dominating set is a pure
 set-cover-style Boolean model: no symmetry to break, a decent LP relaxation and
 a small variable count, so its logs are dominated by the LP/cut loop and by
-presolve reductions -- a deliberate contrast to the colouring and clique models
+presolve reductions -- a deliberate contrast to the coloring and clique models
 that use the same graphs.
 
-Instances: the classic DIMACS colouring set, ASCII ``.col`` files from
+Instances: the classic DIMACS coloring set, ASCII ``.col`` files from
 https://mat.tepper.cmu.edu/COLOR02/INSTANCES/ (format: see
 ``bench/problems/_dimacs.py``). This module keeps its own copies under
 ``data/dominating_set/`` so it stays independent of ``graph_coloring``.
 
 Model: one Boolean ``x[v]`` "v is in the dominating set", one ``add_bool_or``
-over the closed neighbourhood ``N(v) + v`` per vertex, and ``minimize sum(x)``.
+over the closed neighborhood ``N(v) + v`` per vertex, and ``minimize sum(x)``.
 """
 
 from __future__ import annotations
@@ -66,7 +66,7 @@ def instances(data_dir: Path) -> list[Instance]:
         if not path.exists():
             continue
         graph = _dimacs.parse_graph(path)
-        degrees = [len(nb) for nb in graph.neighbours()]
+        degrees = [len(nb) for nb in graph.neighbors()]
         found.append(
             Instance(
                 name=name,
@@ -83,10 +83,10 @@ def instances(data_dir: Path) -> list[Instance]:
 
 
 def build(instance: Instance) -> cp_model.CpModel:
-    """Set-cover model: every closed neighbourhood must contain a chosen vertex."""
+    """Set-cover model: every closed neighborhood must contain a chosen vertex."""
     assert instance.path is not None
     graph = _dimacs.parse_graph(instance.path)
-    adjacency = graph.neighbours()
+    adjacency = graph.neighbors()
 
     model = cp_model.CpModel()
     x = [model.new_bool_var(f"x[{v}]") for v in range(graph.num_vertices)]

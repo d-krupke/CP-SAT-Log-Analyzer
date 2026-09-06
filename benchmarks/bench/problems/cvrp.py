@@ -1,4 +1,4 @@
-"""Capacitated vehicle routing (CVRPLIB) modelled with ``add_multiple_circuit``.
+"""Capacitated vehicle routing (CVRPLIB) modeled with ``add_multiple_circuit``.
 
 Created 2026-09-06 for the CP-SAT log benchmark harness. CVRP complements the
 pure ``tsp`` module: same arc-literal graph, but a multi-route circuit plus a
@@ -109,7 +109,7 @@ def build(instance: Instance) -> cp_model.CpModel:
     together along each route: arc ``i -> j`` forces
     ``load[j] == load[i] + demand[j]`` (``load[j] == demand[j]`` when it leaves
     the depot). That is the MTZ-style cumulative formulation, which also breaks
-    the sub-route symmetry. The objective is the total travelled distance.
+    the sub-route symmetry. The objective is the total traveled distance.
     """
     assert instance.path is not None
     parsed = _tsplib.parse(instance.path)
@@ -119,7 +119,7 @@ def build(instance: Instance) -> cp_model.CpModel:
     if capacity <= 0:
         raise ValueError(f"{instance.name}: missing CAPACITY")
     demands = list(parsed.demands) or [0] * n
-    # Normalise so that node 0 is the depot (all Augerat files already are).
+    # Normalize so that node 0 is the depot (all Augerat files already are).
     order = [parsed.depot] + [i for i in range(n) if i != parsed.depot]
     if order != list(range(n)):
         dist = [[dist[a][b] for b in order] for a in order]

@@ -99,7 +99,7 @@ def _group(line: int, m: re.Match[str]) -> SubsolverGroup:
 
 
 def _other_events(lines: list[Loc[str]]) -> list[SearchEvent]:
-    """Keep unrecognised lines inside the search block as 'other' events (time 0)."""
+    """Keep unrecognized lines inside the search block as 'other' events (time 0)."""
     return [
         SearchEvent(line=loc.line, kind="other", label="", time=0.0, message=loc.value)
         for loc in lines

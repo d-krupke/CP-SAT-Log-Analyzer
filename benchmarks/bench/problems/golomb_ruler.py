@@ -1,4 +1,4 @@
-"""Golomb rulers (CSPLib prob006): minimise the length of the ruler.
+"""Golomb rulers (CSPLib prob006): minimize the length of the ruler.
 
 Created 2026-09-06 for the CP-SAT log collection. Purpose in the corpus: a tiny
 model (a few dozen variables) with a *very* hard optimality proof, so the logs
@@ -84,7 +84,7 @@ def build(instance: Instance) -> cp_model.CpModel:
 
 PROBLEM = Problem(
     name="golomb_ruler",
-    description="Golomb ruler (CSPLib prob006) orders 6-12, AbsEquality + AllDifferent, minimise length",
+    description="Golomb ruler (CSPLib prob006) orders 6-12, AbsEquality + AllDifferent, minimize length",
     download=download,
     instances=instances,
     build=build,

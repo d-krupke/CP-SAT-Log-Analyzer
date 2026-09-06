@@ -36,7 +36,7 @@ times. If presolve dominates the walltime, consider `max_presolve_iterations` or
 presolve_summary = '''
 **Presolve summary.** How often each presolve rule fired and how many affine relations (`x =
 a*y + b`) were detected and substituted away. Rules prefixed with `TODO` are diagnostics
-from the developers: situations recognised but not (yet) exploited. `Problem closed by
+from the developers: situations recognized but not (yet) exploited. `Problem closed by
 presolve.` means the search never started: presolve alone proved optimality or
 infeasibility.'''
 search = '''
@@ -44,12 +44,11 @@ search = '''
 line is a new improving solution found by the tagged subsolver with its cost as `best:` and
 the still-open range as `next:[lb,ub]`; `#Bound` lines (throttled) report a worker improving
 the proven bound; `#Model` lines record how many variables/constraints of the presolved
-model are still active after sharing fixed variables. The lines above the events list the
-portfolio: full problem, first solution, interleaved (LNS/LS) and helper workers, where
-`name(k)` means the strategy runs k times with different seeds. `#Done` closes the search when best
+model are still active after sharing fixed variables. `#Done` closes the search when best
 meets the bound (it can appear once per worker, e.g. `[loading]` when a worker finds the
-model infeasible while loading it). Solutions and bounds are shared between all workers immediately, so a good
-incumbent from an LNS worker also speeds up the proof of the exact workers.'''
+model infeasible while loading it). Solutions and bounds are shared between all workers
+immediately, so a good incumbent from an LNS worker also speeds up the proof of the exact
+workers. The workers themselves are listed in the *Solver portfolio* card above.'''
 response = '''
 **Response summary.** The final status and the counters CP-SAT returns to your program.
 Careful: `booleans`, `conflicts`, `branches`, `propagations`, `integer_propagations` and
@@ -62,18 +61,27 @@ tables (Search stats) to see how hard the whole search really worked.'''
 message = 'A free-form message from the solver.'
 comment = 'Lines starting with `//` are comments added by a human, not by CP-SAT.'
 unknown = '''
-This section was not recognised by the parser. It is kept verbatim; please report the log if
+This section was not recognized by the parser. It is kept verbatim; please report the log if
 you think it should be parsed.'''
 
 # Intro texts of the analysis cards that are not log sections.
 [cards]
+portfolio = '''
+**The workers CP-SAT started.** `Starting search at Ts with N workers` is where presolve ends
+and the parallel search begins. The lists below it are the portfolio: *full problem* workers
+solve the whole model (`default_lp`, `no_lp`, `max_lp`, `core`, ...), *first solution* workers
+race for an initial incumbent and then stop, *interleaved* workers share a thread and run the
+LNS and local-search strategies, and *helper* workers do work for the others (`synchronization`,
+`shared_tree`). `name(k)` means the strategy runs k times with different seeds. Which workers
+exist follows from `num_workers`: with few workers CP-SAT keeps only the strongest strategies,
+and parameters such as `use_lns_only` or `ignore_subsolvers` cut whole rows out of this list.'''
 progress = '''
 Incumbent objective (`best:`) and proven bound (`next:[lb,ub]`) over time. A flat objective with
 a rising bound means the solver is proving; a flat bound with improving solutions means the
 relaxation is weak. Click a point to jump to its log line.'''
 parameters = '''
 CP-SAT prints only parameters that differ from their defaults. Each one is documented below (from
-`sat_parameters.proto`) with advice on typical pitfalls. Parameters that change the behaviour of
+`sat_parameters.proto`) with advice on typical pitfalls. Parameters that change the behavior of
 *all* workers reduce the diversity of the portfolio and are the usual cause of unexpectedly slow
 solves.'''
 parameters_none = '''

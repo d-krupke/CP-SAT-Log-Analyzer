@@ -5,7 +5,7 @@ Usage::
     from cpsatlog import parse_log
     log = parse_log(open("solver.log").read())
     print(log.response.status.value, "found at line", log.response.status.line)
-    print(log.model_dump_json(indent=2))   # fully JSON serialisable
+    print(log.model_dump_json(indent=2))   # fully JSON serializable
 
 Design (see ``schema/`` and ``parsers/``):
 

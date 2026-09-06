@@ -21,7 +21,7 @@ export function AnalysisPanel({ result, explanations }: { result: ParseResult; e
       {hasProgress && (
         <Card
           kind="search"
-          title="Search progress"
+          title="Progress over time"
           path="/progress"
           explanation={explanations.cards.progress}
         >

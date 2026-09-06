@@ -69,6 +69,9 @@ def test_explanations_endpoint_shape() -> None:
     """The frontend relies on these sections (see frontend/src/types.ts)."""
     ex = all_explanations()
     assert "search" in ex.blocks and "progress" in ex.cards
+    # The search section is rendered as two cards, so it needs two texts: the
+    # portfolio card (cards.portfolio) and the event stream (blocks.search).
+    assert "portfolio" in ex.cards and "subsolvers" in ex.cards
     assert "search_stats" in ex.tables and "Conflicts" in ex.tables["search_stats"].columns
     assert ex.constraints["kNoOverlap2D"].complexity in ex.constraint_complexity
     assert ex.domains.levels[-1].max_size is None and ex.domains.levels[0].max_size == 2
@@ -92,7 +95,7 @@ def test_labels_from_the_benchmark_corpus_are_documented() -> None:
 
     Solving ~450 classic instances (QAP, set covering, RCPSP, ...) turned up event labels the
     example logs never showed: the bound labels of the core workers (``bool_<worker>``,
-    ``am1_presolve``), the option-suffixed local-search copies and the RINS/RENS neighbourhood
+    ``am1_presolve``), the option-suffixed local-search copies and the RINS/RENS neighborhood
     names. Each must reach a doc, otherwise the subsolver table shows a bare name.
     """
     for name in (

@@ -10,7 +10,7 @@ Access pattern::
     log.block_at(line=42)              # which section does line 42 belong to?
 
 Every section is ``None`` when the log does not contain it. ``blocks`` is an
-ordered index of all recognised sections with their line spans and a JSON
+ordered index of all recognized sections with their line spans and a JSON
 pointer into this model, which is what a UI uses to map clicks in the raw text
 to parsed data and back.
 """

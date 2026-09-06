@@ -1,4 +1,4 @@
-# Insights: the coloured boxes in the Overview card. The *logic* that decides
+# Insights: the colored boxes in the Overview card. The *logic* that decides
 # whether an insight fires lives in v2/backend/app/insights.py; this file holds
 # everything a CP-SAT expert may want to tune: the thresholds, the level
 # (info | good | warn | bad), the title and the text.
@@ -66,7 +66,7 @@ level = 'info'
 title = 'Mostly feasible descent'
 text = '''
 Worker `{worker}` had only {conflicts:,} conflicts for {branches:,} branches: the search
-descends feasibly most of the time; difficulty lies in the optimisation, not feasibility.'''
+descends feasibly most of the time; difficulty lies in the optimization, not feasibility.'''
 
 [per_worker_counters]     # fields: response_conflicts, max_conflicts
 max_ratio = 0.1              # response conflicts / busiest worker's conflicts
@@ -79,12 +79,12 @@ and was freed, often a first-solution worker such as `fs_random_no_lp`. They are
 portfolio total. Use the Search stats table to judge the effort.'''
 
 [lns_closed_quickly]      # fields: count, total
-closed_percent = 80          # a neighbourhood counts as "closed quickly" above this Closed value
+closed_percent = 80          # a neighborhood counts as "closed quickly" above this Closed value
 min_rows = 3                 # at least this many rows, and at least half of all rows
 level = 'info'
-title = 'LNS neighbourhoods closed quickly'
+title = 'LNS neighborhoods closed quickly'
 text = '''
-Most LNS neighbourhoods ({count} of {total}) were solved to completion; the sub-problems are
+Most LNS neighborhoods ({count} of {total}) were solved to completion; the sub-problems are
 easy, so the difficulty is raised adaptively. Consider whether the solutions came mostly from
 LNS (Solutions table) or from the exact workers.'''
 
@@ -106,10 +106,10 @@ The objective had {terms:,} variables in the initial model and none in the preso
 presolve pinned its value to a constant and the search only had to find a matching solution.
 This also reshapes the portfolio: every worker that works on the objective is gone (`core`,
 `lb_tree_search`, `objective_lb_search`, `objective_shaving*`, `pseudo_costs`) and so is every
-LNS neighbourhood (`*_lns`), because a neighbourhood needs an objective to improve. What runs
+LNS neighborhood (`*_lns`), because a neighborhood needs an objective to improve. What runs
 instead are the plain exact workers plus `ls`, `feasibility_pump` and `rins/rens`, and a
 strategy may be repeated (`default_lp(2)`) to fill the worker budget. If such a run ends
-UNKNOWN, the difficulty is pure feasibility, not optimisation.'''
+UNKNOWN, the difficulty is pure feasibility, not optimization.'''
 
 [presolve_shrank]         # fields: initial, presolved
 shrink_factor = 0.5          # presolved variables < factor * initial variables
@@ -120,7 +120,7 @@ text = 'Presolve reduced the model from {initial:,} to {presolved:,} variables.'
 # --- Quality of the log itself -----------------------------------------------
 # These four rules are about the input rather than the solve. They are evaluated
 # first so they appear at the top of the Overview: everything below them is
-# derived from a log that is incomplete, cut off or partly unrecognised.
+# derived from a log that is incomplete, cut off or partly unrecognized.
 
 [not_a_cpsat_log]
 level = 'bad'
@@ -149,9 +149,9 @@ the initial model are unknown, and the checks that depend on them are skipped. P
 from the first `Starting CP-SAT solver` line on to get the full analysis.'''
 
 [unrecognised_lines]      # fields: count, places, first_line
-min_lines = 1                # any unrecognised line is worth reporting: healthy logs have none
+min_lines = 1                # any unrecognized line is worth reporting: healthy logs have none
 level = 'warn'
-title = 'Parts of the log were not recognised'
+title = 'Parts of the log were not recognized'
 text = '''
 {count} line(s) in {places} place(s) could not be assigned to any known section, starting at
 line {first_line}; they are marked in the log on the right. Usually this is your own output

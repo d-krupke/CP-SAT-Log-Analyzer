@@ -1,8 +1,8 @@
-"""Generalised assignment problem (GAP) from Beasley's OR-Library.
+"""Generalized assignment problem (GAP) from Beasley's OR-Library.
 
 What: one problem class of the CP-SAT log benchmark harness.  Created
 2026-09-06 as a mid-difficulty 0/1 model that mixes two constraint kinds an
-analyzer should recognise: an exactly-one block per job (assignment structure)
+analyzer should recognize: an exactly-one block per job (assignment structure)
 and one knapsack per agent.  Small instances close in milliseconds, the large
 ``gapc``/``gapd`` ones leave a stubborn gap, so one problem class yields both
 "solved in presolve" and "gap never closes" logs.
@@ -21,9 +21,9 @@ Format (whitespace separated, line wrapping is irrelevant)::
         ...
         b_1 ... b_m         capacity per agent
 
-Important: ``gap1``-``gap12`` are **maximisation** instances (Martello & Toth
+Important: ``gap1``-``gap12`` are **maximization** instances (Martello & Toth
 style, optimum of the first ``gap1`` instance is 336), whereas ``gapa``-``gapd``
-are **minimisation** instances.  This module keeps the file's own sense instead
+are **minimization** instances.  This module keeps the file's own sense instead
 of negating, so the logs contain both directions.
 
 Model: Boolean ``x[i][j]``, one ``AddExactlyOne`` per job over the agents, one
@@ -41,7 +41,7 @@ from ..base import Instance, Problem, fetch
 
 BASE_URL = "https://people.brunel.ac.uk/~mastjjb/jeb/orlib/files"
 
-MAXIMISATION_FILES = frozenset(f"gap{i}" for i in range(1, 13))
+MAXIMIZATION_FILES = frozenset(f"gap{i}" for i in range(1, 13))
 FILES: tuple[str, ...] = (
     *(f"gap{i}" for i in range(1, 13)),
     "gapa",
@@ -72,17 +72,17 @@ SELECTION: tuple[tuple[str, int], ...] = (
 
 @dataclass(frozen=True)
 class GapData:
-    """One parsed GAP instance; ``maximise`` comes from the file family."""
+    """One parsed GAP instance; ``maximize`` comes from the file family."""
 
     num_agents: int
     num_jobs: int
     cost: list[list[int]]
     resource: list[list[int]]
     capacity: list[int]
-    maximise: bool
+    maximize: bool
 
 
-def parse_gap(path: Path, *, maximise: bool) -> list[GapData]:
+def parse_gap(path: Path, *, maximize: bool) -> list[GapData]:
     """Parse all instances of one OR-Library ``gap`` file."""
     tokens = path.read_text().split()
     pos = 0
@@ -100,7 +100,7 @@ def parse_gap(path: Path, *, maximise: bool) -> list[GapData]:
         cost = [take(n) for _ in range(m)]
         resource = [take(n) for _ in range(m)]
         capacity = take(m)
-        out.append(GapData(m, n, cost, resource, capacity, maximise))
+        out.append(GapData(m, n, cost, resource, capacity, maximize))
     if pos != len(tokens):
         raise ValueError(f"{path.name}: {len(tokens) - pos} trailing tokens")
     return out
@@ -119,7 +119,7 @@ def instances(data_dir: Path) -> list[Instance]:
         if not path.exists():
             continue
         if file_name not in cache:
-            cache[file_name] = parse_gap(path, maximise=file_name in MAXIMISATION_FILES)
+            cache[file_name] = parse_gap(path, maximize=file_name in MAXIMIZATION_FILES)
         problems = cache[file_name]
         if index >= len(problems):
             continue
@@ -132,7 +132,7 @@ def instances(data_dir: Path) -> list[Instance]:
                     "index_in_file": index,
                     "agents": data.num_agents,
                     "jobs": data.num_jobs,
-                    "sense": "maximise" if data.maximise else "minimise",
+                    "sense": "maximize" if data.maximize else "minimize",
                 },
             )
         )
@@ -143,7 +143,7 @@ def build(instance: Instance) -> cp_model.CpModel:
     assert instance.path is not None
     file_name = instance.name.rsplit("_", 1)[0]
     index = int(instance.meta["index_in_file"])
-    data = parse_gap(instance.path, maximise=file_name in MAXIMISATION_FILES)[index]
+    data = parse_gap(instance.path, maximize=file_name in MAXIMIZATION_FILES)[index]
 
     m, n = data.num_agents, data.num_jobs
     model = cp_model.CpModel()
@@ -157,7 +157,7 @@ def build(instance: Instance) -> cp_model.CpModel:
     objective = cp_model.LinearExpr.sum(
         [cp_model.LinearExpr.weighted_sum(x[i], data.cost[i]) for i in range(m)]
     )
-    if data.maximise:
+    if data.maximize:
         model.maximize(objective)
     else:
         model.minimize(objective)
@@ -166,7 +166,7 @@ def build(instance: Instance) -> cp_model.CpModel:
 
 PROBLEM = Problem(
     name="gap",
-    description="Generalised assignment (OR-Library gap1-12 max, gapa-d min)",
+    description="Generalized assignment (OR-Library gap1-12 max, gapa-d min)",
     download=download,
     instances=instances,
     build=build,

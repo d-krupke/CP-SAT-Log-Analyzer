@@ -1,8 +1,13 @@
 /**
- * Section card of the analysis panel. Anchors to a block of the log:
- * clicking the header selects the block's first line (the log scrolls there),
+ * Section card of the analysis panel. Anchors to a block of the log: clicking
+ * the title bar collapses or expands the card (expanding also scrolls the log
+ * to the section), the `L12-34` badge jumps to the section without collapsing,
  * and when a log line inside the block is selected the card is highlighted and
  * scrolled into view.
+ *
+ * `owns` exists for the two cards that share one log block (portfolio and
+ * search progress): it says which part of the block this card is responsible
+ * for, so only one of them lights up for a given line.
  */
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { kindClass, useSelection } from '../state/selection'
@@ -17,14 +22,16 @@ interface Props {
   explanation?: string
   children: ReactNode
   collapsed?: boolean
+  owns?: LineSpan
 }
 
-export function Card({ kind, title, span, path, explanation, children, collapsed = false }: Props) {
+export function Card({ kind, title, span, path, explanation, children, collapsed = false, owns }: Props) {
   const { selection, block, select } = useSelection()
-  const [manualOpen, setOpen] = useState(!collapsed)
+  const [open, setOpen] = useState(!collapsed)
   const ref = useRef<HTMLElement>(null)
-  const active = path !== undefined && block !== null && block.path === path
-  const open = manualOpen
+  const line = selection.line
+  const mine = owns === undefined || (line !== null && owns.start <= line && line <= owns.end)
+  const active = path !== undefined && block !== null && block.path === path && mine
 
   useEffect(() => {
     if (active && selection.source === 'log') {
@@ -38,15 +45,23 @@ export function Card({ kind, title, span, path, explanation, children, collapsed
   return (
     <section className={`card ${kindClass(kind)}${active ? ' active' : ''}`} ref={ref}>
       <header
-        title={span ? 'Click to show this section in the log' : undefined}
+        title={open ? 'Click to collapse' : 'Click to expand'}
         onClick={() => {
-          if (span) select(span.start, 'panel')
-          if (!open) setOpen(true)
+          // Expanding is also a "show me this" gesture; collapsing must not move the log.
+          if (!open && span) select(span.start, 'panel')
+          setOpen(!open)
         }}
       >
         <h2>{title}</h2>
         {span && (
-          <span className="lines" title="Log lines">
+          <span
+            className="lines"
+            title="Click to show this section in the log"
+            onClick={(e) => {
+              e.stopPropagation()
+              select(span.start, 'panel')
+            }}
+          >
             {span.start === span.end ? `L${span.start}` : `L${span.start}–${span.end}`}
           </span>
         )}

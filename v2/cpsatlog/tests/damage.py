@@ -7,7 +7,7 @@ tests (``test_broken.py`` here, ``test_broken.py`` in the backend) build their i
 healthy example log through the deterministic transformations below.
 
 Each function takes and returns log text; ``damaged_variants`` bundles them into the named set
-the tests parametrise over. Add a transformation here when a new way of breaking a log shows
+the tests parametrize over. Add a transformation here when a new way of breaking a log shows
 up in an issue.
 """
 

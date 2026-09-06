@@ -8,7 +8,7 @@ export function TextBlock({ blockRef, data, explanations }: { blockRef: BlockRef
   const { selection, select } = useSelection()
   const unparsed = isUnparsed(blockRef)
   const title = unparsed
-    ? `Unrecognised section (${data.lines.length} line${data.lines.length === 1 ? '' : 's'})`
+    ? `Unrecognized section (${data.lines.length} line${data.lines.length === 1 ? '' : 's'})`
     : blockRef.kind === 'comment'
       ? 'Comment'
       : `Message: ${data.message_kind ?? ''}`

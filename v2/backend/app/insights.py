@@ -70,7 +70,7 @@ def _insight_log_quality(log: CpSatLog, out: list[Insight]) -> None:
 
     Users paste logs that were killed mid-run, cut off at the top, mixed with their own
     prints, or are not CP-SAT logs at all. Everything derived from such a log is partial, so
-    it must be said first; the unrecognised lines are also highlighted in the raw log view.
+    it must be said first; the unrecognized lines are also highlighted in the raw log view.
     """
     looks_like_cpsat = bool(log.solver or log.initial_model or log.response or log.search)
     unparsed_lines = sum(len(block.lines) for block in log.unparsed)
@@ -203,9 +203,9 @@ def _objective_terms(model: Any) -> int:
 def _insight_objective_removed(log: CpSatLog, out: list[Insight]) -> None:
     """Presolve pinned the objective to a constant: the presolved line has no objective terms.
 
-    Seen on six benchmark logs (bin packing, 2D bin packing, graph colouring, dominating set).
+    Seen on six benchmark logs (bin packing, 2D bin packing, graph coloring, dominating set).
     It is worth pointing out because the portfolio silently changes shape: the objective-based
-    workers and every LNS neighbourhood are dropped.
+    workers and every LNS neighborhood are dropped.
     """
     a, b = log.initial_model, log.presolved_model
     if not (a and b):

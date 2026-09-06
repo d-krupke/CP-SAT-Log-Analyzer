@@ -1,7 +1,7 @@
 """API tests for the backend: every endpoint responds and the analysis is grounded.
 
 We parse the bundled example logs through the HTTP layer so that JSON
-serialisation of the parser models and of the analysis is exercised end to end.
+serialization of the parser models and of the analysis is exercised end to end.
 """
 
 from __future__ import annotations

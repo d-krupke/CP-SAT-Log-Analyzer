@@ -55,7 +55,7 @@ def test_objective_removed_by_presolve_fires() -> None:
 
     From the benchmark corpus (e.g. `binpacking/N1C1W1_A`): the initial line reports
     `(#ints: 1 in objective)` and the presolved one prints the empty form `( in objective)`.
-    CP-SAT then drops every objective-based worker and all LNS neighbourhoods, which is
+    CP-SAT then drops every objective-based worker and all LNS neighborhoods, which is
     invisible in the log unless the portfolio is compared against a normal run.
     """
     log = parse_log(
@@ -72,7 +72,7 @@ def test_objective_removed_by_presolve_fires() -> None:
 
 
 def test_objective_kept_by_presolve_stays_quiet() -> None:
-    """The normal case: the presolved model still optimises, so the insight must not fire."""
+    """The normal case: the presolved model still optimizes, so the insight must not fire."""
     log = parse_log(
         "Starting CP-SAT solver v9.15.6755\n"
         "\n"

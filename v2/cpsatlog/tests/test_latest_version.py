@@ -1,7 +1,7 @@
 """Smoke test against the OR-Tools version installed in the dev environment.
 
 Generates a small knapsack log with the installed ``ortools`` and checks that the
-parser recognises the version, the response and at least one solution event.
+parser recognizes the version, the response and at least one solution event.
 This catches format changes as soon as a new OR-Tools release is installed.
 """
 

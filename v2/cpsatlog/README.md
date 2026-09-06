@@ -1,7 +1,7 @@
 # cpsatlog
 
 Parse [CP-SAT](https://developers.google.com/optimization/cp/cp_solver) (OR-Tools)
-solver logs into **line-anchored, JSON-serialisable pydantic models**.
+solver logs into **line-anchored, JSON-serializable pydantic models**.
 
 ```python
 from cpsatlog import parse_log
@@ -22,7 +22,7 @@ Sections that do not occur in a log are simply `None`.
 
 ## Why line anchors?
 
-Log analysers want to show the raw text next to the parsed data. Every scalar
+Log analyzers want to show the raw text next to the parsed data. Every scalar
 is a `Loc[T]` (`value` + `line`), table rows carry their `line`, every section
 has a `span`, and `CpSatLog.blocks` is an ordered index (`kind`, `span`, JSON
 pointer `path`) that maps any line back to the parsed section.

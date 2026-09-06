@@ -41,7 +41,7 @@ class Graph:
         pairs = self.num_vertices * (self.num_vertices - 1) // 2
         return self.num_edges / pairs if pairs else 0.0
 
-    def neighbours(self) -> list[set[int]]:
+    def neighbors(self) -> list[set[int]]:
         adj: list[set[int]] = [set() for _ in range(self.num_vertices)]
         for u, v in self.edges:
             adj[u].add(v)
@@ -111,7 +111,7 @@ def read_header(path: Path) -> tuple[int, int]:
 
 
 def _degree_order_bitsets(graph: Graph) -> tuple[list[int], list[int]]:
-    """Adjacency bitsets relabelled so that index 0 is the highest-degree vertex.
+    """Adjacency bitsets relabeled so that index 0 is the highest-degree vertex.
 
     In that space "lowest set bit" == "highest-degree candidate", which makes the
     greedy routines below degree-greedy at O(1) per pick instead of scanning.
@@ -123,15 +123,15 @@ def _degree_order_bitsets(graph: Graph) -> tuple[list[int], list[int]]:
     pos = [0] * n
     for index, vertex in enumerate(order):
         pos[vertex] = index
-    relabelled = [0] * n
+    relabeled = [0] * n
     for vertex in range(n):
         mask, out = adj[vertex], 0
         while mask:
             bit = mask & -mask
             out |= 1 << pos[bit.bit_length() - 1]
             mask ^= bit
-        relabelled[pos[vertex]] = out
-    return relabelled, order
+        relabeled[pos[vertex]] = out
+    return relabeled, order
 
 
 def greedy_clique(graph: Graph, num_starts: int = 16) -> list[int]:
@@ -157,7 +157,7 @@ def edge_clique_cover(graph: Graph) -> list[list[int]]:
     """Cover every edge of ``graph`` by a clique, using as few cliques as possible.
 
     A clique of size ``s`` replaces ``s*(s-1)/2`` pairwise constraints, which is
-    what keeps the colouring and clique models compact on dense graphs; on sparse
+    what keeps the coloring and clique models compact on dense graphs; on sparse
     graphs the cover degenerates to ~one clique per edge, i.e. no loss. Two cheap
     greedy strategies are tried because neither dominates: growing cliques
     maximally wins on graphs with huge cliques (hamming10-2: 1015 vs 251554
@@ -200,9 +200,9 @@ def _clique_cover(graph: Graph, *, only_new_edges: bool) -> list[list[int]]:
 
 
 def dsatur_coloring(graph: Graph) -> list[int]:
-    """DSATUR greedy colouring; returns a colour in ``[0, k)`` per vertex."""
+    """DSATUR greedy coloring; returns a color in ``[0, k)`` per vertex."""
     n = graph.num_vertices
-    adj = graph.neighbours()
+    adj = graph.neighbors()
     colors = [-1] * n
     saturation: list[set[int]] = [set() for _ in range(n)]
     degree = [len(adj[v]) for v in range(n)]
@@ -214,8 +214,8 @@ def dsatur_coloring(graph: Graph) -> list[int]:
         while color in saturation[vertex]:
             color += 1
         colors[vertex] = color
-        for neighbour in adj[vertex]:
-            saturation[neighbour].add(color)
+        for neighbor in adj[vertex]:
+            saturation[neighbor].add(color)
     return colors
 
 

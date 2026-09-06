@@ -4,10 +4,13 @@ Notable changes, newest first. Dates are the day the work landed on `main`.
 
 ## v2 stack (`v2/`)
 
+* **2026-09-06** - UI: the search section is now two cards (*Solver portfolio* and *Search
+  progress*), card title bars collapse and expand their card (the `L12-34` badge keeps jumping
+  to the log), and all texts, comments and identifiers were converted to American English.
 * **2026-09-06** - Moved the legacy Streamlit app out of this branch (it lives on `legacy`) and
   replaced the legacy-only CI workflow with one that checks the parser library, the backend and
   the frontend, upgrading OR-Tools on the weekly run.
-* **2026-09-06** - Broken and incomplete logs: unrecognised sections are kept verbatim, marked
+* **2026-09-06** - Broken and incomplete logs: unrecognized sections are kept verbatim, marked
   in both panes and listed as cards, and four new insights say when a log is truncated, headless,
   partly unreadable or not a CP-SAT log at all. Fixed `Task timing` tables glued to the search
   block (62 of the 295 corpus logs lost their table).

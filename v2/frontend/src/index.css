@@ -364,6 +364,11 @@ select {
   font-size: 12px;
   font-family: var(--mono);
 }
+/* The badge is the "show it in the log" control; the rest of the bar collapses. */
+.card > header .lines:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
 .card > header .toggle {
   color: var(--muted);
   font-size: 12px;
@@ -624,6 +629,10 @@ details summary {
   vertical-align: middle;
 }
 
+/* Worker groups in the portfolio card. */
+.portfolio-group {
+  margin: 6px 0;
+}
 /* Portfolio list in the search card and expandable rows in the subsolver table. */
 ul.subsolvers {
   list-style: none;

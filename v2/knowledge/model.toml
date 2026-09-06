@@ -24,7 +24,7 @@ label = 'Boolean'
 color = 'good'
 text = '''
 Booleans are what the SAT core reasons about natively: clause learning, strong propagation
-and exact linearisation. The more of the model is Boolean, the better CP-SAT is at it.'''
+and exact linearization. The more of the model is Boolean, the better CP-SAT is at it.'''
 
 [[domain_size.level]]
 id = 'small'

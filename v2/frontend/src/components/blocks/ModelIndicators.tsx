@@ -1,7 +1,7 @@
 /**
  * Visual indicators for the model cards: a stacked "mix" bar of constraints by
  * complexity and of variables by domain size, plus the per-row level tags.
- * Levels, colours and texts come from knowledge/constraints.toml and model.toml
+ * Levels, colors and texts come from knowledge/constraints.toml and model.toml
  * via the explanations; the counting lives in src/modelMix.ts, this file draws.
  */
 import { formatNumber } from '../../state/selection'

@@ -20,7 +20,7 @@ is and what to look for. Tables and their columns, constraint kinds (`kNoOverlap
 `kAllDiff`, ...), solver messages and every response field are documented too.
 
 **Points out what matters.** An Overview card scores the run - OR-Tools version, worker count,
-final gap, presolve share of the wall time, solutions and bound improvements - and colours a
+final gap, presolve share of the wall time, solutions and bound improvements - and colors a
 tile when something deserves attention. On top of that, seventeen insight rules look for
 specific situations and say what they imply, for example:
 
@@ -29,7 +29,7 @@ specific situations and say what they imply, for example:
 * *Presolve fixed the objective* - the portfolio then loses every objective worker and all LNS;
 * *Summary counters are per worker* - the `conflicts` in the response are one worker's, not the
   portfolio's total;
-* *LNS neighbourhoods closed quickly*, *conflict-heavy search*, *solved by presolve*, ...
+* *LNS neighborhoods closed quickly*, *conflict-heavy search*, *solved by presolve*, ...
 
 **Plots the progress.** Incumbent objective and proven bound over time, interactive, and every
 point links back to the log line that produced it.

@@ -86,7 +86,7 @@ def test_parsed_values_match_the_solver_metadata(name: str) -> None:
 
 @pytest.mark.parametrize("name", NAMES[::10])
 def test_json_round_trip_on_a_sample(name: str) -> None:
-    """Serialisation is checked on every tenth log; the full corpus would only be slower."""
+    """Serialization is checked on every tenth log; the full corpus would only be slower."""
     logs, _ = load_corpus()
     log = parse_log(logs[name])
     assert CpSatLog.model_validate_json(log.model_dump_json()) == log

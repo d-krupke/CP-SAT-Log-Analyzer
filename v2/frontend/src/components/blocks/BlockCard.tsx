@@ -4,7 +4,7 @@ import type { BlockRef, CpSatLog, Explanations } from '../../types'
 import { ModelBlock } from './ModelBlock'
 import { PresolveBlock, PresolveSummaryBlock } from './PresolveBlock'
 import { ResponseBlock } from './ResponseBlock'
-import { SearchBlock } from './SearchBlock'
+import { SearchCards } from './SearchBlock'
 import { SolverBlock } from './SolverBlock'
 import { TableBlock, TaskTimingBlock } from './TableBlock'
 import { TextBlock } from './TextBlock'
@@ -36,7 +36,8 @@ export function BlockCard({ blockRef, log, explanations }: { blockRef: BlockRef;
     case 'presolve_summary':
       return <PresolveSummaryBlock {...common} data={log.presolve_summary!} />
     case 'search':
-      return <SearchBlock {...common} data={log.search!} />
+      // Two cards: the portfolio CP-SAT started and the progress it then made.
+      return <SearchCards {...common} data={log.search!} />
     case 'task_timing':
       return <TaskTimingBlock {...common} data={log.stats.task_timing!} />
     case 'table':

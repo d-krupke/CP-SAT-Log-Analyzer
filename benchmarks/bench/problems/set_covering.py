@@ -20,7 +20,7 @@ Format (whitespace separated, line breaks are irrelevant)::
 The ``scpcyc*`` and ``scpclr*`` families are unicost (all costs are 1) and are
 combinatorially much harder than their file size suggests.
 
-Model: one Boolean per column, one ``AddBoolOr`` per row, minimise the cost sum.
+Model: one Boolean per column, one ``AddBoolOr`` per row, minimize the cost sum.
 """
 
 from __future__ import annotations

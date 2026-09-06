@@ -39,7 +39,7 @@ Size of the lazily minted Boolean skeleton of this worker: Boolean variables plu
 literals `[x <= v]` created on demand for integer variables. Each worker mints its own, so
 the counts differ across rows.'''
 Conflicts = '''
-Number of conflicts analysed; each one produced a learned clause (nogood). A large fraction
+Number of conflicts analyzed; each one produced a learned clause (nogood). A large fraction
 of `Branches` means the worker learns from nearly every decision.'''
 Branches = '''
 Number of decisions taken over the whole search (including after restarts). No fixed
@@ -76,12 +76,12 @@ TemporaryClauses = 'Learned clauses that may be deleted during clause cleanup.'
 [tables.sat_stats]
 summary = '''
 **SAT stats.** Effort spent on keeping learned clauses short and the database small:
-conflict-clause minimisation, literals removed via the binary implication graph, literals
+conflict-clause minimization, literals removed via the binary implication graph, literals
 learned/forgotten, and clauses subsumed during conflict analysis.'''
 
 [tables.sat_stats.columns]
-ClassicMinim = 'Learned clauses shortened by (recursive) clause minimisation.'
-LitRemoved = 'Literals removed from learned clauses by minimisation.'
+ClassicMinim = 'Learned clauses shortened by (recursive) clause minimization.'
+LitRemoved = 'Literals removed from learned clauses by minimization.'
 LitRemovedBinary = 'Literals removed using binary implications.'
 LitLearned = 'Total literals in learned clauses.'
 LitForgotten = 'Literals of learned clauses that were deleted again.'
@@ -113,7 +113,7 @@ summary = '''
 **Lp stats.** One row per worker that carries an LP relaxation. The LP is used as a
 propagator: solved with dual simplex from a warm start after each bound change, its dual
 values justify bound tightenings and infeasible relaxations become conflicts. Workers
-without a row (e.g. `no_lp`, `core`) run without linearisation.'''
+without a row (e.g. `no_lp`, `core`) run without linearization.'''
 
 [tables.lp_stats.columns]
 Component = 'Number of independent LP components (the linear part may split).'
@@ -128,7 +128,7 @@ core learns from.'''
 [tables.lp_dimension]
 summary = '''
 **Lp dimension.** Final size of the (first) LP component per worker: rows, columns and
-non-zeros. Larger linearisation levels give larger LPs (`max_lp`).'''
+non-zeros. Larger linearization levels give larger LPs (`max_lp`).'''
 
 [tables.lp_debug]
 summary = '''
@@ -165,15 +165,15 @@ Many cuts of one family indicate that this structure carries the relaxation.'''
 
 [tables.lns_stats]
 summary = '''
-**LNS stats.** Large Neighbourhood Search workers fix most of the incumbent and let the full
-solver re-optimise a small neighbourhood. `Improv/Calls` is how often a round found a better
+**LNS stats.** Large Neighborhood Search workers fix most of the incumbent and let the full
+solver re-optimize a small neighborhood. `Improv/Calls` is how often a round found a better
 solution versus how often it ran, `Closed` the share of rounds that solved their sub-problem
-completely (too high means the neighbourhoods are too easy, so the difficulty is raised),
+completely (too high means the neighborhoods are too easy, so the difficulty is raised),
 `Difficulty` the adaptive fraction of variables left free, `TimeLimit` the deterministic
 time budget per round.'''
 
 [tables.lns_stats.columns]
-"Improv/Calls" = 'Improving rounds / total rounds of this neighbourhood.'
+"Improv/Calls" = 'Improving rounds / total rounds of this neighborhood.'
 Closed = 'Percentage of rounds whose sub-problem was solved to completion.'
 Difficulty = 'Adaptive relaxation ratio (fraction of the model left free).'
 TimeLimit = 'Adaptive deterministic time limit per round.'
@@ -214,13 +214,13 @@ Num = 'Number of bound improvements by this subsolver.'
 summary = '''
 **Solution repositories.** Shared pools that workers add solutions to and query from:
 feasible solutions (used by LNS as starting points), LP solutions and feasibility-pump
-solutions. `Synchro` counts synchronisation rounds.'''
+solutions. `Synchro` counts synchronization rounds.'''
 
 [tables.solution_repositories.columns]
 Added = 'Solutions added to the pool.'
 Queried = 'Times a worker took a solution from the pool.'
 Ignored = 'Added solutions that were discarded (duplicates/worse); only in older versions.'
-Synchro = 'Number of synchronisations of the pool.'
+Synchro = 'Number of synchronizations of the pool.'
 
 [tables.improving_bounds_shared]
 summary = '''

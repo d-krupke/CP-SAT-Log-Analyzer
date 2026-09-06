@@ -1,21 +1,21 @@
-"""Minimum graph colouring on the DIMACS COLOR benchmark graphs.
+"""Minimum graph coloring on the DIMACS COLOR benchmark graphs.
 
-Created 2026-09-06 for the CP-SAT log benchmarks: colouring gives logs with a
+Created 2026-09-06 for the CP-SAT log benchmarks: coloring gives logs with a
 strong LP/clique lower bound, heavy symmetry and a long objective staircase,
 which is exactly the kind of search progress the log analyzer must explain.
 
-Instances: the classic DIMACS colouring set, ASCII ``.col`` (see
+Instances: the classic DIMACS coloring set, ASCII ``.col`` (see
 ``bench/problems/_dimacs.py`` for the format).
   * https://mat.tepper.cmu.edu/COLOR02/INSTANCES/ (COLOR02/03/04, most files)
   * https://cedric.cnam.fr/~porumbed/graphs/ (mirror for the three files that
     CMU only ships in the binary ``.col.b`` format: flat300_28_0, r125.1, r125.5)
 
-Model: one Boolean ``x[v,c]`` per vertex/colour with ``add_exactly_one`` per
-vertex, ``add_at_most_one`` per (clique of an edge clique cover, colour) instead
-of a clause per (edge, colour), ``y[c]`` "colour c is used" Booleans with
-``x[v,c] => y[c]`` and the symmetry break ``y[c] >= y[c+1]``, the colours of a
+Model: one Boolean ``x[v,c]`` per vertex/color with ``add_exactly_one`` per
+vertex, ``add_at_most_one`` per (clique of an edge clique cover, color) instead
+of a clause per (edge, color), ``y[c]`` "color c is used" Booleans with
+``x[v,c] => y[c]`` and the symmetry break ``y[c] >= y[c+1]``, the colors of a
 greedy maximal clique fixed to ``0..k-1``, and ``minimize sum(y)``. The number of
-available colours is the DSATUR upper bound, so the model is always feasible.
+available colors is the DSATUR upper bound, so the model is always feasible.
 """
 
 from __future__ import annotations
@@ -108,7 +108,7 @@ def instances(data_dir: Path) -> list[Instance]:
 
 
 def build(instance: Instance) -> cp_model.CpModel:
-    """Assignment model for the minimum number of colours."""
+    """Assignment model for the minimum number of colors."""
     assert instance.path is not None
     graph = _dimacs.parse_graph(instance.path)
     num_vertices = graph.num_vertices
@@ -122,7 +122,7 @@ def build(instance: Instance) -> cp_model.CpModel:
     for v in range(num_vertices):
         model.add_exactly_one(x[v])
 
-    # One AtMostOne per (clique, colour): a clique of size s subsumes s*(s-1)/2
+    # One AtMostOne per (clique, color): a clique of size s subsumes s*(s-1)/2
     # edge clauses, which keeps dense instances buildable and propagates better.
     for group in _dimacs.edge_clique_cover(graph):
         for c in range(max_colors):
@@ -131,10 +131,10 @@ def build(instance: Instance) -> cp_model.CpModel:
     for v in range(num_vertices):
         for c in range(max_colors):
             model.add_implication(x[v][c], used[c])
-    # Symmetry breaking: colours are interchangeable, so use them in order.
+    # Symmetry breaking: colors are interchangeable, so use them in order.
     for c in range(max_colors - 1):
         model.add(used[c] >= used[c + 1])
-    # A maximal clique needs |clique| distinct colours; fix them to 0..k-1.
+    # A maximal clique needs |clique| distinct colors; fix them to 0..k-1.
     for index, vertex in enumerate(clique):
         model.add(x[vertex][index] == 1)
 
@@ -144,7 +144,7 @@ def build(instance: Instance) -> cp_model.CpModel:
 
 PROBLEM = Problem(
     name="graph_coloring",
-    description="Minimum graph colouring on the DIMACS COLOR02 benchmark graphs",
+    description="Minimum graph coloring on the DIMACS COLOR02 benchmark graphs",
     download=download,
     instances=instances,
     build=build,

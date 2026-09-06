@@ -3,7 +3,7 @@
 Created 2026-09-06 as part of the local benchmark corpus (see README.md). The
 other problem classes build CP-SAT models directly in Python; this script instead
 drives the bundled MiniZinc 2.10 compiler with the OR-Tools ``cp-sat`` backend, so
-the logs show what models produced by a modelling language look like (huge numbers
+the logs show what models produced by a modeling language look like (huge numbers
 of Booleans, `mznfile...` model names, FlatZinc-style search strategies).
 
 MiniZinc prints the CP-SAT log as FlatZinc comments (``%% `` prefix); the prefix is

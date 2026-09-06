@@ -1,4 +1,4 @@
-# Tiles of the Overview card: thresholds that colour a tile and the hint shown
+# Tiles of the Overview card: thresholds that color a tile and the hint shown
 # under it (or as tooltip). The values themselves are computed in
 # v2/backend/app/metrics.py.
 

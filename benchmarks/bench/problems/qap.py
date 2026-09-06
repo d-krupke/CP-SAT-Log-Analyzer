@@ -18,7 +18,7 @@ Format (whitespace separated, line wrapping is irrelevant)::
     F   (n x n flow matrix)
     D   (n x n distance matrix)
 
-Objective: minimise ``sum_{i != j} F[i][j] * D[p(i)][p(j)]`` over permutations p.
+Objective: minimize ``sum_{i != j} F[i][j] * D[p(i)][p(j)]`` over permutations p.
 All instances used here have symmetric F and D, which lets the objective be
 written over unordered plant pairs ``i < j`` with ``G[i][j] = F[i][j] + F[j][i]``.
 

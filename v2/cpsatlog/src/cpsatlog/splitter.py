@@ -42,7 +42,7 @@ class Chunk:
 
 
 def split_lines(text: str) -> list[str]:
-    """Normalise line endings and trailing whitespace; keeps 1:1 line count."""
+    """Normalize line endings and trailing whitespace; keeps 1:1 line count."""
     return [line.rstrip() for line in text.replace("\r\n", "\n").replace("\r", "\n").split("\n")]
 
 

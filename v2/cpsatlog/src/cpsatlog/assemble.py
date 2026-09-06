@@ -209,7 +209,7 @@ def _finish_search(log: CpSatLog, stray_events: list[SearchEvent]) -> None:
 
 
 def _objective_sense(events: list[SearchEvent]) -> ObjectiveSense | None:
-    """``best`` sits at the ``ub`` side for minimisation and at the ``lb`` side for maximisation."""
+    """``best`` sits at the ``ub`` side for minimization and at the ``lb`` side for maximization."""
     for e in events:
         if e.objective_infinite == "inf":
             return "minimize"

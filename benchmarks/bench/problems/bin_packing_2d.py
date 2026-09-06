@@ -143,7 +143,7 @@ def build(instance: Instance) -> cp_model.CpModel:
     ``[bin[i]*W, bin[i]*W + W - w_i]``, so no rectangle can straddle a bin
     border and a single ``add_no_overlap_2d`` over the whole strip enforces
     intra-bin disjointness.  Items are sorted by decreasing area and restricted
-    to ``bin[i] <= i`` (canonical relabelling of the interchangeable bins).
+    to ``bin[i] <= i`` (canonical relabeling of the interchangeable bins).
     Redundant cumulative constraints add the area argument along both axes.
     """
     assert instance.path is not None

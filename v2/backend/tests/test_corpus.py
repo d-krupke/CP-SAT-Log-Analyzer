@@ -26,7 +26,7 @@ NAMES = corpus_names()
 
 @pytest.mark.parametrize("name", NAMES)
 def test_analysis_runs_and_renders(name: str) -> None:
-    """Every log analyses, and every insight/metric it produces is presentable.
+    """Every log analyzes, and every insight/metric it produces is presentable.
 
     An unfilled ``{field}`` in an insight text means the rule and ``insights.toml`` disagree
     about the available format fields - the kind of mistake that only shows on real logs.

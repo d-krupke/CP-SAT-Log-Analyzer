@@ -1,5 +1,5 @@
 /**
- * Right panel: the raw log with line numbers. Each line is coloured by the
+ * Right panel: the raw log with line numbers. Each line is colored by the
  * block it belongs to, clicking selects it (the analysis panel then scrolls to
  * the matching card), and selections made in the analysis panel scroll here.
  * Lines the parser could not use are marked (`k-unparsed`) so a broken or

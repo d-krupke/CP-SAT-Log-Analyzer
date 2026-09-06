@@ -1,8 +1,8 @@
 # Constraint kinds listed in the model sections (kLinear2, kNoOverlap2D, ...).
 #
 # Each kind has a one-line `summary` and a `complexity` level. The levels are
-# defined in [complexity] below (label, colour and explanation) and drive the
-# badges and the "constraint mix" bar of the model cards. Colours: good, info,
+# defined in [complexity] below (label, color and explanation) and drive the
+# badges and the "constraint mix" bar of the model cards. Colors: good, info,
 # warn, bad.
 
 [complexity.simple]
@@ -29,7 +29,7 @@ text = '''
 Scheduling, packing and routing globals (no-overlap, cumulative, circuit, routes,
 reservoir) with dedicated, comparatively expensive propagators and a weak LP relaxation.
 They usually decide the difficulty of the model: bounds move slowly and the portfolio
-relies on specialised workers and LNS.'''
+relies on specialized workers and LNS.'''
 
 [constraints.kLinear0]
 summary = 'linear constraint without variables (a constant check)'

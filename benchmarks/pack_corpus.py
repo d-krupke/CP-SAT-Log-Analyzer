@@ -12,7 +12,7 @@ Run it after collecting a new batch, then commit the archive::
 
 Deliberately *not* copied into the archive: the per-run JSON sidecars. The MiniZinc
 ones embed the solver's full solution output (assignments of a third-party model), so
-instead of the sidecars we store a normalised ``index.json`` with only the metadata
+instead of the sidecars we store a normalized ``index.json`` with only the metadata
 the tests need - problem, instance, parameters, version, status, objective, bound,
 walltime, model sizes and the source URL (not the sidecars' `log_lines`, which counts
 only the lines CP-SAT sent to the callback and disagrees with the stored file). Change that mapping in ``_entry`` if a test
@@ -53,7 +53,7 @@ _NATIVE_FIELDS = (
 
 
 def _entry(meta: dict[str, Any]) -> dict[str, Any]:
-    """Normalise one sidecar to the metadata the tests are allowed to see."""
+    """Normalize one sidecar to the metadata the tests are allowed to see."""
     if "minizinc_output" in meta:  # driven through MiniZinc: different shape
         entry: dict[str, Any] = {
             "problem": meta.get("problem", ""),

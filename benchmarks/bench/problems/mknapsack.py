@@ -25,7 +25,7 @@ Format (whitespace separated, line wrapping is irrelevant)::
 A few ``mknap1`` instances carry fractional profits/weights; those are scaled to
 integers (profits independently, weights together with the capacities).
 
-Model: one Boolean per item, one linear ``<=`` per constraint, maximise profit.
+Model: one Boolean per item, one linear ``<=`` per constraint, maximize profit.
 """
 
 from __future__ import annotations

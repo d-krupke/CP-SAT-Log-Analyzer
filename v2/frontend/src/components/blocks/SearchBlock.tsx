@@ -1,9 +1,15 @@
+/**
+ * The search section of the log, shown as two cards: the portfolio CP-SAT
+ * started (see PortfolioBlock) and the stream of progress events below. Both
+ * anchor to the same block of the log, so each declares which part of it it
+ * owns (`owns`) to keep the highlighting unambiguous.
+ */
 import { useState } from 'react'
 import { Anchor, Card } from '../Card'
-import { Md } from '../Md'
 import { subsolverDoc } from '../../knowledge'
 import { formatNumber, useSelection } from '../../state/selection'
-import type { BlockRef, Explanations, SearchEvent, SearchProgress } from '../../types'
+import { PortfolioBlock } from './PortfolioBlock'
+import type { BlockRef, Explanations, LineSpan, SearchEvent, SearchProgress } from '../../types'
 
 
 function eventText(ev: SearchEvent, sense: string | null): string {
@@ -23,65 +29,70 @@ function eventText(ev: SearchEvent, sense: string | null): string {
   return ev.message
 }
 
-export function SearchBlock({ blockRef, data, explanations }: { blockRef: BlockRef; data: SearchProgress; explanations: Explanations }) {
+/** Splits the parsed search block into the portfolio card and the progress card. */
+export function SearchCards({ blockRef, data, explanations }: { blockRef: BlockRef; data: SearchProgress; explanations: Explanations }) {
+  const portfolioLines = [data.start?.line, ...data.subsolvers.map((g) => g.line)].filter(
+    (l): l is number => l !== undefined,
+  )
+  const eventLines = data.events.map((e) => e.line)
+  const both = portfolioLines.length > 0 && eventLines.length > 0
+  // Everything up to the last portfolio line belongs to the portfolio card, the
+  // rest to the progress card. Only needed while both are on screen.
+  const cut = portfolioLines.length > 0 ? Math.max(...portfolioLines) : blockRef.span.start - 1
+  const portfolioSpan: LineSpan = portfolioLines.length
+    ? { start: Math.min(...portfolioLines), end: both ? cut : blockRef.span.end }
+    : blockRef.span
+  const progressSpan: LineSpan = eventLines.length
+    ? { start: Math.min(...eventLines), end: Math.max(blockRef.span.end, ...eventLines) }
+    : blockRef.span
+  return (
+    <>
+      {portfolioLines.length > 0 && (
+        <PortfolioBlock
+          blockRef={blockRef}
+          data={data}
+          explanations={explanations}
+          span={portfolioSpan}
+          owns={both ? { start: 0, end: cut } : undefined}
+        />
+      )}
+      {(eventLines.length > 0 || portfolioLines.length === 0) && (
+        <SearchProgressBlock
+          blockRef={blockRef}
+          data={data}
+          explanations={explanations}
+          span={progressSpan}
+          owns={both ? { start: cut + 1, end: Number.MAX_SAFE_INTEGER } : undefined}
+        />
+      )}
+    </>
+  )
+}
+
+export function SearchProgressBlock({
+  blockRef,
+  data,
+  explanations,
+  span,
+  owns,
+}: {
+  blockRef: BlockRef
+  data: SearchProgress
+  explanations: Explanations
+  span: LineSpan
+  owns?: LineSpan
+}) {
   const { selection, select } = useSelection()
   const [filter, setFilter] = useState<string>('all')
   const events = data.events.filter((e) => filter === 'all' || e.kind === filter)
   const counts = { solution: 0, bound: 0, model: 0, done: 0, other: 0 }
   for (const e of data.events) counts[e.kind]++
   return (
-    <Card kind="search" title="Search log" span={blockRef.span} path={blockRef.path} explanation={explanations.blocks.search}>
-      {data.start && (
-        <div className="kv">
-          <Anchor line={data.start.line}>started at</Anchor>
-          <Anchor line={data.start.line}>
-            {data.start.time.toFixed(2)} s
-            {data.start.num_workers !== null ? ` · ${data.start.num_workers} workers` : ''}
-            {data.start.deterministic ? ' · deterministic' : ''}
-            {data.start.sequential ? ' · sequential' : ''}
-          </Anchor>
-          <div>objective</div>
-          <div>{data.objective_sense ?? 'none (satisfaction problem)'}</div>
-        </div>
-      )}
-      {data.subsolvers.length > 0 && (
-        <details>
-          <summary>Portfolio ({data.subsolvers.map((g) => `${g.count ?? g.subsolvers.length} ${g.label}`).join(', ')})</summary>
-          {data.subsolvers.map((g) => (
-            <div key={g.line} style={{ margin: '6px 0' }}>
-              <Anchor line={g.line}>
-                <b>{g.label}</b>
-              </Anchor>{' '}
-              <span className="small">{explanations.subsolver_categories[g.category] ?? ''}</span>
-              <ul className="subsolvers">
-                {g.subsolvers.map((s) => {
-                  const doc = subsolverDoc(explanations, s.name)
-                  return (
-                    <li key={s.name}>
-                      {doc?.details ? (
-                        <details>
-                          <summary>
-                            <code>{s.name}</code>
-                            {s.count > 1 ? ` ×${s.count}` : ''}
-                            <span className="muted"> {doc.summary}</span>
-                          </summary>
-                          <Md className="details" text={doc.details} />
-                        </details>
-                      ) : (
-                        <>
-                          <code>{s.name}</code>
-                          {s.count > 1 ? ` ×${s.count}` : ''}
-                          {doc && <span className="muted"> {doc.summary}</span>}
-                        </>
-                      )}
-                    </li>
-                  )
-                })}
-              </ul>
-            </div>
-          ))}
-        </details>
-      )}
+    <Card kind="search" title="Search progress" span={span} owns={owns} path={blockRef.path} explanation={explanations.blocks.search}>
+      <div className="kv">
+        <div>objective</div>
+        <div>{data.objective_sense ?? 'none (satisfaction problem)'}</div>
+      </div>
       <div className="legend" style={{ margin: '8px 0' }}>
         <span>Events:</span>
         {(['all', 'solution', 'bound', 'model', 'done', 'other'] as const).filter((k) => k === 'all' || counts[k] > 0).map((k) => (

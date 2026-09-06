@@ -165,10 +165,10 @@ def instances(data_dir: Path) -> list[Instance]:
 def build(instance: Instance) -> cp_model.CpModel:
     """Assignment formulation: x[item, bin], y[bin], minimize the bins used.
 
-    Items are sorted by decreasing size so that the canonical-labelling
+    Items are sorted by decreasing size so that the canonical-labeling
     symmetry break "item ``i`` may only sit in bins ``0..i``" applies, which is
     combined with ``y[b] >= y[b+1]`` (bins are filled from index 0).  Both hold
-    simultaneously in the packing obtained by relabelling bins by their
+    simultaneously in the packing obtained by relabeling bins by their
     smallest item index, so no optimal solution is lost.
     """
     assert instance.path is not None
