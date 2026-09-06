@@ -46,6 +46,10 @@ Two limits are **not** environment variables:
   HTTP 413.
 * `client_max_body_size 32m` and `proxy_read_timeout 120s` in `v2/frontend/nginx.conf`.
 
+That file also sets the caching: `/assets/` is immutable (the bundle names carry a content
+hash) while `index.html` is `no-cache`. Without the second rule a redeploy keeps serving the
+old app to everyone who visited before.
+
 Raise both together if you need to accept bigger logs, and remember that any outer proxy has
 its own body-size limit (nginx defaults to 1 MB, which is far too small for CP-SAT logs).
 
