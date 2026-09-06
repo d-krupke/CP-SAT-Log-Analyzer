@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import subprocess
 import sys
 from dataclasses import dataclass
@@ -34,6 +35,7 @@ LOGS = ROOT / "logs" / "minizinc"
 BUNDLE = ROOT / "tools" / "MiniZincIDE-2.10.1-x86_64-linux-gnu" / "bin" / "minizinc"
 FLATTEN_GRACE = 300.0  # seconds granted on top of the solve limit for flattening
 MEMORY_LIMIT_MB = 8000  # CP-SAT aborts itself instead of being OOM-killed
+_RESPONSE_FIELD = re.compile(r"^[a-z_]+: ")
 
 
 @dataclass(frozen=True)
@@ -90,11 +92,18 @@ def discover(family: str) -> list[MznInstance]:
         instances.append(
             MznInstance(family, str(rel).replace("/", "_"), model, data)
         )
-    if not instances:  # self-contained models, e.g. talent_scheduling_01.mzn
-        instances = [
-            MznInstance(family, m.stem, m, None) for m in sorted(family_dir.rglob("*.mzn"))
-        ]
-    return instances
+    return instances or standalone(family)
+
+
+def standalone(family: str) -> list[MznInstance]:
+    """The family's models as instances of their own (no data file).
+
+    Some families ship self-contained models (``talent_scheduling_01.mzn``); in
+    ``zephyrus`` the data files do not even fit the model that sits next to them, so
+    this is also the fallback when every pairing of a family fails.
+    """
+    family_dir = REPO / family
+    return [MznInstance(family, m.stem, m, None) for m in sorted(family_dir.rglob("*.mzn"))]
 
 
 def spread(instances: list[MznInstance], count: int) -> list[MznInstance]:
@@ -125,7 +134,8 @@ def _params(time_limit: float, workers: int) -> str:
 
 def _split_output(text: str) -> tuple[str, list[str]]:
     """Separate the CP-SAT log (``%% `` comments) from MiniZinc's own output."""
-    log, other = [], []
+    log: list[str] = []
+    other: list[str] = []
     for line in text.splitlines():
         if line.startswith("%%%mzn"):  # MiniZinc statistics, not part of the CP-SAT log
             other.append(line)
@@ -133,7 +143,26 @@ def _split_output(text: str) -> tuple[str, list[str]]:
             log.append(line[3:] if line.startswith("%% ") else line[2:])
         elif line.strip():
             other.append(line)
-    return "\n".join(log) + "\n", other
+    log, trailing = _cut_model_output(log)
+    return "\n".join(log) + "\n", other + trailing
+
+
+def _cut_model_output(lines: list[str]) -> tuple[list[str], list[str]]:
+    """Drop what the model's own `output` statement printed through the same channel.
+
+    The flatzinc interpreter prefixes those lines with ``%% `` as well, so they would end
+    up inside the stored log after the response summary (``Mario earned 628 gold coins``,
+    ``TIMEOUT``). The response summary is the last thing CP-SAT itself prints, so keep
+    everything up to its final ``field: value`` line.
+    """
+    summary = [i for i, line in enumerate(lines) if line.startswith("CpSolverResponse summary:")]
+    if not summary:
+        return lines, []
+    end = summary[-1] + 1
+    for i in range(summary[-1] + 1, len(lines)):
+        if _RESPONSE_FIELD.match(lines[i]):
+            end = i + 1
+    return lines[:end], lines[end:]
 
 
 def run(inst: MznInstance, *, time_limit: float, workers: int, force: bool) -> dict | None:
@@ -197,18 +226,29 @@ def main() -> int:
             print(f"{family:22s} {len(found):5d} instances")
         return 0
     for family in names:
-        for inst in spread(discover(family), args.max_instances):
-            try:
-                meta = run(inst, time_limit=args.limit, workers=args.workers, force=args.force)
-            except Exception as exc:  # noqa: BLE001 - keep the batch going
-                print(f"{family}/{inst.name}: FAILED {type(exc).__name__}: {exc}", file=sys.stderr)
-                continue
-            if meta is None:
-                print(f"{family}/{inst.name}: skipped (log exists)")
-            else:
-                tail = meta["minizinc_output"][-1] if meta["minizinc_output"] else ""
-                print(f"{family}/{inst.name}: {meta['log_lines']} log lines | {tail[:60]}")
+        picked = spread(discover(family), args.max_instances)
+        if _solve_all(picked, args) == 0 and picked and picked[0].data is not None:
+            print(f"{family}: no run succeeded, retrying with the models alone", file=sys.stderr)
+            _solve_all(spread(standalone(family), args.max_instances), args)
     return 0
+
+
+def _solve_all(instances: list[MznInstance], args: argparse.Namespace) -> int:
+    """Run each instance; returns how many produced (or already had) a log."""
+    done = 0
+    for inst in instances:
+        try:
+            meta = run(inst, time_limit=args.limit, workers=args.workers, force=args.force)
+        except Exception as exc:  # noqa: BLE001 - keep the batch going
+            print(f"{inst.family}/{inst.name}: FAILED {type(exc).__name__}: {exc}", file=sys.stderr)
+            continue
+        done += 1
+        if meta is None:
+            print(f"{inst.family}/{inst.name}: skipped (log exists)")
+        else:
+            tail = meta["minizinc_output"][-1] if meta["minizinc_output"] else ""
+            print(f"{inst.family}/{inst.name}: {meta['log_lines']} log lines | {tail[:60]}")
+    return done
 
 
 if __name__ == "__main__":
