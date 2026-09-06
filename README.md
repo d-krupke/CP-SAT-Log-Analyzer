@@ -5,8 +5,8 @@
 > only receives fixes that keep it parsing current OR-Tools logs - no new features.
 >
 > The successor is a rewrite with a standalone parser library, a FastAPI backend and a React
-> frontend, which you run with one `docker compose up`. It lives on the **`v2`** branch; see
-> its `v2/README.md` and `docs/`.
+> frontend, which you run with one `docker compose up`. It is on the **`main`** branch; see its
+> [README](https://github.com/d-krupke/CP-SAT-Log-Analyzer/blob/main/README.md) and `docs/`.
 
 Dive into the world of constraint programming with ease using our CP-SAT Log
 Analyzer. This tool transforms the dense and detailed logs of CP-SAT into clear,
