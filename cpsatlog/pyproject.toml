@@ -4,9 +4,24 @@ version = "0.1.0"
 description = "Parse CP-SAT (OR-Tools) solver logs into line-anchored, JSON-serializable pydantic models."
 readme = "README.md"
 requires-python = ">=3.12"
-license = { text = "MIT" }
+# PEP 639: an SPDX expression plus the file itself, so the wheel carries the
+# license text and not only the word "MIT". LICENSE is a copy of the repository's,
+# because a package may not reach outside its own directory.
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [{ name = "Dominik Krupke" }]
 keywords = ["cp-sat", "or-tools", "log", "parser", "pydantic"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Text Processing :: General",
+    "Typing :: Typed",
+]
 # Only pydantic, and 2.10 is a hard floor: the schema declares its generics with
 # PEP 695 syntax (`class Loc[T](BaseModel)`), and pydantic accepts a `Loc[str]`
 # instance where a `Loc[str]` is expected only from 2.10 on. Older versions parse

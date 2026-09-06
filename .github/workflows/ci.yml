@@ -41,6 +41,11 @@ jobs:
         run: |
           uv run --isolated --resolution lowest-direct --group dev \
             pytest -q --ignore=tests/test_latest_version.py
+      # The package advertises 3.13 in its classifiers, so something has to run it.
+      - name: Tests on Python 3.13
+        run: |
+          uv run --isolated --python 3.13 --group dev \
+            pytest -q --ignore=tests/test_latest_version.py
 
   backend:
     name: backend

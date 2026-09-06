@@ -13,7 +13,9 @@ drop that prefix to find the file today.)
   file always resolved to the newest pydantic, which is why nobody saw it, so CI now also runs
   the parser suite with `--resolution lowest-direct` against the floor we advertise. The backend
   imports pydantic in nine modules and had never declared it either (it came in through
-  fastapi); it does now, with the same floor.
+  fastapi); it does now, with the same floor. The library's packaging metadata also grew up:
+  SPDX license expression plus the license text in the wheel, classifiers, project URLs, and a
+  CI step on Python 3.13 so that the classifier claiming it is backed by a test run.
 
 * **2026-09-06** - Public instance at <https://cpsat-loganalyzer.krupke-algorithms.de/>, which
   is what the README now points at first; `docs/deployment.md` describes it as the reference
