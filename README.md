@@ -4,8 +4,6 @@ CP-SAT's search log is dense, long, and full of information that only makes sens
 the solver's internals. This tool turns it into something you can read: parsed, explained,
 plotted, and annotated with what the numbers actually mean for *your* model.
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://cpsat-log-analyzer.streamlit.app/)
-
 Paste a log, upload a file, or click one of the bundled examples. Nothing is stored - your log
 is parsed and thrown away.
 
@@ -13,10 +11,8 @@ _This project is not affiliated with Google._
 
 ## What it does
 
-The features below describe the current stack in [`v2/`](v2/README.md), which you run with one
-`docker compose up`. The hosted Streamlit link is the earlier implementation: it explains the
-log, plots the progress and renders the tables, but has no insight rules, no parameter review
-and no line-anchored linking.
+The features below describe the stack in [`v2/`](v2/README.md), which you run with one
+`docker compose up`.
 
 **Explains every section of the log.** Solver header, initial and presolved model, presolve
 passes, search events, statistics tables, response summary - each gets a text that says what it
@@ -59,21 +55,18 @@ it.
 **Speaks CP-SAT 9.3 to 9.15**, including the older log formats, and is checked against 295 real
 logs from public instance libraries on every test run.
 
-![Overview](./.assets/overview.png)
-<sup>The overview of the hosted Streamlit version.</sup>
-
 ## Try it
 
-* **Hosted:** <https://cpsat-log-analyzer.streamlit.app/> - the Streamlit implementation, no
-  installation, [documented separately](docs/legacy-streamlit-app.md).
-* **Locally, the current stack:**
+```sh
+git clone https://github.com/d-krupke/CP-SAT-Log-Analyzer.git
+cd CP-SAT-Log-Analyzer/v2
+docker compose up --build
+# open http://localhost:8080
+```
 
-  ```sh
-  git clone https://github.com/d-krupke/CP-SAT-Log-Analyzer.git
-  cd CP-SAT-Log-Analyzer/v2
-  docker compose up --build
-  # open http://localhost:8080
-  ```
+The earlier Streamlit implementation - the one behind
+<https://cpsat-log-analyzer.streamlit.app/> - is no longer part of this branch; it lives on the
+`legacy` branch and is feature-frozen.
 
 Deploying it for others, configuration, sizing and operations:
 [docs/deployment.md](docs/deployment.md).
@@ -87,10 +80,8 @@ Deploying it for others, configuration, sizing and operations:
 | [docs/architecture.md](docs/architecture.md) | how the parser, backend, knowledge base and UI fit together |
 | [docs/README.md](docs/README.md) | index, including the per-component READMEs |
 
-Two implementations live in this repository: the **Streamlit app** in the root (`app.py`,
-`cpsat_log_parser/`), which is what the hosted link serves, and the **v2 stack** in `v2/`
-(`cpsatlog` parser library + FastAPI backend + React frontend), which is where development
-happens.
+Everything lives in [`v2/`](v2/README.md): the `cpsatlog` parser library, the FastAPI backend,
+the React frontend, the TOML knowledge base and the log corpus the tests run against.
 
 ## Contributing
 

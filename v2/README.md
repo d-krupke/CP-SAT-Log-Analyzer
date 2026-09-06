@@ -10,8 +10,8 @@ The current implementation, in five parts:
 | Knowledge | [`knowledge/`](knowledge/README.md) | Plain TOML with every explanation, parameter advice, subsolver description and insight threshold. Editable without programming. |
 | Test corpus | [`corpus/`](corpus/README.md) | 295 real CP-SAT logs, compressed, used by the parser and backend test suites. |
 
-The Streamlit app in the repository root is the previous implementation and is left untouched;
-see [`docs/legacy-streamlit-app.md`](../docs/legacy-streamlit-app.md).
+The previous Streamlit implementation lives on the `legacy` branch and is feature-frozen; see
+[`docs/deployment.md`](../docs/deployment.md#legacy-streamlit-app) for what still serves it.
 
 ## Where to go
 

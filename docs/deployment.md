@@ -1,8 +1,8 @@
 # Deployment
 
 How to run the analyzer for other people. Everything here is about the **v2 stack**
-(`v2/`: FastAPI backend + React frontend); the legacy Streamlit app that is currently public
-is covered [at the end](#legacy-streamlit-app).
+(`v2/`: FastAPI backend + React frontend), which is all this branch contains; the legacy
+Streamlit app is covered [at the end](#legacy-streamlit-app).
 
 The service is **stateless**: no database, no volumes, no accounts, and no log is ever written
 to disk. A submitted log lives in memory for the duration of the request. That makes
@@ -197,21 +197,20 @@ next to the app. Keep that in mind when building the image by hand:
 
 ## Continuous integration
 
-`.github/workflows/pytest.yml` currently tests the **legacy** app only (flake8 plus
-`pytest -s tests`, on every push and weekly on Friday). The v2 suites
-(`v2/cpsatlog`, `v2/backend`, both with `ruff` and `ty`) are not wired into CI yet - run them
-locally before deploying, see [development.md](development.md).
+`.github/workflows/ci.yml` runs three independent jobs on every push and pull request, and
+weekly on Friday: the parser library and the backend (`ruff check`, `ruff format --check`,
+`ty`, `pytest`, plus a knowledge-base load for the backend) and the frontend (`npm run lint`,
+`npm run build`). The weekly run additionally upgrades OR-Tools to its newest release before
+running the parser suite, so a changed log format surfaces there first - see
+[development.md](development.md) for the same commands locally.
 
 ## Legacy Streamlit app
 
-The publicly deployed version is still the Streamlit app in the repository root
-(<https://cpsat-log-analyzer.streamlit.app/>), deployed from `app.py` by Streamlit Community
-Cloud, which installs `requirements.txt` and runs `streamlit run app.py` for you. Locally:
+<https://cpsat-log-analyzer.streamlit.app/> is served by Streamlit Community Cloud from `app.py`
+of the **`legacy` branch**: it installs `requirements.txt` and runs `streamlit run app.py` for
+you, and needs no configuration. That app is not in this branch any more, so the Streamlit
+Community Cloud app must be pointed at `legacy` (Manage app -> Settings -> Branch); otherwise
+its next redeploy finds no `app.py`. Its structure, features and screenshots are documented in
+`docs/legacy-streamlit-app.md` on that branch.
 
-```sh
-pip install -r requirements.txt
-streamlit run app.py
-```
-
-It shares no code with `v2/` and needs no configuration. Its structure and features are
-described in [legacy-streamlit-app.md](legacy-streamlit-app.md).
+It shares no code with `v2/` and is feature-frozen: new work happens here.

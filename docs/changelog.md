@@ -4,6 +4,13 @@ Notable changes, newest first. Dates are the day the work landed on `main`.
 
 ## v2 stack (`v2/`)
 
+* **2026-09-06** - Moved the legacy Streamlit app out of this branch (it lives on `legacy`) and
+  replaced the legacy-only CI workflow with one that checks the parser library, the backend and
+  the frontend, upgrading OR-Tools on the weekly run.
+* **2026-09-06** - Broken and incomplete logs: unrecognised sections are kept verbatim, marked
+  in both panes and listed as cards, and four new insights say when a log is truncated, headless,
+  partly unreadable or not a CP-SAT log at all. Fixed `Task timing` tables glued to the search
+  block (62 of the 295 corpus logs lost their table).
 * **2026-09-06** - Committed the benchmark log corpus (295 real logs, compressed in
   `v2/corpus/`) and made it a test suite for both the parser and the analysis; trimmed the
   landing-page examples to ten logs chosen for diversity and moved the rest to
@@ -17,7 +24,7 @@ Notable changes, newest first. Dates are the day the work landed on `main`.
   models, FastAPI backend with derived analysis and insights, React/Vite frontend with the
   two-pane linked view, and the editable TOML knowledge base.
 
-## Streamlit app (repository root)
+## Streamlit app (now on the `legacy` branch)
 
 * **2024-10-31** - Added a log history to quickly switch back to previous logs.
 * **2024-10-31** - Fixed parsing when the model was solved in presolve.

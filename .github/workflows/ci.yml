@@ -1,0 +1,71 @@
+# CI for the v2 stack: the parser library, the backend and the frontend are
+# checked independently, each with the tooling it is developed with (uv for the
+# Python parts, npm for the frontend). The weekly run additionally upgrades
+# OR-Tools to its newest release, which is how a changed log format shows up
+# here before a user reports it.
+name: ci
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "0 0 * * FRI"
+
+jobs:
+  cpsatlog:
+    name: parser library
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: v2/cpsatlog
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - name: Install
+        run: uv sync --all-groups
+      - name: Upgrade OR-Tools (weekly run only)
+        if: github.event_name == 'schedule'
+        run: uv sync --all-groups --upgrade-package ortools
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run ty check .
+      - run: uv run pytest -q
+
+  backend:
+    name: backend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: v2/backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - name: Install
+        run: uv sync --all-groups
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run ty check .
+      - run: uv run pytest -q
+      - name: Knowledge base loads
+        run: uv run python -m app.knowledge
+
+  frontend:
+    name: frontend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: v2/frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: v2/frontend/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build

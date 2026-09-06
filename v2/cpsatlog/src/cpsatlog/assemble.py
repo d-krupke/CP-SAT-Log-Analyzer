@@ -159,9 +159,7 @@ def _unparsed(log: CpSatLog, block: Block, chunk: Chunk) -> str:
             kind=block.kind,
             span=block.span,
             lines=[
-                Loc(value=line, line=no)
-                for no, line in chunk.numbered()
-                if block.span.contains(no)
+                Loc(value=line, line=no) for no, line in chunk.numbered() if block.span.contains(no)
             ],
         )
     log.unparsed.append(raw)

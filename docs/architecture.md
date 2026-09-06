@@ -81,6 +81,7 @@ log is recognisable as such at a glance instead of looking like a complete analy
 
 ## The legacy app
 
-`app.py`, `_app/` and `cpsat_log_parser/` in the repository root are the original Streamlit
-implementation, still the publicly deployed one. It shares no code with `v2/`; see
-[legacy-streamlit-app.md](legacy-streamlit-app.md).
+The original Streamlit implementation (`app.py`, `_app/`, `cpsat_log_parser/`) lived in the
+repository root until it was moved to the `legacy` branch. It shares no code with `v2/` and is
+feature-frozen; see [deployment.md](deployment.md#legacy-streamlit-app) for what still serves
+it.

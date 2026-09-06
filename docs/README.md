@@ -5,8 +5,7 @@
 | [deployment.md](deployment.md) | running the analyzer for other people: Docker Compose, single container, reverse proxy, configuration, sizing, operations |
 | [development.md](development.md) | local setup of the three projects, the test suites, editing the knowledge base, supporting a new OR-Tools version |
 | [architecture.md](architecture.md) | how parser, backend, knowledge base and UI fit together, and why the analysis is line-anchored |
-| [legacy-streamlit-app.md](legacy-streamlit-app.md) | the Streamlit app in the repository root: running it, its structure, its screenshots |
-| [changelog.md](changelog.md) | notable changes to both implementations |
+| [changelog.md](changelog.md) | notable changes, including those of the legacy Streamlit app |
 
 Component documentation lives next to the code:
 

@@ -136,9 +136,7 @@ def test_model_line_component_sizes() -> None:
 
 def test_model_line_truncated_component_sizes() -> None:
     """With more than ten components CP-SAT appends `,...`; the flag records that."""
-    ev = parse_event(
-        "#Model   0.2s var:9/9 constraints:4/4 compo:9,8,7,6,5,4,3,2,1,1,...", 8
-    )
+    ev = parse_event("#Model   0.2s var:9/9 constraints:4/4 compo:9,8,7,6,5,4,3,2,1,1,...", 8)
     assert ev is not None
     assert len(ev.model_components) == 10
     assert ev.model_components_truncated

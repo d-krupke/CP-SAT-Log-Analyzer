@@ -1,7 +1,7 @@
 # Development
 
-Everything below is about `v2/`. The legacy Streamlit app in the repository root is frozen; it
-only needs `pip install -r requirements.txt && streamlit run app.py`.
+Everything in this branch is `v2/`. The legacy Streamlit app lives on the `legacy` branch and
+is frozen; it is documented there.
 
 Requirements: Python 3.12 with [uv](https://docs.astral.sh/uv/), Node 22+, and Docker if you
 want to run the whole stack.
