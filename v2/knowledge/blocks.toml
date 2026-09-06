@@ -40,15 +40,16 @@ line is a new improving solution found by the tagged subsolver with its cost as 
 the still-open range as `next:[lb,ub]`; `#Bound` lines (throttled) report a worker improving
 the proven bound; `#Model` lines record how many variables/constraints of the presolved
 model are still active after sharing fixed variables; `#Done` closes the search when best
-meets the bound. Solutions and bounds are shared between all workers immediately, so a good
+meets the bound (it can appear once per worker, e.g. `[loading]` when a worker finds the
+model infeasible while loading it). Solutions and bounds are shared between all workers immediately, so a good
 incumbent from an LNS worker also speeds up the proof of the exact workers.'''
 response = '''
 **Response summary.** The final status and the counters CP-SAT returns to your program.
 Careful: `booleans`, `conflicts`, `branches`, `propagations`, `integer_propagations` and
-`restarts` are **not** portfolio totals. They are copied from the single worker whose model
-carries the returned solution, which is often a first-solution or LNS helper that barely
-searched. Read the per-worker tables (Search stats) to see how hard the search really
-worked.'''
+`restarts` are **not** portfolio totals. They are copied from the first full worker of the
+portfolio (usually `default_lp`, or `main` in a single-thread run), not from the worker that
+found the solution. Read the per-worker tables (Search stats) to see how hard the whole
+search really worked.'''
 message = 'A free-form message from the solver.'
 comment = 'Lines starting with `//` are comments added by a human, not by CP-SAT.'
 unknown = '''

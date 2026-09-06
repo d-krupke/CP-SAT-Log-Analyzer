@@ -5,8 +5,11 @@
 closed_by_presolve = 'Presolve proved optimality or infeasibility, so no search ran.'
 gap_limit_reached = '''
 The solver stopped because the objective/bound gap fell below `relative_gap_limit` /
-`absolute_gap_limit`; the status is still FEASIBLE.'''
-loading_model = 'The presolved model is being loaded into the workers.'
+`absolute_gap_limit`. CP-SAT then reports the status **OPTIMAL** although the gap is not
+zero; check `best_bound` in the response for the remaining gap.'''
+loading_model = '''
+The presolved model is being loaded into the workers (older versions; newer ones print
+`Preloading model.` at the end of presolve instead).'''
 hint = '''
 Information about the solution hint (whether it was complete/feasible and which objective it
 had).'''

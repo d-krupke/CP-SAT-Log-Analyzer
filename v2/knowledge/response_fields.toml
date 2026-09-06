@@ -9,20 +9,31 @@ objective = 'Objective value of the returned (best) solution.'
 best_bound = '''
 Best proven bound on the objective. The gap between objective and bound quantifies how far
 the solution may be from optimal.'''
-integers = "Integer variables in the returning worker's model."
+# The counters below are those of the *first* full worker of the portfolio (usually the one
+# with the user parameters, i.e. default_lp), not the portfolio total and not necessarily
+# the worker that found the returned solution (cp_model.proto, "Some statistics").
+integers = "Integer variables in the first full worker's model."
 booleans = '''
-Boolean variables (incl. minted bound literals) of the worker that returned the solution.'''
-conflicts = 'Conflicts of the worker that returned the solution, not the portfolio total.'
-branches = 'Decisions of the worker that returned the solution, not the portfolio total.'
-propagations = 'Boolean propagations of the returning worker.'
-integer_propagations = 'Integer bound propagations of the returning worker.'
-restarts = 'Restarts of the returning worker.'
-lp_iterations = 'Simplex iterations of the returning worker.'
+Boolean variables (incl. minted bound literals) of the first full worker of the portfolio.'''
+conflicts = '''
+Conflicts of the first full worker of the portfolio (usually `default_lp`), not the portfolio
+total and not necessarily the worker that found the solution.'''
+branches = '''
+Decisions of the first full worker of the portfolio, not the portfolio total.'''
+propagations = 'Boolean propagations of the first full worker.'
+integer_propagations = 'Integer bound propagations of the first full worker.'
+restarts = 'Restarts of the first full worker.'
+lp_iterations = 'Simplex iterations of the first full worker.'
 walltime = 'Total wall-clock time of the solve.'
-usertime = 'CPU time of the main thread.'
+usertime = '''
+Meant to be the CPU time of the main thread; in the open-source build it is measured with the
+wall-clock timer, so it usually equals `walltime`.'''
 deterministic_time = 'Hardware-independent effort measure summed over workers.'
 gap_integral = '''
-Integral of the relative gap over time. Smaller means the solver converged faster; useful to
-compare runs that end with the same status.'''
+Integral over deterministic time of log(1 + absolute objective gap), i.e. how long the
+solver spent with a large bound-to-solution distance. Smaller means it converged faster;
+useful to compare runs that end with the same status.'''
 solution_fingerprint = 'Hash of the returned solution.'
-lrat_status = 'Status of LRAT proof logging (NA when not enabled).'
+lrat_status = '''
+Status of LRAT proof logging (NA when not enabled). Printed as a separate line just before
+the summary in newer versions.'''

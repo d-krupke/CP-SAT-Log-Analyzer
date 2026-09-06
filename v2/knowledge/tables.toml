@@ -63,7 +63,9 @@ Fixed = 'Boolean variables fixed at level 0.'
 Equiv = 'Variables replaced by an equivalent literal.'
 Total = 'Total Boolean variables of the worker.'
 VarLeft = 'Total minus fixed minus equivalent: what the search still decides on.'
-BinaryClauses = 'Clauses of size two, stored in the implication graph.'
+BinaryClauses = '''
+Implication arcs in the binary implication graph; each binary clause is stored as two
+arcs, so this is about twice the number of binary clauses.'''
 PermanentClauses = 'Problem clauses and learned clauses that are kept for good.'
 TemporaryClauses = 'Learned clauses that may be deleted during clause cleanup.'
 
@@ -114,7 +116,7 @@ Component = 'Number of independent LP components (the linear part may split).'
 Iterations = 'Cumulative simplex pivots, kept low by dual-simplex warm starts.'
 AddedCuts = 'Cutting planes added to the relaxation (see the Lp Cut table).'
 OPTIMAL = 'LP solves that ended optimal (bound information available).'
-"DUAL_F." = 'Solves that stopped dual feasible (iteration limit hit; bound still valid).'
+"DUAL_F." = 'Solves interrupted while dual feasible (e.g. iteration limit); bound still valid.'
 "DUAL_U." = '''
 Dual unbounded = primal infeasible relaxation; produces a dual-ray conflict that the SAT
 core learns from.'''
@@ -181,13 +183,18 @@ backtracks, constraint-weight updates and score computations.'''
 [tables.solutions]
 summary = '''
 **Solutions.** Which subsolver found how many improving solutions and how good they were:
-`Rank` is the range of ranks among all solutions (1 = best). Often first solutions come from
-feasibility jump/LNS and the last ones from exact workers or LNS. It is often more telling
+`Rank` gives the numbers of the first and last improving solution the subsolver found, in
+order of discovery (1 = the first solution of the run, the highest number = the final best).
+Often the first solutions come from feasibility jump/LNS and the last ones from exact
+workers or LNS. It is often more telling
 which subsolvers do *not* appear.'''
 
 [tables.solutions.columns]
 Num = 'Number of improving solutions reported by this subsolver.'
-Rank = '[best rank, worst rank] of those solutions (1 = best solution).'
+Rank = '''
+[first, last] solution number found by this subsolver, counted in order of discovery (1 =
+first solution of the run; every later number improves on the previous one, so the highest
+number is the final best solution).'''
 
 [tables.objective_bounds]
 summary = '''
@@ -208,7 +215,7 @@ solutions. `Synchro` counts synchronisation rounds.'''
 [tables.solution_repositories.columns]
 Added = 'Solutions added to the pool.'
 Queried = 'Times a worker took a solution from the pool.'
-Ignored = 'Added solutions that were discarded (duplicates/worse).'
+Ignored = 'Added solutions that were discarded (duplicates/worse); only in older versions.'
 Synchro = 'Number of synchronisations of the pool.'
 
 [tables.improving_bounds_shared]
@@ -228,7 +235,7 @@ between workers. A dead end that one configuration discovers becomes a permanent
 for all others: the portfolio learns collectively.'''
 
 [tables.clauses_shared.columns]
-Num = 'Clauses exported by this worker.'
+Num = 'Clauses exported by this worker (single column of older OR-Tools versions).'
 "#Exported" = 'Clauses exported by this worker.'
 "#Imported" = 'Clauses imported from other workers.'
 "#BinaryRead" = 'Binary clauses read from the shared pool.'

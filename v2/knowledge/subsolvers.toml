@@ -30,8 +30,10 @@ summary = 'Balanced default: CP propagation plus a light LP relaxation feeding b
 details = '''
 The reference configuration: all parameters at their defaults, `linearization_level = 1`
 (only linear constraints and the objective enter the LP). Decisions follow the automatic
-heuristic (VSIDS on the Boolean skeleton, then integer completion). This is the only worker
-that runs with `num_workers = 1`, so a single-thread run is a `default_lp` run.'''
+heuristic (VSIDS on the Boolean skeleton, then integer completion). A plain single-thread
+run (`num_workers = 1`, no `interleave_search`, no custom `subsolvers`) does not use the
+portfolio at all: it runs one worker named `main` with your parameters as given, which
+equals `default_lp` only if you did not override anything.'''
 
 [subsolvers.no_lp]
 role = 'exact'
@@ -171,8 +173,10 @@ role = 'exact'
 summary = 'Workers that split one shared search tree between them instead of running independent searches.'
 details = '''
 `use_shared_tree_search`: the only part of the portfolio that actually partitions the
-search tree. Enabled with `shared_tree_num_workers` (0 by default); each worker takes open
-subtrees from a shared manager. Core, LB-tree and max-HS optimisation are disabled in these
+search tree. `shared_tree_num_workers` (default -1 = automatic) sets how many; automatic
+mode only enables it when `(num_workers - 16) / 2` (with objective) or
+`(num_workers - 8) * 3 / 4` (satisfaction) exceeds 4, i.e. with roughly more than 24
+resp. 14 workers. Each worker takes open subtrees from a shared manager. Core, LB-tree and max-HS optimisation are disabled in these
 workers.'''
 
 # ---------------------------------------------------------------- bound-focused workers
@@ -249,7 +253,8 @@ and `x != v`) at level zero, propagating each and recording the bounds and equiv
 that follow. Everything it derives is exported through the shared-bounds channel, so it is a
 service to the portfolio more than a search on its own. It starts with a tiny per-probe
 deterministic time budget that it raises as needed. Variants `_no_lp` / `_max_lp` set the
-linearisation level to 0 / 2 (`_max_lp` also spends 100k root LP iterations).'''
+linearisation level to 0 / 2 (`_max_lp` also spends 100k root LP iterations). Not run in
+deterministic (`interleave_search`) mode.'''
 
 [subsolvers.probing_no_lp]
 role = 'bound'
@@ -278,6 +283,16 @@ constraints (`feasibility_jump_linearization_level = 0`), `fj_lin` on their line
 role = 'first_solution'
 summary = 'Feasibility jump on the linearised constraints.'
 details = 'See `fj`; uses `feasibility_jump_linearization_level = 2`.'
+
+[subsolvers.random]
+role = 'first_solution'
+summary = 'First-solution tree search with randomised decisions (older name of fs_random).'
+details = 'See `fs_random`.'
+
+[subsolvers.random_quick_restart]
+role = 'first_solution'
+summary = 'Randomised first-solution search with quick restarts (older name of fs_random_quick_restart).'
+details = 'See `fs_random_quick_restart`.'
 
 [subsolvers.fs_random]
 role = 'first_solution'
@@ -319,23 +334,29 @@ relaxation; controlled by `use_feasibility_pump`.'''
 role = 'lns'
 summary = 'RINS neighbourhood: keeps the variables on which the LP solution and the incumbent agree.'
 details = '''
-Relaxation Induced Neighbourhood Search: variables with the same value in the LP relaxation
-and in the best solution are fixed, the rest is re-optimised. Needs LP solutions from an
-LP-enabled worker. Logged as `rins`, `rins_lns` or `rins_lns_default` depending on the
-version; enabled with `use_rins_lns`.'''
+Relaxation Induced Neighbourhood Search: variables with the same value in a relaxation
+point (an LP solution or the feasibility pump's incomplete solution) and in the incumbent
+are fixed, the rest is re-optimised. In current versions it is one worker with RENS named
+`rins/rens` (see there); enabled with `use_rins_lns`.'''
 
 [subsolvers.rens]
 role = 'lns'
 summary = 'RENS neighbourhood: fixes integral LP values and restricts the others to their rounding.'
 details = '''
-Relaxation Enforced Neighbourhood Search: works from an LP solution alone, so it can run
-before a first solution exists. Variables that are integral in the LP are fixed, fractional
-ones restricted to floor/ceil. Shares the `use_rins_lns` switch with `rins`.'''
+Relaxation Enforced Neighbourhood Search: works from a relaxation point alone (LP solution
+or feasibility pump), so it can run before a first solution exists. Variables that are
+integral in the relaxation are fixed, fractional ones restricted to floor/ceil. Shares the
+`use_rins_lns` switch and the `rins/rens` worker with `rins`.'''
 
 [subsolvers."rins/rens"]
 role = 'lns'
-summary = 'The RINS and RENS neighbourhoods share one slot of the portfolio (see rins and rens).'
-details = 'Listed as one entry in the portfolio line; the search log and the tables show `rins` and `rens` separately.'
+summary = 'One LNS worker that randomly alternates RINS and RENS neighbourhoods (see rins and rens).'
+details = '''
+A single worker: each call does a RINS step (75 %, needs an incumbent) or a RENS step,
+using either the periodic LP relaxation or the feasibility pump's point as relaxation. The
+portfolio line, Task timing and LNS stats show it as `rins/rens`; only the Solutions table
+splits the credit into `rins_lp_lns`, `rins_pump_lns`, `rens_lp_lns`, `rens_pump_lns`.
+Disabled with 1 worker, `interleave_search` or `use_lns = false`.'''
 
 [subsolvers.rnd_var_lns]
 role = 'lns'
@@ -399,7 +420,9 @@ details = 'Only created when there are more than two distinct interval sets (res
 [subsolvers.scheduling_precedences_lns]
 role = 'lns'
 summary = 'Scheduling LNS: keeps the precedence order of the incumbent and relaxes the exact times.'
-details = 'Fixes the relative order of intervals as in the incumbent and lets the solver re-time them.'
+details = '''
+Fixes the relative order of intervals as in the incumbent and lets the solver re-time
+them. Also created for pure NoOverlap2D (packing) models without NoOverlap/Cumulative.'''
 
 [subsolvers.packing_random_lns]
 role = 'lns'
@@ -456,7 +479,8 @@ Runs the feasibility-jump local search as an *improvement* heuristic: starting f
 incumbent (or a shared hint), it moves through assignments that reduce weighted constraint
 violation and objective. Several copies run interleaved; `ls_lin` works on the linearised
 constraints. Their counters are in the `LS stats` table. Older versions call it
-`violation_ls`. The number of copies follows `num_violation_ls`.'''
+`violation_ls`. The number of copies follows `num_violation_ls`. Only created when the model
+has an objective; satisfaction problems get no `ls`/`ls_lin` workers.'''
 
 [subsolvers.ls_lin]
 role = 'local_search'

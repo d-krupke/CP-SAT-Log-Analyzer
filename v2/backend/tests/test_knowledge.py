@@ -78,3 +78,15 @@ def test_parameter_warning_rules() -> None:
     assert "all workers" in (describe_parameter("use_probing_search", True).warning or "")
     assert "Not a parameter" in (describe_parameter("no_such_param", 1).warning or "")
     assert describe_parameter("num_workers", 8).advice
+
+
+def test_worker_names_from_example_logs_are_documented() -> None:
+    """Every worker name seen in the example logs' portfolio lines must resolve to a doc.
+
+    Older OR-Tools versions use names such as ``random`` or ``rins/rens``; a missing doc
+    would leave the UI without an explanation for that worker.
+    """
+    for name in ("random", "random_quick_restart", "rins/rens", "objective_shaving_search", "jump"):
+        d = describe_subsolver(name)
+        assert d is not None, name
+        assert d.summary

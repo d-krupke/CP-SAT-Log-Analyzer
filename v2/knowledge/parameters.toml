@@ -34,10 +34,11 @@ since, or a newer addition).'''
 # from sat_parameters.proto is shown in addition, so keep this to the practical part.
 [advice]
 num_workers = '''
-Number of parallel workers. With 1 worker only `default_lp` runs; from 2 on the interleaved
-LNS/first-solution heuristics join, and the full portfolio (core, no_lp, max_lp,
-quick_restart, bound-focused workers, ...) needs 8-16+. Matching the number of *physical*
-cores often beats hyper-threads.'''
+Number of parallel workers. With 1 worker a single worker named `main` runs with exactly
+your parameters (no portfolio); from 2 on the named strategies plus LNS/first-solution
+heuristics join. The number of full workers grows with `num_workers` (e.g. 6 of 8, 11 of 16),
+so a reasonably diverse portfolio needs 8-16 and the complete list of ~18 named strategies
+closer to 32. Matching the number of *physical* cores often beats hyper-threads.'''
 num_search_workers = 'Deprecated alias of `num_workers`; still honoured when `num_workers` is 0.'
 max_time_in_seconds = '''
 Wall-clock limit. On hitting it the status is FEASIBLE (or UNKNOWN) and the gap in the
@@ -47,14 +48,20 @@ Stop once |objective - bound| / max(1, |objective|) drops below this value. The 
 prints `Relative gap limit of X reached.`'''
 absolute_gap_limit = 'Stop once the absolute difference between objective and bound is below this.'
 search_branching = '''
-Controls the decision heuristic of the workers. `FIXED_SEARCH` forces your
-`add_decision_strategy` order on *every* worker and disables CP-SAT's learned heuristics,
-which is almost always slower unless the strategy encodes real insight;
-`PORTFOLIO_SEARCH`/`AUTOMATIC_SEARCH` keep the diversity of the portfolio.'''
+Controls the decision heuristic. Only workers that do not set their own branching inherit
+it (`default_lp`, `no_lp`, `max_lp*`, and the single `main` worker with 1 worker); `core*`,
+`quick_restart*`, `reduced_costs`, `pseudo_costs`, `probing*`, `lb_tree_search*` hard-code
+theirs. `FIXED_SEARCH` uses your `add_decision_strategy` order instead of the learned
+heuristics, which is almost always slower unless the strategy encodes real insight. Without
+a decision strategy or scheduling constraints, `FIXED_SEARCH` workers are dropped from the
+portfolio entirely.'''
 linearization_level = '''
 0 = no LP relaxation (like `no_lp`), 1 = only linear constraints/objective (default), 2 =
-also linearise other constraints (like `max_lp`). Setting it at the top level changes *all*
-workers and removes the LP diversity of the portfolio.'''
+also linearise other constraints (like `max_lp`). Most named workers (`no_lp`, `default_lp`,
+`max_lp*`, `core*`, `reduced_costs`, `pseudo_costs`, `lb_tree_search*`,
+`objective_lb_search*`, `objective_shaving*`) hard-code their own level and ignore this;
+only `fixed`, `quick_restart`, `probing` and the single `main` worker (1 worker) inherit it.
+With 1 worker this is the way to change the LP level.'''
 cp_model_presolve = '''
 Disabling presolve keeps the model as is. Only worth it for tiny models or when presolve
 time dominates a fast search; it usually hurts.'''
@@ -76,11 +83,15 @@ Runs only the LNS/first-solution heuristics; needs a time limit and never proves
 use_lns = 'Disabling LNS removes the main improvement heuristics of the portfolio.'
 use_feasibility_jump = '''
 Feasibility jump is the main first-solution heuristic; disabling it delays first solutions.'''
-interleave_search = 'Runs the workers interleaved in one thread (deterministic).'
+interleave_search = '''
+Runs the portfolio in synchronised batches so the result is deterministic regardless of
+`num_workers`; the work is still distributed over `num_workers` threads.'''
 random_seed = 'Changes the random choices; run several seeds to judge variance.'
 enumerate_all_solutions = '''
-Enumerates all solutions with a single worker and disabled presolve reductions that would
-drop solutions; much slower than optimisation.'''
+Enumerates all solutions. Single-threaded if `num_workers` is left at 0; with an explicit
+`num_workers > 1` it runs in parallel but may report the same solution several times.
+Forces `keep_all_feasible_solutions_in_presolve` so presolve does not drop solutions; much
+slower than optimisation.'''
 fix_variables_to_their_hinted_value = 'Fixes hinted variables; useful to test if a hint is feasible.'
 keep_all_feasible_solutions_in_presolve = '''
 Prevents presolve from removing equivalent solutions (hints stay feasible) at a cost.'''
@@ -92,10 +103,44 @@ max_deterministic_time = 'Hardware-independent limit; results are reproducible a
 share_objective_bounds = 'Disabling stops workers from exchanging objective bounds.'
 share_level_zero_bounds = 'Disabling stops workers from exchanging variable bounds.'
 share_binary_clauses = 'Disabling stops workers from exchanging learned binary clauses.'
-optimize_with_core = 'Forces core-based optimisation on the default worker.'
+optimize_with_core = '''
+Forces core-based optimisation on the workers that do not set it themselves (`default_lp`,
+`no_lp`, `max_lp*`, `quick_restart`, `probing`, or the single `main` worker); `core*` and
+`max_hs` already use it.'''
 use_absl_random = 'Uses a non-deterministic random generator.'
 log_search_progress = 'Enables this log.'
 log_to_stdout = 'Whether the log also goes to stdout (besides the log callback).'
+log_subsolver_statistics = '''
+Prints the per-subsolver statistics tables at the end of the log (Search stats, LNS stats,
+...). Only useful together with `log_search_progress`.'''
+repair_hint = '''
+Tries to repair a partial or conflicting hint instead of just following it; gives up after
+`hint_conflict_limit` conflicts and continues with normal search.'''
+hint_conflict_limit = '''
+Conflict budget spent on following/repairing the solution hint before it is abandoned
+(default 10). Raise it if a good hint is dropped too early.'''
+cp_model_use_sat_presolve = '''
+Clause-level (SAT) presolve on top of the CP presolve; disabling keeps the CP-level
+simplifications but skips the SAT-level ones.'''
+shared_tree_num_workers = '''
+Workers dedicated to the shared-tree search (a branch-and-bound tree split among workers).
+-1 = automatic: only used when it yields more than 4 workers, i.e. roughly `num_workers`
+above 24 for optimisation and above 13 for satisfaction problems.'''
+num_full_subsolvers = '''
+Number of full (exact) workers to keep from the portfolio; 0 = automatic (grows with
+`num_workers`, leaving room for LNS/LS workers).'''
+use_rins_lns = '''
+LP-guided RINS/RENS neighbourhoods. Silently disabled with 1 worker, `interleave_search`
+or `use_lns=false`.'''
+use_feasibility_pump = '''
+LP-based first-solution heuristic. Silently disabled with 1 worker, `interleave_search`,
+`use_lns=false` or `linearization_level=0`.'''
+num_violation_ls = '''
+Overrides the automatic number of violation-based local search workers (`ls`, `ls_lin`)
+derived from `num_workers`.'''
+cut_level = '''
+Which cutting planes the LP workers generate; 0 disables cuts, which makes LP rounds cheaper
+but weakens the bounds.'''
 
 # Warning rules, checked top to bottom; the first matching rule wins.
 # Each rule needs `text` and one of:
@@ -108,14 +153,15 @@ log_to_stdout = 'Whether the log also goes to stdout (besides the log callback).
 parameter = 'search_branching'
 value = 'FIXED_SEARCH'
 text = '''
-FIXED_SEARCH disables the learned heuristics on all workers; expect slower solves unless your
-strategy is essential.'''
+FIXED_SEARCH replaces the learned heuristics on the inheriting workers (default_lp, no_lp,
+max_lp*); expect slower solves unless your strategy is essential. Without a decision strategy
+or scheduling constraints these workers are dropped instead.'''
 
 [[warning]]
 parameter = 'linearization_level'
 text = '''
-Applied to all workers: the portfolio loses its LP diversity (no_lp/default_lp/max_lp all behave
-alike).'''
+Only fixed, quick_restart, probing and a single `main` worker inherit this; the LP-diverse
+workers (no_lp/default_lp/max_lp) hard-code their own level and are unaffected.'''
 
 [[warning]]
 parameter = 'cp_model_presolve'
@@ -144,15 +190,14 @@ pattern = [
   'use_energetic_reasoning*',
   'use_timetable_edge_finding*',
   'use_overload_checker*',
-  'use_pairwise_reasoning*',
   'max_pairs_pairwise_reasoning*',
   'use_dual_scheduling_heuristics',
   'use_hard_precedences_in_cumulative',
   'exploit_all_precedences',
 ]
 text = '''
-Expensive propagation set at the top level applies to every worker including the LNS helpers;
-consider a dedicated subsolver via subsolver_params/extra_subsolvers.'''
+Expensive propagation set at the top level applies to every worker that does not override it,
+including the LNS helpers; consider a dedicated subsolver via subsolver_params/extra_subsolvers.'''
 
 [[warning]]
 prefix = ['use_', 'presolve_', 'share_', 'cp_model_', 'symmetry_', 'max_', 'min_']

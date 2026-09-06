@@ -10,7 +10,9 @@ upgrading OR-Tools.'''
 
 [workers]
 min_for_full_portfolio = 8      # fewer workers -> warning
-hint_few = 'With fewer than 8 workers only part of the portfolio runs (1 worker = default_lp only).'
+hint_few = '''
+With fewer than 8 workers only part of the portfolio runs (1 worker = a single `main` worker
+with your parameters, no portfolio).'''
 
 [gap]
 hint = '|objective - bound| / max(1, |objective|)'
