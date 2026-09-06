@@ -8,6 +8,7 @@ or via ``docker compose up`` (see ``v2/docker-compose.yml``). Endpoints:
 - ``GET  /api/examples/{name}``  raw text of an example
 - ``GET  /api/explanations``     static explanation texts (blocks, tables, columns, ...)
 - ``GET  /api/parameters/{name}`` documentation of one solver parameter
+- ``GET  /api/site``             deployment chrome: issue link, imprint, privacy
 - ``GET  /api/health``
 
 If ``STATIC_DIR`` points to a built frontend, it is served at ``/`` so a single
@@ -30,6 +31,7 @@ from .analysis import Analysis, analyze
 from .examples import ExampleInfo, list_examples, read_example
 from .explanations import Explanations, all_explanations
 from .parameters import ParameterInfo, describe_parameter
+from .site import SiteConfig, site_config
 
 MAX_LOG_BYTES = 20 * 1024 * 1024
 
@@ -87,6 +89,12 @@ def explanations() -> Explanations:
 @app.get("/api/parameters/{name}", response_model=ParameterInfo)
 def parameter(name: str) -> ParameterInfo:
     return describe_parameter(name, None)
+
+
+@app.get("/api/site", response_model=SiteConfig)
+def site() -> SiteConfig:
+    """Where "Report issue" points, plus whatever legal pages this deployment configured."""
+    return site_config()
 
 
 STATIC_DIR = Path(os.environ.get("STATIC_DIR", "/nonexistent"))

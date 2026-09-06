@@ -142,3 +142,6 @@ benchmarks/collect.log
 
 # stray archives of third-party models/logs dropped in the repo root
 models.tar.gz
+
+# Operator-specific legal texts mounted into the backend (see v2/.env.example)
+v2/legal/

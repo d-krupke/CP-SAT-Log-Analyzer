@@ -376,3 +376,15 @@ export interface ExampleInfo {
   description: string
   summary: string
 }
+
+/** Deployment chrome from `GET /api/site` (see v2/backend/app/site.py). */
+export interface SitePage {
+  key: string
+  label: string
+  url: string | null
+  markdown: string | null
+}
+export interface SiteConfig {
+  issue_url: string
+  pages: SitePage[]
+}

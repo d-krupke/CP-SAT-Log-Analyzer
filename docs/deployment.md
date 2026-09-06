@@ -31,7 +31,8 @@ Stop with `docker compose down`. To publish on another port, change the `ports` 
 
 ## Configuration
 
-The backend reads four environment variables; the images set the last two already.
+The backend reads these environment variables; the images set `KNOWLEDGE_DIR` and
+`EXAMPLE_LOGS_DIR` already, and `v2/.env.example` lists the rest ready to copy.
 
 | Variable | Default | Effect |
 | --- | --- | --- |
@@ -39,6 +40,9 @@ The backend reads four environment variables; the images set the last two alread
 | `STATIC_DIR` | unset | Directory with a built frontend. If it exists, the backend serves the UI itself - see [single container](#single-container). |
 | `KNOWLEDGE_DIR` | `/src/v2/knowledge` in the image | The TOML knowledge base. Point it at a bind mount to edit texts on a running deployment. |
 | `EXAMPLE_LOGS_DIR` | `/example_logs` in the image | The example logs offered on the landing page. |
+| `ISSUE_URL` | this repository's issue tracker | Where the *Report issue* link in the top bar points. |
+| `IMPRINT_URL` / `IMPRINT_FILE`, `PRIVACY_URL` / `PRIVACY_FILE` | unset | The operator's legal pages - see [below](#legal-pages-imprint-and-privacy). |
+| `IMPRINT_LABEL`, `PRIVACY_LABEL` | `Impressum`, `Privacy` | Link texts of those two. |
 
 Two limits are **not** environment variables:
 
@@ -52,6 +56,42 @@ old app to everyone who visited before.
 
 Raise both together if you need to accept bigger logs, and remember that any outer proxy has
 its own body-size limit (nginx defaults to 1 MB, which is far too small for CP-SAT logs).
+
+## Legal pages (imprint and privacy)
+
+Operating a public website in Germany and most of the EU requires an imprint (Impressum,
+§ 5 DDG) and a privacy statement. Those describe **you as the operator**, not this project, so
+the app ships without them: with nothing configured the top bar shows only *Report issue*, and
+no page claims an imprint that does not exist. Configure them per deployment, in the `.env`
+next to `v2/docker-compose.yml` (`cp .env.example .env`).
+
+Two ways, per page:
+
+```sh
+# 1. Link out to pages you already have - one line each, nothing to mount.
+IMPRINT_URL=https://krupke-algorithms.de/impressum
+PRIVACY_URL=https://krupke-algorithms.de/datenschutz
+PRIVACY_LABEL=Datenschutz
+
+# 2. Write them as Markdown and let the app show them in a dialog. Uncomment the
+#    `volumes:` block of the backend service in docker-compose.yml first.
+IMPRINT_FILE=/legal/imprint.md
+PRIVACY_FILE=/legal/privacy.md
+```
+
+`*_URL` wins if both are given. A file is read per request, so editing a mounted file takes
+effect on the next page load without a restart; a file that is missing or empty is **logged as
+a warning and its link is omitted**, because a legal link that opens an empty dialog is worse
+than none. Check after a deploy:
+
+```sh
+docker compose exec backend python -m app.site   # prints the resolved configuration
+curl -s http://localhost:8080/api/site           # what the frontend actually receives
+```
+
+What the analyzer itself does with personal data is short and worth stating in that privacy
+text: a submitted log is parsed in memory, never written to disk and never logged, and the
+service sets no cookies and stores nothing in the browser except the chosen theme.
 
 ## Topologies
 
@@ -138,8 +178,9 @@ Two consequences:
 
 ## Editing the knowledge base on a running deployment
 
-All explanations, parameter advice and insight thresholds live in `v2/knowledge/*.toml`, which
-is **baked into the backend image**. Two ways to change a text in production:
+All explanations, parameter advice and table documentation live in `v2/knowledge/*.toml`, which
+is **baked into the backend image** (the insight boxes are Python, see
+[architecture.md](architecture.md)). Two ways to change a text in production:
 
 1. **Rebuild** (`docker compose build backend && docker compose up -d backend`) - the normal
    path, keeps image and repository in sync.
@@ -190,6 +231,7 @@ uvicorn access lines only; log contents are never logged.
 | `v2/backend/app/`, `v2/cpsatlog/` | `backend` |
 | `v2/frontend/src/` | `frontend` |
 | `v2/frontend/nginx.conf` | `frontend` |
+| `.env` (issue link, legal pages) | nothing - `docker compose up -d backend` re-creates the container with the new values |
 
 **Rollback.** `git checkout <previous commit> && docker compose up --build -d`. There is no
 migration and no state, so a rollback is complete.

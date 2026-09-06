@@ -4,6 +4,11 @@ Notable changes, newest first. Dates are the day the work landed on `main`.
 
 ## v2 stack (`v2/`)
 
+* **2026-09-06** - The top bar can carry a *Report issue* link and the operator's legal pages
+  (imprint, privacy). Both come from the environment (`ISSUE_URL`, `IMPRINT_URL`/`IMPRINT_FILE`,
+  `PRIVACY_URL`/`PRIVACY_FILE`, see `v2/.env.example` and `docs/deployment.md`): a URL links
+  out, a mounted Markdown file opens in a dialog, and an instance that configures nothing shows
+  nothing - the project itself has no imprint to make.
 * **2026-09-06** - The insight boxes moved from `knowledge/insights.toml` into code: one
   small class per box under `v2/backend/app/insights/triggers/`, loaded by import, holding its
   own threshold, level, title and text next to the check that fires it. A TOML section could

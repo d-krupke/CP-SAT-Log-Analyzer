@@ -41,8 +41,8 @@ file) is reported in `log.warnings` and the copy is kept there too.
 
 ## `v2/backend` - analysis and explanations
 
-FastAPI with six endpoints - `parse`, `examples`, `examples/{name}`, `explanations`,
-`parameters/{name}`, `health` (see [deployment.md](deployment.md) for the operational view):
+FastAPI with seven endpoints - `parse`, `examples`, `examples/{name}`, `explanations`,
+`parameters/{name}`, `site`, `health` (see [deployment.md](deployment.md) for the operational view):
 
 | Module | Responsibility |
 | --- | --- |
@@ -53,6 +53,7 @@ FastAPI with six endpoints - `parse`, `examples`, `examples/{name}`, `explanatio
 | `explanations.py` | look-ups into the knowledge base for blocks, tables, columns, response fields, subsolvers, constraints, messages |
 | `parameters.py` | documentation for an overridden parameter: generated proto docs plus curated advice and warnings |
 | `examples.py` | the bundled example logs offered on the landing page |
+| `site.py` | deployment chrome read from the environment: the *Report issue* target and the operator's imprint/privacy pages (a link or a Markdown file). Empty by default, so the project ships no legal claims of its own |
 | `knowledge.py` | loads `v2/knowledge/*.toml`, re-reading a file when its mtime changes |
 
 Everything the backend derives carries the line numbers it came from, so the frontend can

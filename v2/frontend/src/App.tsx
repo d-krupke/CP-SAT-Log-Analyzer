@@ -4,13 +4,14 @@
  * raw log right) once a log is parsed.
  */
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { loadExplanations, parseLog, readExample } from './api'
+import { loadExplanations, loadSite, parseLog, readExample } from './api'
 import { AnalysisPanel } from './components/AnalysisPanel'
 import { Landing } from './components/Landing'
 import { LogView } from './components/LogView'
+import { SiteLinks } from './components/SiteLinks'
 import { Splitter } from './components/Splitter'
 import { blockForLine, SelectionContext, type Selection, type Source } from './state/selection'
-import type { Explanations, ParseResult } from './types'
+import type { Explanations, ParseResult, SiteConfig } from './types'
 
 const EMPTY_EXPLANATIONS: Explanations = {
   blocks: {},
@@ -56,9 +57,11 @@ export default function App() {
   const [error, setError] = useState<string | null>(null)
   const [explanations, setExplanations] = useState<Explanations>(EMPTY_EXPLANATIONS)
   const [selection, setSelection] = useState<Selection>({ line: null, source: 'log', nonce: 0 })
+  const [site, setSite] = useState<SiteConfig | null>(null)
 
   useEffect(() => {
     loadExplanations().then(setExplanations).catch(() => {})
+    loadSite().then(setSite).catch(() => {})
   }, [])
 
   const analyze = useCallback(async (logText: string) => {
@@ -123,6 +126,7 @@ export default function App() {
           <a href="https://d-krupke.github.io/cpsat-primer/" target="_blank" rel="noreferrer">
             CP-SAT Primer
           </a>
+          <SiteLinks site={site} />
           <button onClick={toggleTheme} title="Toggle dark/light theme">
             {theme === 'dark' ? '☀︎' : '☾'}
           </button>

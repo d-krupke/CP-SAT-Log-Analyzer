@@ -1,5 +1,5 @@
 /** Thin fetch wrappers for the backend API (see v2/backend/app/main.py). */
-import type { ExampleInfo, Explanations, ParseResult } from './types'
+import type { ExampleInfo, Explanations, ParseResult, SiteConfig } from './types'
 
 const BASE = (import.meta.env.VITE_API_URL as string | undefined) ?? ''
 
@@ -36,4 +36,8 @@ export function readExample(name: string): Promise<string> {
 
 export function loadExplanations(): Promise<Explanations> {
   return fetch(`${BASE}/api/explanations`).then((r) => json<Explanations>(r))
+}
+
+export function loadSite(): Promise<SiteConfig> {
+  return fetch(`${BASE}/api/site`).then((r) => json<SiteConfig>(r))
 }

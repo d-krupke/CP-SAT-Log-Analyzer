@@ -46,6 +46,7 @@ lines, a split is due past ~500).
 | `v2/backend/tests/test_insights.py` | the trigger framework: discovery, display order, the invariants of a box, and that a trigger which raises is contained |
 | `v2/backend/tests/test_hints.py` | `build_hint_report`: the verdict per wording, the `complete_hint` evidence, and the vacuous line on a model with no variables |
 | `v2/backend/tests/test_broken.py` | analysis and API on damaged logs, and the four log-quality triggers |
+| `v2/backend/tests/test_site.py` | the deployment chrome: an unconfigured instance shows no legal links, URLs and Markdown files are picked up from the environment, a broken file is reported |
 | `v2/backend/tests/test_knowledge.py` | the knowledge base itself: required sections, documented labels, regressions on wrong claims |
 | `v2/backend/tests/test_corpus.py` | `analyze()` on all 295 corpus logs: no crash, no trigger blows up, every worker and parameter documented |
 

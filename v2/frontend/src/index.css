@@ -819,3 +819,50 @@ button.link {
 .domain-size .num {
   font-family: var(--mono);
 }
+
+/* ---- deployment chrome: legal links and their dialog (components/SiteLinks) ---- */
+button.linky {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--accent);
+  cursor: pointer;
+}
+button.linky:hover {
+  text-decoration: underline;
+}
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 50;
+}
+.modal {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  max-width: 720px;
+  width: 100%;
+  max-height: 80vh;
+  overflow: auto;
+  padding: 0 18px 18px;
+}
+.modal header {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 0 10px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+}
+.modal header h2 {
+  font-size: 16px;
+  margin: 0;
+}
