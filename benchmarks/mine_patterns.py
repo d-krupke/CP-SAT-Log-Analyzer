@@ -4,10 +4,10 @@ Created 2026-09-06 alongside `validate_logs.py`. Where that script asks "does th
 parser understand the log", this one asks "does the knowledge base explain it":
 it collects every subsolver/worker name, every statistics table and every table
 column that occurs in `logs/**/*.txt` and prints the ones that have no entry in
-`v2/knowledge/*.toml`. Run it after a batch; the output is a to-do list for the
+`knowledge/*.toml`. Run it after a batch; the output is a to-do list for the
 knowledge base.
 
-    uv run --project ../v2/cpsatlog python mine_patterns.py
+    uv run --project ../cpsatlog python mine_patterns.py
 """
 
 from __future__ import annotations
@@ -23,7 +23,7 @@ from cpsatlog import parse_log
 
 ROOT = Path(__file__).resolve().parent
 LOGS = ROOT / "logs"
-KNOWLEDGE = ROOT.parent / "v2" / "knowledge"
+KNOWLEDGE = ROOT.parent / "knowledge"
 
 
 def _knowledge(name: str) -> dict:

@@ -3,8 +3,8 @@
 Created 2026-09-06: ``benchmarks/logs/`` is git-ignored (16 MB, and the instances
 behind it may be copyrighted), but the logs themselves are plain CP-SAT output and
 are the best regression input the project has. This script writes
-``v2/corpus/benchmark_logs.tar.xz`` (~1 MB) so the parser and the analyzer can be
-tested against every collected log; see ``v2/corpus/README.md``.
+``corpus/benchmark_logs.tar.xz`` (~1 MB) so the parser and the analyzer can be
+tested against every collected log; see ``corpus/README.md``.
 
 Run it after collecting a new batch, then commit the archive::
 
@@ -33,7 +33,7 @@ from typing import Any
 
 HERE = Path(__file__).resolve().parent
 LOGS = HERE / "logs"
-OUT = HERE.parent / "v2" / "corpus" / "benchmark_logs.tar.xz"
+OUT = HERE.parent / "corpus" / "benchmark_logs.tar.xz"
 MTIME = 1767225600  # 2026-01-01 00:00:00 UTC, fixed for reproducible archives
 
 # Sidecar fields copied verbatim into the index (missing ones are simply left out).

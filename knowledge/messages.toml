@@ -1,0 +1,51 @@
+# Explanations of free-form solver messages. Keys are the message kinds the
+# parser assigns (see cpsatlog/src/cpsatlog/parsers/misc.py, and
+# parsers/hints.py for every `hint_*` kind).
+
+[messages]
+closed_by_presolve = 'Presolve proved optimality or infeasibility, so no search ran.'
+gap_limit_reached = '''
+The solver stopped because the objective/bound gap fell below `relative_gap_limit` /
+`absolute_gap_limit`. CP-SAT then reports the status **OPTIMAL** although the gap is not
+zero; check `best_bound` in the response for the remaining gap.'''
+loading_model = '''
+The presolved model is being loaded into the workers (older versions; newer ones print
+`Preloading model.` at the end of presolve instead).'''
+hint_complete_feasible = '''
+Every non-fixed variable was hinted and the assignment satisfies all constraints. CP-SAT runs
+this check twice, once on the model as given and once after presolve; the second time it adds
+the hint to the solution pool as `complete_hint` instead of printing a line. Careful: the
+same sentence appears for a model whose variables presolve has all fixed, i.e. also when no
+hint was given at all.'''
+hint_complete_infeasible = '''
+The hint assigns every variable but violates a constraint. CP-SAT tries to repair it for
+`hint_conflict_limit` conflicts (`repair_hint`) and then searches normally. Usually the hint
+comes from a model that has changed since.'''
+hint_incomplete = '''
+Only some of the non-fixed variables were hinted, so the hint cannot become a solution. CP-SAT
+follows the hinted values while branching and searches for the rest.'''
+hint_outside_domain = '''
+A hinted value is not contained in that variable's domain, so the hint is unusable - typically
+a stale hint taken before the domains were tightened.'''
+hint_breaks_assumptions = '''
+The hint is feasible for the model but contradicts an assumption literal of this solve, so it
+cannot be used as a solution.'''
+hint_fixed_variables = '''
+`fix_variables_to_their_hinted_value` is on, so presolve pinned the hinted variables to their
+values. This is not a hint any more but a hard constraint: if the hint is wrong, the model
+becomes infeasible.'''
+hint_ignored = 'The run set `cp_model_ignore_hints`, so the hint was dropped before the solve.'
+hint_debug_only = '''
+The hint is used only as a debug solution (`cp_model_use_hint_for_debug_only`): CP-SAT checks
+that no propagation removes it instead of searching from it.'''
+hint_other = '''
+A message about the solution hint that this version of the analyzer does not know. Please
+report the log.'''
+infeasible = 'The model was proven infeasible.'
+interleave_batch_size = '''
+`interleave_search` is on and `interleave_batch_size` was left at 0, so the solver picked the
+batch size itself: `num_workers * 3` (1 with a single worker). The portfolio then runs in
+synchronized batches, which makes the run deterministic but leaves each worker less
+uninterrupted time.'''
+legacy_subsolver_stats = '''
+Per-worker statistics dump of an old OR-Tools version (newer versions print tables instead).'''

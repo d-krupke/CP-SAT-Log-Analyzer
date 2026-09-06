@@ -1,11 +1,11 @@
 # Architecture
 
-The v2 analyzer is four parts with one rule between them: **the parser only structures the
+The analyzer is four parts with one rule between them: **the parser only structures the
 log, the knowledge base holds everything a CP-SAT expert knows, and the frontend renders what
 the backend derives.** Nothing about CP-SAT semantics is hard-coded in the UI.
 
 ```
-            example_logs/            v2/knowledge/*.toml
+            example_logs/            knowledge/*.toml
           (12 offered + archive)   (texts, advice, thresholds)
                     |                        |
    raw log  ->  cpsatlog  ->  backend/app  ->  JSON  ->  frontend
@@ -13,7 +13,7 @@ the backend derives.** Nothing about CP-SAT semantics is hard-coded in the UI.
                               explanations)
 ```
 
-## `v2/cpsatlog` - the parser library
+## `cpsatlog` - the parser library
 
 Standalone, `pip install`-able, no knowledge of the UI. `parse_log(text)` returns a
 `CpSatLog` pydantic model with one attribute per log section (`solver`, `initial_model`,
@@ -39,7 +39,7 @@ entirely foreign text parses without raising, keeps its line anchoring, and what
 be used stays in `log.unparsed` with its text. A section that appears twice (two runs in one
 file) is reported in `log.warnings` and the copy is kept there too.
 
-## `v2/backend` - analysis and explanations
+## `backend` - analysis and explanations
 
 FastAPI with seven endpoints - `parse`, `examples`, `examples/{name}`, `explanations`,
 `parameters/{name}`, `site`, `health` (see [deployment.md](deployment.md) for the operational view):
@@ -54,23 +54,23 @@ FastAPI with seven endpoints - `parse`, `examples`, `examples/{name}`, `explanat
 | `parameters.py` | documentation for an overridden parameter: generated proto docs plus curated advice and warnings |
 | `examples.py` | the bundled example logs offered on the landing page |
 | `site.py` | deployment chrome read from the environment: the *Report issue* target and the operator's imprint/privacy pages (a link or a Markdown file). Empty by default, so the project ships no legal claims of its own |
-| `knowledge.py` | loads `v2/knowledge/*.toml`, re-reading a file when its mtime changes |
+| `knowledge.py` | loads `knowledge/*.toml`, re-reading a file when its mtime changes |
 
 Everything the backend derives carries the line numbers it came from, so the frontend can
 highlight the evidence for a claim instead of asserting it.
 
-## `v2/knowledge` - the editable knowledge base
+## `knowledge` - the editable knowledge base
 
 Plain TOML: block explanations, table and column texts, subsolver descriptions and roles,
 constraint kinds, solver messages, parameter advice and warnings, insight thresholds and
 texts, metric thresholds, example descriptions. A CP-SAT expert can change any wording or tune
-any threshold without touching Python; `v2/knowledge/README.md` maps each kind of text to its
+any threshold without touching Python; `knowledge/README.md` maps each kind of text to its
 file and `python -m app.knowledge` validates the result.
 
 This is also why the frontend needs no change for a new insight: it renders whatever
 `analysis.insights` contains.
 
-## `v2/frontend` - the UI
+## `frontend` - the UI
 
 React + Vite + Plotly. `AnalysisPanel` (Overview tiles, insights, progress plot, parameters,
 subsolvers, one card per log block) on the left, `LogView` with the raw log on the right, a
@@ -101,8 +101,8 @@ log is recognizable as such at a glance instead of looking like a complete analy
 * `example_logs/` - the 12 logs offered in the UI, chosen for diversity of log shapes;
   `example_logs/archive/` holds retired ones (older OR-Tools formats, redundant variants) that
   the test suites still parse.
-* `v2/corpus/benchmark_logs.tar.xz` - 295 real logs from the `benchmarks/` harness, the
-  regression base for both parser and analysis. See `v2/corpus/README.md`.
+* `corpus/benchmark_logs.tar.xz` - 295 real logs from the `benchmarks/` harness, the
+  regression base for both parser and analysis. See `corpus/README.md`.
 * Some example logs are generated on purpose rather than collected:
   `benchmarks/make_hint_example.py` solves one random job shop twice and hints the second run
   with the first run's solution, which gives the pair `915_jobshop_no_hint` /
@@ -112,6 +112,7 @@ log is recognizable as such at a glance instead of looking like a complete analy
 ## The legacy app
 
 The original Streamlit implementation (`app.py`, `_app/`, `cpsat_log_parser/`) lived in the
-repository root until it was moved to the `legacy` branch. It shares no code with `v2/` and is
+repository root until it was moved to the `legacy` branch. It shares no code with the current
+stack and is
 feature-frozen; see [deployment.md](deployment.md#legacy-streamlit-app) for what still serves
 it.

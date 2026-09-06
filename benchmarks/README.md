@@ -23,7 +23,7 @@ uv run python run.py solve                # no names = every problem class
 | `bench/runner.py` | solves one instance and writes the log + metadata |
 | `run.py` | CLI: `list`, `download`, `solve` |
 | `mzn_run.py` | MiniZinc Challenge families through the bundled MiniZinc + `cp-sat` backend |
-| `validate_logs.py` | parses every collected log with the v2 `cpsatlog` parser and reports gaps |
+| `validate_logs.py` | parses every collected log with the `cpsatlog` parser and reports gaps |
 | `collect_all.sh` | the batches that produce the corpus (worker counts, parameter variants) |
 | `make_hint_example.py` | generates the solution-hint example pair (see below); not part of the corpus |
 
@@ -71,7 +71,7 @@ uv run python mzn_run.py solve rcpsp steelmillslab --limit 60 --max-instances 2
 ## Checking the corpus against the parser
 
 ```sh
-uv run --project ../v2/cpsatlog python validate_logs.py
+uv run --project ../cpsatlog python validate_logs.py
 ```
 
 Prints per problem how many logs parsed, which top-level sections are missing
@@ -84,7 +84,7 @@ The logs are git-ignored, but they are also the best regression input the projec
 they are shipped compressed:
 
 ```sh
-uv run python pack_corpus.py       # -> ../v2/corpus/benchmark_logs.tar.xz (~0.9 MB, 295 logs)
+uv run python pack_corpus.py       # -> ../corpus/benchmark_logs.tar.xz (~0.9 MB, 295 logs)
 ```
 
 Re-run it after every batch and commit the archive; it is byte-reproducible, so an unchanged
@@ -92,10 +92,10 @@ corpus produces no diff. The archive carries the `.txt` logs plus a normalized `
 (problem, instance, parameters, version, status, objective, bound, walltime, model size,
 source URL) instead of the raw sidecars, because the MiniZinc sidecars embed the full
 solution output of third-party models. The instances themselves stay local - they may be
-copyrighted. Two test suites read the archive: `v2/cpsatlog/tests/test_corpus.py` (every log
+copyrighted. Two test suites read the archive: `cpsatlog/tests/test_corpus.py` (every log
 parses, nothing unparsed, parsed values match `index.json`) and
-`v2/backend/tests/test_corpus.py` (`analyze()` works, insight texts render, every worker and
-every parameter is documented). See `v2/corpus/README.md`.
+`backend/tests/test_corpus.py` (`analyze()` works, insight texts render, every worker and
+every parameter is documented). See `corpus/README.md`.
 
 Corpus logs also became the frontend's examples. The landing page offered ten `915_*`
 logs, selected for diversity rather than coverage of every parameter: one small introductory
@@ -107,7 +107,7 @@ MiniZinc - so each entry differs in problem type, status, portfolio shape, preso
 constraint family. Everything retired from that list, including all the pre-9.15 logs, moved
 to `example_logs/archive/`: the API does not serve it, but both test suites still parse it
 (the only coverage of the 9.3 ... 9.10 log formats). Curated texts for both groups live in
-`v2/knowledge/examples.toml` (`[examples]` and `[archived]`); a test fails if an offered
+`knowledge/examples.toml` (`[examples]` and `[archived]`); a test fails if an offered
 example has no description or if an archived one shows up on the landing page.
 
 ## Generated examples: the solution-hint pair (2026-09-06)
@@ -130,7 +130,7 @@ solutions, while `915_jobshop_hinted` starts at 1146 after 0.01 s with a single
 
 ## Audit of the knowledge base against the corpus (2026-09-06)
 
-Every quantitative claim in `v2/knowledge/` that the 295 logs can test was checked;
+Every quantitative claim in `knowledge/` that the 295 logs can test was checked;
 each one that failed was traced to the OR-Tools sources before the text was changed.
 
 Confirmed by the logs:

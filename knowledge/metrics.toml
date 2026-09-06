@@ -1,0 +1,65 @@
+# Tiles of the Overview card: thresholds that color a tile and the hint shown
+# under it (or as tooltip). The values themselves are computed in
+# backend/app/metrics.py.
+
+[version]
+oldest_well_supported = '9.8'   # older versions get a warning
+hint_old = '''
+Old version: the log format differs and many newer improvements are missing. Consider
+upgrading OR-Tools.'''
+
+[workers]
+min_for_full_portfolio = 8      # fewer workers -> warning
+hint_few = '''
+With fewer than 8 workers only part of the portfolio runs (1 worker = a single `main` worker
+with your parameters, no portfolio).'''
+
+[gap]
+hint = '|objective - bound| / max(1, |objective|)'
+warn_below_percent = 10         # gap below this: warn (yellow); above: bad (red); ~0: good
+
+[presolve_time]
+warn_share = 0.5                # presolve share of the wall time above which the tile warns
+hint = 'Time from the start of presolve to the start of the search.'
+hint_dominates = 'Presolve dominates the run time.'
+
+[solutions]
+hint = 'Improving solutions reported in the search log.'
+
+[bound_events]
+hint = 'Logged bound improvements (throttled by the solver).'
+
+[hint]
+# Tile "Hint": one text per outcome (the statuses of app/hints.py::HintStatus,
+# plus `used` for a hint the solver started the search from). Always shown, so
+# that "no hint was given" is visible rather than merely absent.
+none = '''
+No solution hint in this log. A hint is a (possibly partial) assignment you pass with the
+model; CP-SAT checks it, and a complete feasible one becomes the first solution. Worth trying
+whenever you already have a solution: from a previous run, a construction heuristic, or the
+previous instance of a re-solve.'''
+vacuous = '''
+No hint was given. The log does say "The solution hint is complete and is feasible.", but
+presolve had already fixed every variable at that point, so the check succeeds trivially.'''
+used = 'The hint was complete and feasible and became solution #1 (worker `complete_hint`).'
+accepted = '''
+The hint was complete and feasible. Its own line is not proof that the search started from it;
+look for a `complete_hint` solution in the search log.'''
+infeasible = '''
+The hint assigns every variable but violates a constraint. CP-SAT tries to repair it
+(`repair_hint`, `hint_conflict_limit`) and searches normally otherwise. Usually the model
+changed since the hint was taken.'''
+incomplete = '''
+Only some of the non-fixed variables were hinted, so the hint cannot become a solution; CP-SAT
+follows the hinted values while branching. Hint all variables to get a first solution for
+free.'''
+outside_domain = '''
+A hinted value is not contained in that variable's domain, so the hint is unusable - typically
+a stale hint taken before the domains were tightened.'''
+breaks_assumptions = '''
+The hint is feasible for the model but contradicts an assumption literal of this solve.'''
+ignored = 'A hint was given but dropped: the run set `cp_model_ignore_hints`.'
+debug_only = '''
+The hint is used as a debug solution only (`cp_model_use_hint_for_debug_only`): CP-SAT checks
+that no propagation removes it instead of searching from it.'''
+other = 'A hint was given; this version of the analyzer does not know the message about it.'

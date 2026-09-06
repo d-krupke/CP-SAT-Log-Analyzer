@@ -1,4 +1,4 @@
-# CI for the v2 stack: the parser library, the backend and the frontend are
+# CI for the three projects: the parser library, the backend and the frontend are
 # checked independently, each with the tooling it is developed with (uv for the
 # Python parts, npm for the frontend). The weekly run additionally upgrades
 # OR-Tools to its newest release, which is how a changed log format shows up
@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: v2/cpsatlog
+        working-directory: cpsatlog
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: v2/backend
+        working-directory: backend
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
@@ -58,14 +58,14 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: v2/frontend
+        working-directory: frontend
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
           cache: npm
-          cache-dependency-path: v2/frontend/package-lock.json
+          cache-dependency-path: frontend/package-lock.json
       - run: npm ci
       - run: npm run lint
       - run: npm run build

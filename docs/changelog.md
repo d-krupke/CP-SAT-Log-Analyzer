@@ -2,9 +2,20 @@
 
 Notable changes, newest first. Dates are the day the work landed on `main`.
 
-## v2 stack (`v2/`)
+## The current stack
 
-* **2026-09-06** - The README screenshots are generated: `npm run screenshots` in `v2/frontend`
+(Entries before the flatten name paths under the `v2/` directory the rewrite grew up in;
+drop that prefix to find the file today.)
+
+* **2026-09-06** - The rewrite moved out of `v2/` into the repository root: `cpsatlog/`,
+  `backend/`, `frontend/`, `knowledge/`, `corpus/` and `docker-compose.yml` now sit at the top
+  level, which is where the CI, the Docker build context and every relative link already
+  wanted them. The legacy Streamlit app it used to share the checkout with lives on the
+  `legacy` branch. Also tightened the two `.dockerignore` files: the 777 MB `benchmarks/`
+  directory, the corpus, the docs and the images were being uploaded to the daemon on every
+  build for nothing.
+
+* **2026-09-06** - The README screenshots are generated: `npm run screenshots` in `frontend`
   boots the backend and a production build under Playwright, drives the real UI over the
   bundled example logs and writes `docs/screenshots/*.png`. Because it clicks real controls it
   is also a coarse end-to-end smoke test, and it fails when a view breaks or a card is renamed.

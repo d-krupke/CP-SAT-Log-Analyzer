@@ -1,7 +1,7 @@
 # Deployment
 
-How to run the analyzer for other people. Everything here is about the **v2 stack**
-(`v2/`: FastAPI backend + React frontend), which is all this branch contains; the legacy
+How to run the analyzer for other people. Everything here is about the **current stack**
+(``: FastAPI backend + React frontend), which is all this branch contains; the legacy
 Streamlit app is covered [at the end](#legacy-streamlit-app).
 
 The service is **stateless**: no database, no volumes, no accounts, and no log is ever written
@@ -11,7 +11,6 @@ deployment simple and scaling a matter of running more replicas behind a load ba
 ## Quick start (Docker Compose)
 
 ```sh
-cd v2
 docker compose up --build -d      # first run builds both images
 # open http://localhost:8080
 ```
@@ -32,13 +31,13 @@ Stop with `docker compose down`. To publish on another port, change the `ports` 
 ## Configuration
 
 The backend reads these environment variables; the images set `KNOWLEDGE_DIR` and
-`EXAMPLE_LOGS_DIR` already, and `v2/.env.example` lists the rest ready to copy.
+`EXAMPLE_LOGS_DIR` already, and `.env.example` lists the rest ready to copy.
 
 | Variable | Default | Effect |
 | --- | --- | --- |
 | `CORS_ORIGINS` | `*` | Comma-separated allowed origins. Only relevant when the UI is served from a different origin than the API (the dev server, or a split deployment). Set it to your real origin then. |
 | `STATIC_DIR` | unset | Directory with a built frontend. If it exists, the backend serves the UI itself - see [single container](#single-container). |
-| `KNOWLEDGE_DIR` | `/src/v2/knowledge` in the image | The TOML knowledge base. Point it at a bind mount to edit texts on a running deployment. |
+| `KNOWLEDGE_DIR` | `/src/knowledge` in the image | The TOML knowledge base. Point it at a bind mount to edit texts on a running deployment. |
 | `EXAMPLE_LOGS_DIR` | `/example_logs` in the image | The example logs offered on the landing page. |
 | `ISSUE_URL` | this repository's issue tracker | Where the *Report issue* link in the top bar points. |
 | `IMPRINT_URL` / `IMPRINT_FILE`, `PRIVACY_URL` / `PRIVACY_FILE` | unset | The operator's legal pages, linked in the lower right corner - see [below](#legal-pages-imprint-and-privacy). |
@@ -46,9 +45,9 @@ The backend reads these environment variables; the images set `KNOWLEDGE_DIR` an
 
 Two limits are **not** environment variables:
 
-* `MAX_LOG_BYTES = 20 * 1024 * 1024` in `v2/backend/app/main.py` - larger requests get
+* `MAX_LOG_BYTES = 20 * 1024 * 1024` in `backend/app/main.py` - larger requests get
   HTTP 413.
-* `client_max_body_size 32m` and `proxy_read_timeout 120s` in `v2/frontend/nginx.conf`.
+* `client_max_body_size 32m` and `proxy_read_timeout 120s` in `frontend/nginx.conf`.
 
 That file also sets the caching: `/assets/` is immutable (the bundle names carry a content
 hash) while `index.html` is `no-cache`. Without the second rule a redeploy keeps serving the
@@ -63,7 +62,7 @@ Operating a public website in Germany and most of the EU requires an imprint (Im
 § 5 DDG) and a privacy statement. Those describe **you as the operator**, not this project, so
 the app ships without them: with nothing configured the corner stays empty and no page claims
 an imprint that does not exist. Configure them per deployment, in the `.env` next to
-`v2/docker-compose.yml` (`cp .env.example .env`).
+`docker-compose.yml` (`cp .env.example .env`).
 
 Configured pages appear as small links pinned to the lower right corner of the window, next to
 the log, so that they are always reachable without competing with the analysis. *Report issue*
@@ -98,7 +97,7 @@ What the analyzer itself does with personal data is short and worth stating in t
 text: a submitted log is parsed in memory, never written to disk and never logged, and the
 service sets no cookies and stores nothing in the browser except the chosen theme.
 
-A mounted `v2/legal/imprint.md` is plain Markdown (headings, lists and links render); the
+A mounted `legal/imprint.md` is plain Markdown (headings, lists and links render); the
 directory is git-ignored, because its contents are yours and not part of this repository. A
 German imprint typically needs at least this - check your own case, this is not legal advice:
 
@@ -132,14 +131,16 @@ The backend can serve the built UI on its own, which is convenient for platforms
 container per service:
 
 ```sh
-cd v2/frontend && npm ci && npm run build          # produces dist/
+cd frontend && npm ci && npm run build          # produces dist/
 docker run -d -p 8000:8000 \
-  -e STATIC_DIR=/static -v "$PWD/dist:/static:ro" v2-backend
+  -e STATIC_DIR=/static -v "$PWD/dist:/static:ro" cp-sat-log-analyzer-backend
 # open http://localhost:8000
 ```
 
-(`v2-backend` is the image name `docker compose build` produces; build it by hand with
-`docker build -f v2/backend/Dockerfile -t v2-backend .` from the repository root.)
+(`cp-sat-log-analyzer-backend` is the image name `docker compose build` produces - Compose
+derives it from the directory, so a differently named checkout gives a different name. Build it
+by hand with `docker build -f backend/Dockerfile -t cp-sat-log-analyzer-backend .` from the
+repository root.)
 
 Unknown paths fall back to `index.html`, so the client-side routes and deep links
 (`?example=915_01`) work. In this mode nginx's body limit does not apply, but
@@ -161,7 +162,7 @@ No websockets, no sticky sessions, no shared state.
 ## Production checklist
 
 ```yaml
-# v2/docker-compose.prod.yml
+# docker-compose.prod.yml
 # docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 services:
   backend:
@@ -186,7 +187,7 @@ services:
 
 ## Sizing and limits
 
-Measured on the benchmark corpus (`v2/corpus/`, one process, no concurrency):
+Measured on the benchmark corpus (`corpus/`, one process, no concurrency):
 
 | Log | Parse + analyze | JSON response | Peak process memory |
 | --- | --- | --- | --- |
@@ -204,7 +205,7 @@ Two consequences:
 
 ## Editing the knowledge base on a running deployment
 
-All explanations, parameter advice and table documentation live in `v2/knowledge/*.toml`, which
+All explanations, parameter advice and table documentation live in `knowledge/*.toml`, which
 is **baked into the backend image** (the insight boxes are Python, see
 [architecture.md](architecture.md)). Two ways to change a text in production:
 
@@ -215,14 +216,14 @@ is **baked into the backend image** (the insight boxes are Python, see
    ```yaml
    backend:
      volumes:
-       - ../v2/knowledge:/knowledge:ro
+       - ../knowledge:/knowledge:ro
      environment:
        KNOWLEDGE_DIR: /knowledge
    ```
 
    The loader re-reads a file when its modification time changes, so an edit is live on the
    next request - no restart. Validate an edit first with
-   `cd v2/backend && uv run python -m app.knowledge`, which fails loudly on a broken file
+   `cd backend && uv run python -m app.knowledge`, which fails loudly on a broken file
    instead of showing an empty text in the UI.
 
 The example logs behave the same way through `EXAMPLE_LOGS_DIR`.
@@ -253,19 +254,19 @@ uvicorn access lines only; log contents are never logged.
 
 | Changed | Rebuild |
 | --- | --- |
-| `v2/knowledge/*.toml`, `example_logs/` | `backend` (or bind-mount, see above) |
-| `v2/backend/app/`, `v2/cpsatlog/` | `backend` |
-| `v2/frontend/src/` | `frontend` |
-| `v2/frontend/nginx.conf` | `frontend` |
+| `knowledge/*.toml`, `example_logs/` | `backend` (or bind-mount, see above) |
+| `backend/app/`, `cpsatlog/` | `backend` |
+| `frontend/src/` | `frontend` |
+| `frontend/nginx.conf` | `frontend` |
 | `.env` (issue link, legal pages) | nothing - `docker compose up -d backend` re-creates the container with the new values |
 
 **Rollback.** `git checkout <previous commit> && docker compose up --build -d`. There is no
 migration and no state, so a rollback is complete.
 
 **Build context.** The backend image is built from the **repository root** (see
-`v2/docker-compose.yml`), because it needs `v2/cpsatlog`, `v2/knowledge` and `example_logs`
+`docker-compose.yml`), because it needs `cpsatlog`, `knowledge` and `example_logs`
 next to the app. Keep that in mind when building the image by hand:
-`docker build -f v2/backend/Dockerfile .` from the root.
+`docker build -f backend/Dockerfile .` from the root.
 
 ## Continuous integration
 
@@ -285,4 +286,4 @@ Community Cloud app must be pointed at `legacy` (Manage app -> Settings -> Branc
 its next redeploy finds no `app.py`. Its structure, features and screenshots are documented in
 `docs/legacy-streamlit-app.md` on that branch.
 
-It shares no code with `v2/` and is feature-frozen: new work happens here.
+It shares no code with `` and is feature-frozen: new work happens here.

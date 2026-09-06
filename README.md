@@ -13,8 +13,7 @@ _This project is not affiliated with Google._
 
 ## What it does
 
-The features below describe the stack in [`v2/`](v2/README.md), which you run with one
-`docker compose up`.
+You run it with one `docker compose up`.
 
 **Explains every section of the log.** Solver header, initial and presolved model, presolve
 passes, search events, statistics tables, response summary - each gets a text that says what it
@@ -77,7 +76,7 @@ logs from public instance libraries on every test run.
 
 ```sh
 git clone https://github.com/d-krupke/CP-SAT-Log-Analyzer.git
-cd CP-SAT-Log-Analyzer/v2
+cd CP-SAT-Log-Analyzer
 docker compose up --build
 # open http://localhost:8080
 ```
@@ -100,8 +99,10 @@ Deploying it for others, configuration, sizing and operations:
 | [docs/architecture.md](docs/architecture.md) | how the parser, backend, knowledge base and UI fit together |
 | [docs/README.md](docs/README.md) | index, including the per-component READMEs |
 
-Everything lives in [`v2/`](v2/README.md): the `cpsatlog` parser library, the FastAPI backend,
-the React frontend, the TOML knowledge base and the log corpus the tests run against.
+The repository is the analyzer: [`cpsatlog/`](cpsatlog/README.md) the parser library,
+[`backend/`](backend/README.md) the FastAPI app, [`frontend/`](frontend/README.md) the React
+UI, [`knowledge/`](knowledge/README.md) the TOML texts and [`corpus/`](corpus/README.md) the
+295 logs the tests run against.
 
 ## Contributing
 
@@ -109,17 +110,17 @@ Issues and pull requests are welcome. Two things are easy to contribute without 
 code:
 
 * **Explanations.** All CP-SAT knowledge is plain TOML in
-  [`v2/knowledge/`](v2/knowledge/README.md) - texts, parameter advice, subsolver descriptions,
+  [`knowledge/`](knowledge/README.md) - texts, parameter advice, subsolver descriptions,
   table columns. Correcting or sharpening a text needs no Python.
 * **Insights.** A new colored box is one small class in
-  [`v2/backend/app/insights/triggers/`](v2/backend/app/insights/): it gets the parsed log and
+  [`backend/app/insights/triggers/`](backend/app/insights/): it gets the parsed log and
   either stays quiet or writes its sentence. `base.py` shows the shape.
 * **Logs.** A log the parser mishandles, or one that shows an interesting pathology, is a
   useful issue by itself.
 
 Before opening a pull request, run the suites listed in
 [docs/development.md](docs/development.md). If you changed something visible, regenerate the
-screenshots on this page with `npm run screenshots` in `v2/frontend` and commit them with the
+screenshots on this page with `npm run screenshots` in `frontend` and commit them with the
 change.
 
 ## Authors

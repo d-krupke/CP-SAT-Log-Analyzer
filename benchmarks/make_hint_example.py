@@ -11,7 +11,7 @@ logs to ``example_logs/``:
 The instance is generated here (fixed seed) instead of downloaded, so the logs stay
 reproducible and nothing copyrighted is involved. Re-run it only when the logs
 should be refreshed for a new OR-Tools version; the descriptions in
-``v2/knowledge/examples.toml`` mention the numbers, so update them together.
+``knowledge/examples.toml`` mention the numbers, so update them together.
 """
 
 from __future__ import annotations

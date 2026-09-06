@@ -1,0 +1,7 @@
+# The frontend image builds from this directory. Screenshot runs and their output
+# have no business in the image; the e2e tsconfig project stays, because the
+# root tsconfig references it and `tsc -b` would fail without it.
+node_modules
+dist
+test-results
+playwright-report

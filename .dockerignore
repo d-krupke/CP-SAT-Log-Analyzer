@@ -1,9 +1,29 @@
-# Keeps the docker build context (repo root, used by v2/docker-compose.yml) small.
+# Keeps the docker build context (the repository root) small. The backend image
+# needs only cpsatlog/, backend/, knowledge/ and example_logs/ - everything else
+# here is development material that would otherwise be uploaded to the daemon.
 .git
+.github
+.idea
 **/.venv
 **/node_modules
 **/dist
 **/__pycache__
 **/.pytest_cache
 **/.ruff_cache
-*.tar.gz
+
+# Local-only and test-only material. benchmarks/ in particular holds the
+# downloaded instance sets and is by far the largest directory in the checkout.
+benchmarks/
+corpus/
+docs/
+example_logs/archive/
+frontend/
+**/*.tar.gz
+**/*.tar.xz
+
+# Images: logos and README screenshots belong to the repository, not to the image.
+**/*.webp
+**/*.png
+**/*.jpg
+**/*.jpeg
+**/*.gif

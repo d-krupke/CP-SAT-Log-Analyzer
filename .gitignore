@@ -133,7 +133,7 @@ evaluations/tsp/2023-11-18_random_euclidean/PRIVATE_DATA
 evaluations/tsp/2023-11-18_tsplib/PRIVATE_DATA
 
 # benchmark instances/logs/tools are collected locally only (the logs are shipped
-# compressed in v2/corpus/, the instances never - they may be copyrighted)
+# compressed in corpus/, the instances never - they may be copyrighted)
 benchmarks/data/
 benchmarks/logs/
 benchmarks/tools/
@@ -143,5 +143,8 @@ benchmarks/collect.log
 # stray archives of third-party models/logs dropped in the repo root
 models.tar.gz
 
-# Operator-specific legal texts mounted into the backend (see v2/.env.example)
-v2/legal/
+# Operator-specific legal texts mounted into the backend (see .env.example)
+legal/
+
+# Stray vite dependency cache (appears when vite is run outside frontend/).
+**/.vite/
