@@ -45,8 +45,10 @@ from inspect import cleandoc
 from typing import TYPE_CHECKING, ClassVar
 
 from cpsatlog import CpSatLog
-from cpsatlog.schema import ResponseSummary
+from cpsatlog.schema import Loc, ResponseSummary
 from pydantic import BaseModel, Field
+
+from ..solver_info import num_workers
 
 if TYPE_CHECKING:
     from ..analysis import ProgressSeries
@@ -93,6 +95,11 @@ class Context:
     def walltime(self) -> float | None:
         response = self.log.response
         return response.walltime.value if response and response.walltime else None
+
+    @property
+    def num_workers(self) -> Loc[int] | None:
+        """Workers and the line that states them - the same answer the Workers tile shows."""
+        return num_workers(self.log)
 
 
 TRIGGERS: list[type[Trigger]] = []

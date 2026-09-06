@@ -53,6 +53,7 @@ FastAPI with seven endpoints - `parse`, `examples`, `examples/{name}`, `explanat
 | `explanations.py` | look-ups into the knowledge base for blocks, tables, columns, response fields, subsolvers, constraints, messages |
 | `parameters.py` | documentation for an overridden parameter: generated proto docs plus curated advice and warnings |
 | `examples.py` | the bundled example logs offered on the landing page |
+| `solver_info.py` | facts read off the solver header that both the tiles and a trigger need, so that only one place decides them (currently: how many workers ran) |
 | `site.py` | deployment chrome read from the environment: the *Report issue* target and the operator's imprint/privacy pages (a link or a Markdown file). Empty by default, so the project ships no legal claims of its own |
 | `knowledge.py` | loads `knowledge/*.toml`, re-reading a file when its mtime changes |
 

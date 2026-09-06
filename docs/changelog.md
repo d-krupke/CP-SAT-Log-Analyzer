@@ -7,6 +7,11 @@ Notable changes, newest first. Dates are the day the work landed on `main`.
 (Entries before the flatten name paths under the `v2/` directory the rewrite grew up in;
 drop that prefix to find the file today.)
 
+* **2026-09-06** - *Only part of the portfolio ran* is an insight box now instead of two
+  sentences crammed into the Workers tile, and it says what this run actually started: one
+  worker means `main` alone with no LNS beside it, two to seven means a subset the box lists
+  from the log's own portfolio lines. The tile is back to a number and a color.
+
 * **2026-09-06** - `cpsatlog` declared `pydantic>=2.7` but needs **2.10**: its schema uses PEP
   695 generics (`class Loc[T](BaseModel)`), and before 2.10 pydantic does not accept a `Loc[str]`
   instance where a `Loc[str]` is declared - 159 of the 921 parser tests fail on 2.9. The lock

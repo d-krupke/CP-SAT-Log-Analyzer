@@ -12,10 +12,12 @@ from cpsatlog import parse_log
 
 from app.analysis import analyze
 from app.insights.triggers.lns import LnsClosedQuickly
+from app.insights.triggers.portfolio import PartialPortfolio
 from app.insights.triggers.presolve import ObjectiveRemovedByPresolve
 
 LNS_TITLE = LnsClosedQuickly.title
 OBJECTIVE_TITLE = ObjectiveRemovedByPresolve.title
+PORTFOLIO_TITLE = PartialPortfolio.title
 
 
 def test_lns_closed_percentages_fire_the_insight() -> None:
@@ -100,3 +102,77 @@ def test_satisfaction_model_does_not_trigger_the_objective_insight() -> None:
     )
     titles = [i.title for i in analyze(log).insights]
     assert OBJECTIVE_TITLE not in titles
+
+
+def _portfolio_log(workers: int, *groups: str) -> str:
+    """Smallest log that states a worker count and what the portfolio started."""
+    return (
+        "Starting CP-SAT solver v9.15.0\n"
+        f"Parameters: num_workers: {workers}\n"
+        "\n"
+        f"Starting search at 0.00s with {workers} workers.\n" + "".join(f"{g}\n" for g in groups)
+    )
+
+
+def _portfolio_insight(text: str):
+    """The PartialPortfolio box for this log, or None if it stayed quiet."""
+    return next((i for i in analyze(parse_log(text)).insights if i.title == PORTFOLIO_TITLE), None)
+
+
+def test_single_worker_run_explains_that_there_is_no_portfolio() -> None:
+    """One worker is not "a slower run": `main` is the whole search, with no LNS beside it.
+
+    The box has to say that much, because the Workers tile only shows the number `1`.
+    """
+    box = _portfolio_insight(
+        _portfolio_log(1, "1 full problem subsolver: [main]"),
+    )
+    assert box is not None
+    assert box.level == "warn"
+    assert "single worker" in box.text
+    assert "1 full problem subsolver: [main]" in box.text
+
+
+def test_reduced_portfolio_names_the_worker_count_and_what_started() -> None:
+    """Between 2 and 7 workers the portfolio is a subset - report which one, from the log."""
+    box = _portfolio_insight(
+        _portfolio_log(
+            4,
+            "2 full problem subsolvers: [default_lp, no_lp]",
+            "1 first solution subsolver: [fj]",
+            "3 helper subsolvers: [neighborhood_helper, synchronization_agent,"
+            " update_gap_integral]",
+        ),
+    )
+    assert box is not None
+    assert "4 workers" in box.text and "single worker" not in box.text
+    assert "2 full problem subsolvers: [default_lp, no_lp]" in box.text
+    assert "1 first solution subsolver: [fj]" in box.text
+    # Helpers are not strategies; listing them would only pad the box.
+    assert "neighborhood_helper" not in box.text
+
+
+def test_full_portfolio_stays_quiet() -> None:
+    """At the threshold the portfolio is complete, so there is nothing to say."""
+    assert _portfolio_insight(_portfolio_log(8, "6 full problem subsolvers: [default_lp]")) is None
+
+
+def test_worker_count_without_a_portfolio_listing_still_fires() -> None:
+    """A log cut off before the search still states its workers in the parameters."""
+    box = _portfolio_insight("Starting CP-SAT solver v9.15.0\nParameters: num_workers: 2\n")
+    assert box is not None
+    assert "What it started" not in box.text
+
+
+def test_workers_tile_carries_no_prose() -> None:
+    """The explanation moved into the box above; the tile is a number and a color.
+
+    Guards the reason for that move: a tile hint is rendered inside the tile, where two
+    sentences about the portfolio pushed everything else out of shape.
+    """
+    tile = next(
+        m
+        for m in analyze(parse_log(_portfolio_log(1, "1 full problem subsolver: [main]"))).metrics
+        if m.key == "workers"
+    )
+    assert (tile.value, tile.level, tile.hint) == ("1", "warn", None)

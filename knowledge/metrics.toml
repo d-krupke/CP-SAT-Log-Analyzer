@@ -9,10 +9,9 @@ Old version: the log format differs and many newer improvements are missing. Con
 upgrading OR-Tools.'''
 
 [workers]
-min_for_full_portfolio = 8      # fewer workers -> warning
-hint_few = '''
-With fewer than 8 workers only part of the portfolio runs (1 worker = a single `main` worker
-with your parameters, no portfolio).'''
+# Fewer workers -> the tile turns yellow. What that costs is explained by the
+# PartialPortfolio trigger, which holds the same number; a tile has no room for it.
+min_for_full_portfolio = 8
 
 [gap]
 hint = '|objective - bound| / max(1, |objective|)'

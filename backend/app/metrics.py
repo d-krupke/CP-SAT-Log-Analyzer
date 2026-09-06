@@ -13,6 +13,7 @@ from pydantic import BaseModel
 
 from .hints import HintReport
 from .knowledge import load
+from .solver_info import num_workers
 
 
 class Metric(BaseModel):
@@ -79,7 +80,7 @@ def build_metrics(log: CpSatLog, hint: HintReport) -> list[Metric]:
                 hint=cfg["version"]["hint_old"] if old else None,
             )
         )
-    workers = _num_workers(log)
+    workers = num_workers(log)
     if workers is not None:
         few = workers.value < cfg["workers"]["min_for_full_portfolio"]
         metrics.append(
@@ -89,7 +90,8 @@ def build_metrics(log: CpSatLog, hint: HintReport) -> list[Metric]:
                 value=str(workers.value),
                 line=workers.line,
                 level="warn" if few else "info",
-                hint=cfg["workers"]["hint_few"] if few else None,
+                # No hint: what a small worker count means takes more room than a
+                # tile has, so the PartialPortfolio trigger says it in a box below.
             )
         )
     if log.initial_model or log.response or log.search or hint.has_evidence:
@@ -272,20 +274,4 @@ def _presolve_duration(log: CpSatLog) -> float | None:
         return max(0.0, log.search.start.time - log.presolve.start_time.value)
     if log.presolve.total_step_time:
         return log.presolve.total_step_time
-    return None
-
-
-def _num_workers(log: CpSatLog) -> Loc[int] | None:
-    if log.solver is None:
-        return None
-    if log.solver.num_workers is not None:
-        return log.solver.num_workers
-    params = log.solver.parameters
-    if params:
-        for key in ("num_workers", "num_search_workers"):
-            val = params.value.get(key)
-            if isinstance(val, int) and val > 0:
-                return Loc(value=val, line=params.line)
-    if log.search and log.search.start and log.search.start.num_workers:
-        return Loc(value=log.search.start.num_workers, line=log.search.start.line)
     return None

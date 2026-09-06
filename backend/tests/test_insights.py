@@ -120,3 +120,19 @@ def test_a_healthy_log_produces_boxes_with_evidence_lines() -> None:
     for insight in insights:
         assert insight.lines, insight.title
         assert all(1 <= line <= log.num_lines for line in insight.lines), insight.title
+
+
+def test_partial_portfolio_threshold_matches_the_tile() -> None:
+    """One number, two consumers: the box explains exactly when the tile turns yellow.
+
+    The trigger keeps its threshold in code (as every trigger does) while the Workers tile
+    reads ``knowledge/metrics.toml``. If they ever drift, a log gets a yellow tile with no
+    box or a box with no tile, so this test is what keeps the two honest.
+    """
+    from app.insights.triggers.portfolio import PartialPortfolio
+    from app.knowledge import load
+
+    assert (
+        PartialPortfolio.min_for_full_portfolio
+        == load("metrics")["workers"]["min_for_full_portfolio"]
+    )
