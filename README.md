@@ -30,7 +30,7 @@ specific situations and say what they imply, for example:
 * *Presolve expanded the model* - a global constraint was unrolled into thousands of Booleans;
 * *Presolve fixed the objective* - the portfolio then loses every objective worker and all LNS;
 * *Log ends before the response summary* - so everything below it is partial;
-* *LNS neighborhoods closed quickly*, *conflict-heavy search*, *solved by presolve*, ...
+* *LNS neighborhoods closed quickly*, *solutions stalled early*, *solved by presolve*, ...
 
 **Says what became of your hint.** Whether a solution hint reached the solver, whether it was
 complete and feasible, and whether CP-SAT actually started from it (the `complete_hint`

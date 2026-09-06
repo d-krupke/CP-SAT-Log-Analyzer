@@ -10,7 +10,9 @@ Notable changes, newest first. Dates are the day the work landed on `main`.
   only be "a number and a format string" and gave no hint of what else a rule *could* look at;
   a class gets the whole analysis and writes its own sentence. Dropped *Summary counters are
   per worker* (documentation rather than an observation about the log - the Response card
-  already says it) and reworded the boxes that drew a conclusion the log does not support.
+  already says it) and *Conflict-heavy search* / *Mostly feasible descent* (one worker's
+  conflicts-per-branch ratio does not carry the conclusion they drew, and between them they
+  fired on half of the corpus), and reworded the boxes that claimed more than the log shows.
 * **2026-09-06** - Layout pass on the cards: the parts of a card are headed sections instead of
   nested `<details>` (a card is already collapsible as a whole), a collapsed card shows a
   one-line summary (`52 steps · 0.01 s`, `14 rules`) instead of a bare bar, the presolved model
