@@ -1,5 +1,13 @@
 # CP-SAT-Log-Analyzer
 
+> **This branch is the original Streamlit application, kept as it is.** It is what
+> [cpsat-log-analyzer.streamlit.app](https://cpsat-log-analyzer.streamlit.app/) serves, and it
+> only receives fixes that keep it parsing current OR-Tools logs - no new features.
+>
+> The successor is a rewrite with a standalone parser library, a FastAPI backend and a React
+> frontend, which you run with one `docker compose up`. It lives on the **`v2`** branch; see
+> its `v2/README.md` and `docs/`.
+
 Dive into the world of constraint programming with ease using our CP-SAT Log
 Analyzer. This tool transforms the dense and detailed logs of CP-SAT into clear,
 readable formats, complemented by intuitive visualizations of key metrics.
