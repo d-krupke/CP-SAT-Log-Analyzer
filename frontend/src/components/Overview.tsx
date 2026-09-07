@@ -2,6 +2,7 @@
 import { Card } from './Card'
 import { Md } from './Md'
 import { useSelection } from '../state/selection'
+import { tooltip } from '../tooltip'
 import type { Analysis } from '../types'
 
 export function Overview({ analysis }: { analysis: Analysis }) {
@@ -13,7 +14,7 @@ export function Overview({ analysis }: { analysis: Analysis }) {
           <div
             key={m.key}
             className={`metric ${m.level}`}
-            title={m.hint ?? (m.line ? `Log line ${m.line}` : undefined)}
+            title={tooltip(m.hint) ?? (m.line ? `Log line ${m.line}` : undefined)}
             onClick={() => m.line && select(m.line, 'panel')}
           >
             <div className="label">{m.label}</div>

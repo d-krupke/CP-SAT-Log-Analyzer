@@ -5,6 +5,7 @@ import { Md } from './Md'
 import { subsolverDoc } from '../knowledge'
 import { cardCollapsedByDefault } from '../state/expansion'
 import { useSelection } from '../state/selection'
+import { tooltip } from '../tooltip'
 import type { Explanations, SubsolverContribution } from '../types'
 
 export function SubsolversCard({ items, explanations }: { items: SubsolverContribution[]; explanations: Explanations }) {
@@ -43,7 +44,7 @@ export function SubsolversCard({ items, explanations }: { items: SubsolverContri
                     <td>{s.name}</td>
                     <td>
                       {s.role && (
-                        <span className="tag" title={explanations.subsolver_roles[s.role] ?? ''}>
+                        <span className="tag" title={tooltip(explanations.subsolver_roles[s.role])}>
                           {s.role.replace('_', ' ')}
                         </span>
                       )}

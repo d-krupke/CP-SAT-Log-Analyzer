@@ -114,6 +114,9 @@ def _validate_model_indicators() -> list[str]:
             out.append(
                 f"constraints.toml: {key} has unknown complexity {entry.get('complexity')!r}"
             )
+        enforced = entry.get("enforced_complexity")
+        if enforced is not None and enforced not in levels:
+            out.append(f"constraints.toml: {key} has unknown enforced_complexity {enforced!r}")
     domain = model.get("domain_size", {})
     for text in ("holes", "truncated", "summary", "constant"):
         if not domain.get(text):
@@ -124,7 +127,7 @@ def _validate_model_indicators() -> list[str]:
     if any(a is None or (b is not None and a >= b) for a, b in zip(sizes, sizes[1:], strict=False)):
         out.append("model.toml: [[domain_size.level]] max_size values must increase")
     for lv in domain.get("level", []) + list(levels.values()):
-        if lv.get("color") not in {"good", "info", "warn", "bad"}:
+        if lv.get("color") not in {"good", "info", "warn", "bad", "alt", "neutral"}:
             out.append(
                 f"knowledge: level {lv.get('label')!r} has unknown color {lv.get('color')!r}"
             )

@@ -15,6 +15,10 @@
   --warn-soft: #fef3c7;
   --bad: #b91c1c;
   --bad-soft: #fee2e2;
+  --alt: #7c3aed;
+  --alt-soft: #ede9fe;
+  --neutral: #94a3b8;
+  --neutral-soft: #e2e8f0;
   --info-soft: #e5e7eb;
   --sel: #fde68a;
   --k-solver: #7c3aed;
@@ -46,6 +50,10 @@
   --warn-soft: #3d2f12;
   --bad: #f87171;
   --bad-soft: #3f1d1d;
+  --alt: #c4b5fd;
+  --alt-soft: #2e2450;
+  --neutral: #94a3b8;
+  --neutral-soft: #2b3542;
   --info-soft: #273241;
   --sel: #6b5e1c;
   --k-solver: #a78bfa;
@@ -681,6 +689,14 @@ table.tbl {
   color: var(--bad);
   border-color: var(--bad);
 }
+.tag.alt {
+  color: var(--alt);
+  border-color: var(--alt);
+}
+.tag.neutral {
+  color: var(--muted);
+  border-color: var(--neutral);
+}
 .param {
   border-top: 1px solid var(--border);
   padding: 8px 0;
@@ -832,6 +848,16 @@ button.link {
 .sizebar i.bad,
 .dot.bad {
   background: var(--bad);
+}
+.mix-bar .seg.alt,
+.sizebar i.alt,
+.dot.alt {
+  background: var(--alt);
+}
+.mix-bar .seg.neutral,
+.sizebar i.neutral,
+.dot.neutral {
+  background: var(--neutral);
 }
 .mix-legend {
   display: flex;

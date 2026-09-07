@@ -33,7 +33,15 @@ class SubsolverPattern(SubsolverDoc):
 
 class ConstraintDoc(BaseModel):
     summary: str
-    complexity: str = "simple"
+    # The long version: which propagator the kind gets, what presolve does with
+    # it and what the LP sees. Shown on hover, so it may be a paragraph.
+    details: str = ""
+    complexity: str = "linear"
+    # Enforced ("reified") constraints are a different animal than their plain
+    # counterparts - `b => 3x <= 7` is an indicator constraint with a big-M LP
+    # relaxation - so a kind may classify its `#enforced` share separately.
+    enforced_complexity: str | None = None
+    enforced_summary: str = ""
 
 
 class LevelDoc(BaseModel):

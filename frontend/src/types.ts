@@ -338,11 +338,14 @@ export interface SubsolverPattern extends SubsolverDoc {
 }
 export interface ConstraintDoc {
   summary: string
+  details: string
   complexity: string
+  enforced_complexity: string | null
+  enforced_summary: string
 }
 export interface LevelDoc {
   label: string
-  color: 'good' | 'info' | 'warn' | 'bad'
+  color: 'good' | 'info' | 'warn' | 'bad' | 'alt' | 'neutral'
   text: string
 }
 export interface DomainSizeLevel extends LevelDoc {

@@ -44,6 +44,20 @@ def test_explanations_endpoint_shape() -> None:
     assert "hint" in ex.cards and ex.messages["hint_incomplete"]
     assert "search_stats" in ex.tables and "Conflicts" in ex.tables["search_stats"].columns
     assert ex.constraints["kNoOverlap2D"].complexity in ex.constraint_complexity
+    # Enforced linear constraints are indicator constraints with a big-M LP
+    # relaxation, so the model card must be able to count them apart from the
+    # plain linear ones (see modelMix.ts).
+    linear1 = ex.constraints["kLinear1"]
+    assert linear1.complexity == "linear"
+    assert linear1.enforced_complexity == "reified"
+    assert linear1.enforced_complexity in ex.constraint_complexity
+    # An enforced clause is still a clause, and an at-most-one is not one at all:
+    # both stay in the SAT group, which is what the level split is about.
+    assert ex.constraints["kBoolAnd"].enforced_complexity is None
+    assert ex.constraints["kBoolAnd"].complexity == "sat"
+    assert ex.constraints["kAtMostOne"].complexity == "sat"
+    # Interval lines are declarations, not constraints (the loader skips them).
+    assert ex.constraints["kInterval"].complexity == "declaration"
     assert ex.domains.levels[-1].max_size is None and ex.domains.levels[0].max_size == 2
     assert ex.messages["closed_by_presolve"]
     assert set(ex.subsolver_roles) >= {d.role for d in ex.subsolvers.values()}
@@ -91,7 +105,7 @@ def test_empty_constraint_kind_is_documented() -> None:
     """``kEmpty`` (a proto with no constraint case set) occurs in real models, so explain it."""
     kinds = all_explanations().constraints
     assert "kEmpty" in kinds
-    assert kinds["kEmpty"].complexity == "simple"
+    assert kinds["kEmpty"].complexity == "declaration"
 
 
 def test_worker_names_from_example_logs_are_documented() -> None:

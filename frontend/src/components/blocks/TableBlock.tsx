@@ -4,6 +4,7 @@ import { Section } from '../Section'
 import { subsolverDoc } from '../../knowledge'
 import { tableCollapsedByDefault } from '../../state/expansion'
 import { formatNumber, useSelection } from '../../state/selection'
+import { tooltip } from '../../tooltip'
 import type { BlockRef, Explanations, Table, TaskTimingTable } from '../../types'
 
 export function TableBlock({ blockRef, data, explanations }: { blockRef: BlockRef; data: Table; explanations: Explanations }) {
@@ -26,7 +27,7 @@ export function TableBlock({ blockRef, data, explanations }: { blockRef: BlockRe
             <tr>
               <th>{data.title.split(' (')[0]}</th>
               {columns.map((c) => (
-                <th key={c} title={doc?.columns[c] ?? ''}>
+                <th key={c} title={tooltip(doc?.columns[c])}>
                   {c}
                 </th>
               ))}
@@ -34,7 +35,7 @@ export function TableBlock({ blockRef, data, explanations }: { blockRef: BlockRe
           </thead>
           <tbody>
             {data.rows.map((r, i) => (
-              <tr key={`${r.line}-${i}`} className={selection.line === r.line ? 'selected' : ''} onClick={() => select(r.line, 'panel')} title={subsolverDoc(explanations, r.name)?.summary ?? ''}>
+              <tr key={`${r.line}-${i}`} className={selection.line === r.line ? 'selected' : ''} onClick={() => select(r.line, 'panel')} title={tooltip(subsolverDoc(explanations, r.name)?.summary)}>
                 <td>
                   <Anchor line={r.line}>{r.name}</Anchor>
                 </td>
@@ -83,7 +84,7 @@ export function TaskTimingBlock({ blockRef, data, explanations }: { blockRef: Bl
             <tr>
               <th>Task</th>
               {cols.map((c) => (
-                <th key={`w${c}`} title={doc?.columns[c === 'total' ? 'time' : c] ?? ''}>
+                <th key={`w${c}`} title={tooltip(doc?.columns[c === 'total' ? 'time' : c])}>
                   {c === 'total' ? 'wall time' : c}
                 </th>
               ))}
@@ -97,7 +98,7 @@ export function TaskTimingBlock({ blockRef, data, explanations }: { blockRef: Bl
           </thead>
           <tbody>
             {data.rows.map((r) => (
-              <tr key={r.line} className={selection.line === r.line ? 'selected' : ''} onClick={() => select(r.line, 'panel')} title={subsolverDoc(explanations, r.name)?.summary ?? ''}>
+              <tr key={r.line} className={selection.line === r.line ? 'selected' : ''} onClick={() => select(r.line, 'panel')} title={tooltip(subsolverDoc(explanations, r.name)?.summary)}>
                 <td>
                   <Anchor line={r.line}>{r.name}</Anchor>
                 </td>

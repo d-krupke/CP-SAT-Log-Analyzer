@@ -1,151 +1,322 @@
 # Constraint kinds listed in the model sections (kLinear2, kNoOverlap2D, ...).
 #
-# Each kind has a one-line `summary` and a `complexity` level. The levels are
-# defined in [complexity] below (label, color and explanation) and drive the
-# badges and the "constraint mix" bar of the model cards. Colors: good, info,
-# warn, bad.
+# Each kind has a one-line `summary`, an optional longer `details` (shown when
+# hovering the row) and a `complexity` level. The levels are defined in
+# [complexity] below (label, color and explanation) and drive the badges and the
+# "constraint mix" bar of the model cards. Colors: good, info, warn, bad, alt,
+# neutral.
+#
+# A kind may add `enforced_complexity` (and `enforced_summary`): the level used
+# for the `#enforced: k` part of its count, i.e. the constraints that carry
+# enforcement literals. Enforcement changes what a constraint costs - `b => 3x +
+# 2y <= 7` is an indicator constraint, not a linear one - so the mix bar splits
+# such a line into its plain and its enforced share.
+#
+# The claims here were checked against the OR-Tools sources (v9.15 branch):
+# `cp_model_solver.cc` (how the line is printed), `cp_model_loader.cc` (which
+# propagator a kind gets), `cp_model_expand.cc` (what presolve expands) and
+# `linear_relaxation.cc` (what reaches the LP, and at which linearization
+# level). Please keep them checkable when you edit.
 
-[complexity.simple]
-label = 'simple'
+[complexity.sat]
+label = 'SAT'
 color = 'good'
 text = '''
-Linear and Boolean constraints are CP-SAT's native language: clauses, at-most-one and linear
-constraints have strong, cheap propagators and enter the LP relaxation directly, so bounds
-and propagation are as good as it gets.'''
+Boolean constraints handled by the CDCL core and the binary implication graph: clauses
+(`kBoolOr`, `kBoolAnd`, `kBoolAndClauses`) and the at-most-one family. This is the machinery
+CP-SAT is built around - watched literals, clause learning, cheap propagation - and the
+at-most-ones are more than cheap: presolve merges them into maximal cliques, they are the
+only Boolean constraints the LP always gets (as tight `sum <= 1` rows, already at
+`linearization_level` 1, while clauses need level 2), they feed the clique cut generator, and
+they tighten the big-M of the reified rows. A model that is mostly SAT constraints plays to
+the solver's strengths.'''
+
+[complexity.linear]
+label = 'linear'
+color = 'info'
+text = '''
+Integer linear constraints without enforcement. They get a bound-propagating propagator and
+enter the LP as exact rows, so the dual bound, the cuts built on top of it and reduced-cost
+fixing all work at full strength. Two- and three-variable rows additionally feed the binary
+relation / precedence machinery that the scheduling propagators and precedence cuts use. This
+is the best-behaved part of an integer model.'''
+
+[complexity.reified]
+label = 'reified'
+color = 'warn'
+text = '''
+Linear constraints guarded by enforcement literals (`b => 3x + 2y <= 7`), reported as
+`#enforced` on the model lines. Two things get weaker. Propagation: the propagator prunes the
+terms only once every enforcement literal is true - before that all it can do is falsify the
+last open literal when the bounds already violate the constraint. And the relaxation: at the
+default `linearization_level` of 1 these constraints are not in the LP *at all*
+(`LinearizeEnforcedConstraints` requires level > 1, i.e. the `max_lp` workers), and where they
+are, they enter as big-M rows - `sum(~e_i * (lb - min_activity)) + terms >= lb` - whose slack
+is exactly the gap between the constraint and the worst case allowed by the variable bounds. A
+fractional `b` then satisfies such a row nearly for free, and if the big-M overflows the row
+is dropped. Tight variable domains and at-most-one structure over the enforcement literals
+shrink the M; enforcement over Booleans (clauses, at-most-one) does not have this problem,
+which is why enforced `kBoolAnd`/`kBoolOr` count as SAT. A large reified share is the usual
+explanation for a dual bound that crawls in a model that looks purely linear.'''
 
 [complexity.encoded]
 label = 'encoded'
-color = 'info'
+color = 'alt'
 text = '''
-Non-linear or combinatorial constraints (products, max, all-different, element, table,
-automaton, ...) that presolve expands into Booleans and linear pieces. Propagation is
-reasonable, but the expansion can multiply the model size and the LP relaxation is weaker;
-compare the initial and presolved model.'''
+Non-linear and combinatorial constraints. Most of them (`kElement`, `kTable`, `kAutomaton`,
+`kInverse`, `kIntMod`, `kIntProd`, `kReservoir`) are rewritten by presolve into Booleans and
+linear pieces - `LoadConstraint` has no case for them at all - and the rest (`kAllDiff`,
+`kLinMax`, `kIntDiv`) keep a dedicated propagator but reach the LP only partially, through cut
+generators rather than exact rows. Propagation is usually reasonable; the two things to watch
+are the size of the expansion (compare the initial and the presolved model) and the bound,
+which now rests on cuts.'''
 
 [complexity.global]
 label = 'global'
-color = 'warn'
+color = 'bad'
 text = '''
-Scheduling, packing and routing globals (no-overlap, cumulative, circuit, routes,
-reservoir) with dedicated, comparatively expensive propagators and a weak LP relaxation.
-They usually decide the difficulty of the model: bounds move slowly and the portfolio
-relies on specialized workers and LNS.'''
+Scheduling, packing and routing globals. They come with the most elaborate propagators in the
+solver (overload checking, detectable precedences, not-last, edge finding for disjunctive
+scheduling; timetabling for cumulative; subcircuit reasoning for routing) and with the weakest
+relaxations: the LP sees an energetic relaxation plus whatever the completion-time, energetic
+or subtour cut generators have separated so far. Red here is not a defect - it is where the
+difficulty of the model lives. Expect bounds to move slowly, the specialized workers and LNS
+to do the work, and the objective to matter more than the model size.'''
+
+[complexity.declaration]
+label = 'declaration'
+color = 'neutral'
+text = '''
+Lines that are not constraints in their own right: interval variables (`LoadConstraint` skips
+them - "already dealt with"), the constant check `kLinear0`, and the empty/dummy proto. They
+are counted apart so that they do not inflate the shares above; a job-shop model with one
+interval per task would otherwise read as mostly harmless.'''
 
 [constraints.kLinear0]
 summary = 'linear constraint without variables (a constant check)'
-complexity = 'simple'
+complexity = 'declaration'
+details = '''
+Nothing left to decide: presolve either proved it true, in which case it disappears, or false,
+in which case the model is UNSAT. With an enforcement literal it is loaded as a clause
+forbidding that literal.'''
 
 [constraints.kLinear1]
-summary = 'linear constraint with one variable (a bound, often reified)'
-complexity = 'simple'
+summary = 'bound on a single variable'
+complexity = 'linear'
+enforced_complexity = 'reified'
+details = '''
+Plain, this is a domain restriction that presolve normally folds into the variable's domain -
+which is why the ones that survive are usually the enforced ones.'''
+enforced_summary = '''
+`b => x >= 5`: the indicator/channeling constraint behind most `OnlyEnforceIf` bounds, and the
+classic reason for a weak LP bound in a model that otherwise looks linear. Presolve also
+creates them when it encodes an integer variable into Booleans.'''
 
 [constraints.kLinear2]
 summary = 'linear constraint with two variables'
-complexity = 'simple'
+complexity = 'linear'
+enforced_complexity = 'reified'
+details = '''
+Plain two-variable rows are also registered as binary relations (`RootLevelLinear2Bounds`),
+which is what the precedence propagators, the transitive precedence closure and the precedence
+cuts work on. Enforced ones are not registered there - a reified precedence is invisible to
+that machinery.'''
+enforced_summary = '`b => a*x + c*y <= d`: enforced, so big-M in the LP and no binary-relation reasoning.'
 
 [constraints.kLinear3]
 summary = 'linear constraint with three variables'
-complexity = 'simple'
+complexity = 'linear'
+enforced_complexity = 'reified'
+details = 'Plain ones also register the three implied two-variable relations for the precedence machinery.'
+enforced_summary = '`b => ...`: enforced three-variable row, relaxed with big-M when it is linearized at all.'
 
 [constraints.kLinearN]
 summary = 'linear constraint with many variables'
-complexity = 'simple'
+complexity = 'linear'
+enforced_complexity = 'reified'
+details = '''
+`#terms` is the number to read here: beyond `linear_split_size` (default 100) the constraint is
+split into intermediate sums, so a few very wide rows can quietly add variables of their own.'''
+enforced_summary = '`b => ...`: enforced wide row - the widest big-M in the model, and the weakest LP row.'
 
 [constraints.kBoolOr]
 summary = 'clause (at least one literal true)'
-complexity = 'simple'
+complexity = 'sat'
+details = '''
+Loaded straight into the CDCL solver; enforcement literals are simply appended negated, which
+is why they cost nothing here. Only linearized at `linearization_level` > 1.'''
 
 [constraints.kBoolAnd]
-summary = 'conjunction (enforcement implies all literals)'
-complexity = 'simple'
+summary = 'conjunction (one enforcement literal implies all literals)'
+complexity = 'sat'
+details = '''
+`b => (l1 and l2 and ...)` is loaded as one binary clause per literal. `#enforced` equals the
+count by construction - without an enforcement literal the constraint would just fix its
+literals and vanish in presolve.'''
 
 [constraints.kBoolAndClauses]
-summary = 'conjunction with several enforcement literals (compact encoding of clauses)'
-complexity = 'simple'
+summary = 'conjunction with several enforcement literals'
+complexity = 'sat'
+details = '''
+`n literals => m literals`, i.e. a compact way to write m clauses of size n+1. CP-SAT reports
+these apart from `kBoolAnd` because they are not handled the same way internally.'''
 
 [constraints.kAtMostOne]
-summary = 'at most one literal true'
-complexity = 'simple'
+summary = 'at most one literal true (own propagator, not n(n-1) clauses)'
+complexity = 'sat'
+details = '''
+Not a clause. It is stored in the binary implication graph as an at-most-one - a compact
+encoding of n*(n-1) implications - and propagates by scanning the group when one of its
+literals becomes true, with a single-literal reason for the CDCL analysis; only small groups
+(`at_most_one_max_expansion_size`, default 3) are expanded into binary clauses. It is also one
+of the most valuable structures the solver can find: presolve merges at-most-ones into maximal
+cliques, the LP gets the tight row `sum <= 1` already at `linearization_level` 1 (clauses need
+level 2), they drive the clique cut generator, and they are used to tighten the big-M of
+enforced linear rows. An enforced at-most-one is expanded away in presolve; the loader refuses
+one.'''
 
 [constraints.kExactlyOne]
 summary = 'exactly one literal true'
-complexity = 'simple'
+complexity = 'sat'
+details = '''
+Its own propagator plus the tight LP row `sum == 1` at every linearization level. Ternary ones
+also feed the product detector, which is how CP-SAT recognizes some product encodings.'''
 
 [constraints.kBoolXor]
-summary = 'XOR of literals'
+summary = 'XOR of literals (parity)'
 complexity = 'encoded'
+details = '''
+A dedicated parity propagator, and nothing else: there is no case for it in the linear
+relaxation, so it never reaches the LP, and CDCL learns from parity constraints poorly. A
+handful is harmless; a system of them is a different kind of problem (Gaussian elimination
+territory).'''
 
 [constraints.kIntDiv]
 summary = 'integer division'
 complexity = 'encoded'
+details = 'Kept as a constraint with its own propagator, but with no LP relaxation at all - the bound has to come from propagation.'
 
 [constraints.kIntMod]
 summary = 'modulo'
 complexity = 'encoded'
+details = 'Always rewritten by presolve (`ExpandIntMod`) into a product plus linear pieces; nothing of it survives under this name.'
 
 [constraints.kIntProd]
 summary = 'product'
 complexity = 'encoded'
+details = '''
+Expanded by presolve where it can be (`ExpandIntProd`); what remains gets a cut generator
+rather than an exact row, and a square `x*x` gets its own relaxation. Products are where an
+otherwise linear bound goes soft.'''
 
 [constraints.kLinMax]
 summary = 'maximum of linear expressions'
 complexity = 'encoded'
+details = '''
+Not expanded by default (`max_lin_max_size_for_expansion` is 0), so it keeps its propagator.
+The LP gets only the easy half, `target >= expr_i` for every expression; the other half comes
+from cut generators at `linearization_level` > 1. Minimizing a max (a makespan) is therefore
+well relaxed, bounding a max from above is not.'''
 
 [constraints.kAllDiff]
 summary = 'all different'
 complexity = 'encoded'
+details = '''
+Presolve expands it into one at-most-one (or exactly-one) per value when the domains are small
+enough; otherwise it keeps a dedicated propagator with an LP relaxation and a cut generator.
+This is the constraint that most often multiplies the model size - compare the initial and the
+presolved constraint counts.'''
 
 [constraints.kElement]
 summary = 'element / array indexing'
 complexity = 'encoded'
+details = 'Always expanded by presolve; the loader has no case for it, so it reaches the propagators only as Booleans and linear pieces.'
 
 [constraints.kTable]
-summary = 'table (allowed tuples)'
+summary = 'table (allowed or forbidden tuples)'
 complexity = 'encoded'
+details = '''
+Always expanded, positive and negative tables by different routines. The expansion is
+proportional to the number of tuples, so a large table is a large model.'''
 
 [constraints.kAutomaton]
 summary = 'automaton / regular constraint'
 complexity = 'encoded'
+details = 'Always expanded into the state graph (one Boolean per state and transition per time step); the loader has no case for it.'
 
 [constraints.kInverse]
 summary = 'inverse permutation'
 complexity = 'encoded'
+details = 'Always expanded by presolve into channeling clauses between the two directions.'
 
 [constraints.kReservoir]
 summary = 'reservoir constraint'
-complexity = 'global'
+complexity = 'encoded'
+details = '''
+Expanded by default (`expand_reservoir_constraints` is true): into a circuit over the events
+with one level variable per event, or into precedence and Boolean constraints. It rarely
+survives into the presolved model, which is where you can see what it became.'''
 
 [constraints.kCircuit]
 summary = 'Hamiltonian circuit'
 complexity = 'global'
+details = '''
+Loaded as a subcircuit propagator. The LP gets a static relaxation plus, at
+`linearization_level` > 1, the subtour cut generator - so the bound is exactly as good as the
+cuts separated so far.'''
 
 [constraints.kRoutes]
 summary = 'multiple vehicle routes'
 complexity = 'global'
+details = '''
+The same machinery as `kCircuit` with multiple circuits through the depot, plus route-specific
+cut generators. Enforcement literals are not supported by the relaxation, so an enforced one
+contributes nothing to the LP.'''
 
 [constraints.kInterval]
 summary = 'interval variable (start, size, end)'
-complexity = 'simple'
+complexity = 'declaration'
+details = '''
+Not a constraint: the loader skips it ("already dealt with"). It declares the start/size/end
+expressions and, when enforced, the presence literal of an optional task; only no-overlap and
+cumulative give it meaning.'''
+enforced_summary = '''
+Enforced intervals are optional tasks - `#enforced` counts how many tasks may be absent. The
+scheduling propagators handle them, but they must reason over presence literals, so bounds move
+more slowly than for a fixed set of tasks.'''
 
 [constraints.kNoOverlap]
 summary = 'disjunctive scheduling (no overlap in 1D)'
 complexity = 'global'
+details = '''
+The disjunctive family: overload checking, detectable precedences, not-last and edge finding,
+with a special case for two tasks. The LP gets an energetic relaxation and completion-time
+cuts.'''
 
 [constraints.kNoOverlap2D]
 summary = 'rectangle packing (no overlap in 2D)'
 complexity = 'global'
+details = '''
+Pairwise and area-based reasoning (mandatory overlap, orthogonal packing, try-edge) plus an
+energetic relaxation - the sum of the areas must fit the bounding box - and, at
+`linearization_level` > 1, energetic and completion-time cut generators.'''
 
 [constraints.kCumulative]
 summary = 'cumulative resource constraint'
 complexity = 'global'
+details = '''
+Timetabling per task, overload checking and energetic reasoning; optionally decomposed over
+time. The LP relaxation is energetic, so a tight capacity argument the propagators find may
+still be invisible to the bound.'''
 
 [constraints.kEmpty]
-complexity = 'simple'
-summary = '''
-A constraint proto with nothing set (`CONSTRAINT_NOT_SET`), so it constrains nothing. Either
-the model added an empty constraint or presolve emptied it; it costs nothing and disappears in
-the presolved model.'''
+complexity = 'declaration'
+summary = 'empty constraint proto (constrains nothing)'
+details = '''
+A constraint with nothing set (`CONSTRAINT_NOT_SET`). Either the model added an empty
+constraint or presolve emptied it; it costs nothing and disappears in the presolved model.'''
 
 [constraints.kDummyConstraint]
-summary = 'placeholder keeping variables alive (presolve testing only; rejected by the solver)'
-complexity = 'simple'
+summary = 'placeholder keeping variables alive'
+complexity = 'declaration'
+details = 'Presolve testing only - the solver rejects a model that contains one.'

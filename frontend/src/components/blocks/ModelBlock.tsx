@@ -2,8 +2,9 @@ import { Anchor, Card } from '../Card'
 import { Section } from '../Section'
 import { formatNumber, useSelection } from '../../state/selection'
 import type { BlockRef, Explanations, ModelDescription } from '../../types'
-import { constraintMix, domainMix } from '../../modelMix'
+import { constraintMix, constraintParts, domainMix } from '../../modelMix'
 import { Delta, DomainSize, LevelTag, MixBar } from './ModelIndicators'
+import { tooltip } from '../../tooltip'
 
 
 export function ModelBlock({ blockRef, data, initial, explanations }: { blockRef: BlockRef; data: ModelDescription; initial?: ModelDescription | null; explanations: Explanations }) {
@@ -94,25 +95,40 @@ export function ModelBlock({ blockRef, data, initial, explanations }: { blockRef
                 </tr>
               </thead>
               <tbody>
-                {data.constraints.map((c) => (
-                  <tr key={c.line} className={selection.line === c.line ? 'selected' : ''} onClick={() => select(c.line, 'panel')} title={explanations.constraints[c.name]?.summary ?? ''}>
-                    <td>
-                      <Anchor line={c.line}>{c.name}</Anchor>
-                    </td>
-                    <td className="num">
-                      <Anchor line={c.line}>{formatNumber(c.count)}</Anchor>
-                    </td>
-                    <td style={{ textAlign: 'left' }}>
-                      <LevelTag level={explanations.constraint_complexity[explanations.constraints[c.name]?.complexity ?? '']} />
-                    </td>
-                    <td style={{ textAlign: 'left' }} className="muted">
-                      {explanations.constraints[c.name]?.summary ?? ''}
-                      {Object.entries(c.details).length > 0 && (
-                        <> · {Object.entries(c.details).map(([k, v]) => `#${k}: ${formatNumber(v)}`).join(', ')}</>
-                      )}
-                    </td>
-                  </tr>
-                ))}
+                {data.constraints.map((c) => {
+                  // Enforced constraints get their own tag: `b => 3x <= 7` is an
+                  // indicator constraint, not the plain linear one the kind suggests.
+                  const doc = explanations.constraints[c.name]
+                  const parts = constraintParts(c, explanations)
+                  return (
+                    <tr key={c.line} className={selection.line === c.line ? 'selected' : ''} onClick={() => select(c.line, 'panel')} title={tooltip(doc?.details || doc?.summary)}>
+                      <td>
+                        <Anchor line={c.line}>{c.name}</Anchor>
+                      </td>
+                      <td className="num">
+                        <Anchor line={c.line}>{formatNumber(c.count)}</Anchor>
+                      </td>
+                      <td style={{ textAlign: 'left' }}>
+                        {parts.map((p) => {
+                          const level = explanations.constraint_complexity[p.key]
+                          return (
+                            <LevelTag
+                              key={p.key}
+                              level={parts.length > 1 && level ? { ...level, label: `${level.label} ${formatNumber(p.count)}` } : level}
+                              title={tooltip(p.note, level?.text)}
+                            />
+                          )
+                        })}
+                      </td>
+                      <td style={{ textAlign: 'left' }} className="muted">
+                        {doc?.summary ?? ''}
+                        {Object.entries(c.details).length > 0 && (
+                          <> · {Object.entries(c.details).map(([k, v]) => `#${k}: ${formatNumber(v)}`).join(', ')}</>
+                        )}
+                      </td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>

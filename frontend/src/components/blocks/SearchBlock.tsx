@@ -8,6 +8,7 @@ import { useState } from 'react'
 import { Anchor, Card } from '../Card'
 import { subsolverDoc } from '../../knowledge'
 import { formatNumber, useSelection } from '../../state/selection'
+import { tooltip } from '../../tooltip'
 import { PortfolioBlock } from './PortfolioBlock'
 import type { BlockRef, Explanations, LineSpan, SearchEvent, SearchProgress } from '../../types'
 
@@ -121,7 +122,7 @@ export function SearchProgressBlock({
                 <td className="num">
                   <Anchor line={ev.line}>{ev.time.toFixed(2)}</Anchor>
                 </td>
-                <td style={{ textAlign: 'left' }} title={subsolverDoc(explanations, ev.subsolver)?.summary ?? ''}>
+                <td style={{ textAlign: 'left' }} title={tooltip(subsolverDoc(explanations, ev.subsolver)?.summary)}>
                   <Anchor line={ev.line}>{ev.subsolver ?? ''}</Anchor>
                 </td>
                 <td style={{ textAlign: 'left', whiteSpace: 'normal' }}>
