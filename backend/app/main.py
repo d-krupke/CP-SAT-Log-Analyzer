@@ -23,7 +23,6 @@ from pathlib import Path
 from cpsat_logutils import CpSatLog, parse_log
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
@@ -99,26 +98,15 @@ def site() -> SiteConfig:
 
 STATIC_DIR = Path(os.environ.get("STATIC_DIR", "/nonexistent"))
 if STATIC_DIR.is_dir():
-    #: Everything the SPA route may serve has to live under here. Resolved once so
-    #: that the per-request check compares two absolute, symlink-free paths.
-    STATIC_ROOT = STATIC_DIR.resolve()
-    app.mount("/assets", StaticFiles(directory=STATIC_ROOT / "assets"), name="assets")
-
-    @app.get("/{path:path}", include_in_schema=False)
-    def spa(path: str) -> FileResponse:
-        """Serve a built file, or the SPA shell for a client-side route.
-
-        ``path`` is whatever the client sent, percent-decoding included, so it can
-        climb out of the static directory: ``/..%2F..%2Fetc/passwd`` arrives here
-        as a relative path with ``..`` segments intact, and a proxy that
-        normalizes ``/../`` does not touch the encoded form. Anything that does
-        not resolve to a file inside the root falls through to the shell, which
-        is also what an unknown route should return.
-        """
-        index = FileResponse(STATIC_ROOT / "index.html")
-        if not path:
-            return index
-        candidate = (STATIC_ROOT / path).resolve()
-        if candidate.is_file() and candidate.is_relative_to(STATIC_ROOT):
-            return FileResponse(candidate)
-        return index
+    # The whole built frontend, served by one mount so that a single container can
+    # host the app. Registered last: the API routes above are matched first.
+    #
+    # This used to be a hand-written catch-all that joined the request path onto
+    # STATIC_DIR - which served any file the process could read, because the path
+    # arrives percent-decoded and `..` survives it. StaticFiles does the
+    # containment check itself, and there is nothing here it cannot serve: the
+    # build is index.html, two files from `public/`, and `assets/`. `html=True`
+    # answers `/` with index.html; an unknown path is a 404, which is the truth -
+    # deep links into this app are `/?example=...`, a query on `/`, so there are
+    # no client-side routes that would need the shell instead.
+    app.mount("/", StaticFiles(directory=STATIC_DIR, html=True), name="spa")

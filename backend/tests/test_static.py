@@ -1,14 +1,17 @@
-"""Serving the built frontend: the SPA fallback must not hand out the filesystem.
+"""Serving the built frontend: the mount must not hand out the filesystem.
 
-Created 2026-09-07 after a review found that ``spa()`` joined the request path
-onto ``STATIC_DIR`` and served whatever came out. ``path`` reaches the route
-percent-decoded, so ``/..%2Fsecret.txt`` climbed out of the static directory and
-returned any file the process could read - on the public deployment, which is
-the one configuration that has ``STATIC_DIR`` set. A browser normalizes a literal
-``/../`` away, which is why this was invisible in manual use; the encoded forms
-below are the ones that arrive intact.
+Created 2026-09-07 after a review found that the hand-written catch-all this
+replaced joined the request path onto ``STATIC_DIR`` and served whatever came
+out. The path reaches the app percent-decoded, so ``/..%2Fsecret.txt`` climbed
+out of the static directory and returned any file the process could read - on
+the public deployment, which is the one configuration that sets ``STATIC_DIR``.
+A browser normalizes a literal ``/../`` away, which is why this was invisible in
+manual use; the encoded forms below are the ones that arrive intact.
 
-The route only exists when ``STATIC_DIR`` names a directory, and it is read at
+``StaticFiles`` refuses those itself, so these tests are here to keep the mount
+from being replaced by something hand-written again.
+
+The mount only exists when ``STATIC_DIR`` names a directory, and it is read at
 import time, so these tests reload ``app.main`` against a temporary one.
 """
 
@@ -50,12 +53,18 @@ def test_a_built_file_is_served(static_client: TestClient) -> None:
     assert static_client.get("/assets/app.js").text == "// bundle"
 
 
-def test_an_unknown_route_falls_back_to_the_shell(static_client: TestClient) -> None:
-    """Client-side routes have no file: the SPA shell answers, not a 404."""
-    for path in ("/", "/whatever/deep/link"):
-        response = static_client.get(path)
-        assert response.status_code == 200, path
-        assert response.text == "<html>shell</html>", path
+def test_the_root_serves_the_shell(static_client: TestClient) -> None:
+    """``html=True``: the directory itself answers with index.html."""
+    response = static_client.get("/")
+    assert response.status_code == 200
+    assert response.text == "<html>shell</html>"
+
+
+def test_an_unknown_path_is_a_404(static_client: TestClient) -> None:
+    """There are no client-side routes here - deep links are ``/?example=...``, a
+    query on ``/`` - so a path with no file behind it is simply not found. The
+    catch-all this replaced answered every one of them with the shell."""
+    assert static_client.get("/whatever/deep/link").status_code == 404
 
 
 @pytest.mark.parametrize(
@@ -68,15 +77,14 @@ def test_an_unknown_route_falls_back_to_the_shell(static_client: TestClient) -> 
         "/assets/../../secret.txt",
     ],
 )
-def test_the_route_cannot_climb_out_of_the_static_directory(
+def test_the_mount_cannot_climb_out_of_the_static_directory(
     static_client: TestClient, path: str
 ) -> None:
-    """Every escape resolves outside the root, so it gets the shell like any unknown route.
+    """Every escape resolves outside the root and is refused.
 
-    The assertion is on the body rather than the status: falling back to the
-    shell is the correct answer here, and a 200 that happens to contain the
-    secret is exactly the bug this guards.
+    The body is asserted as well as the status: the bug this guards was a 200
+    that happened to contain the file.
     """
     response = static_client.get(path)
     assert "TOP SECRET" not in response.text
-    assert response.text == "<html>shell</html>"
+    assert response.status_code == 404

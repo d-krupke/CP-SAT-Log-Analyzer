@@ -7,13 +7,16 @@ Notable changes, newest first. Dates are the day the work landed on `main`.
 (Entries before the flatten name paths under the `v2/` directory the rewrite grew up in;
 drop that prefix to find the file today.)
 
-* **2026-09-07** - **Security fix.** The route that serves the built frontend joined the
-  request path onto `STATIC_DIR` and served whatever came out, so `/..%2Fsecret` read any file
-  the process could - on any deployment with `STATIC_DIR` set, which is the Docker image and
-  therefore the public instance. The path reaches the route percent-decoded, so a proxy that
-  normalizes `/../` never saw it. It is now resolved and required to stay under the static
-  root; anything else falls through to the SPA shell. `backend/tests/test_static.py` covers the
-  route, which nothing had exercised before.
+* **2026-09-07** - **Security fix.** The hand-written catch-all that served the built frontend
+  joined the request path onto `STATIC_DIR` and served whatever came out, so `/..%2Fsecret`
+  read any file the process could - on any deployment with `STATIC_DIR` set, which is the
+  Docker image and therefore the public instance. The path reaches the app percent-decoded, so
+  a proxy that normalizes `/../` never saw it. The whole route is gone: one
+  `StaticFiles(html=True)` mount now serves the build, does the containment check itself, and
+  replaces the separate `/assets` mount. **Behaviour change:** an unknown path is a 404 instead
+  of the SPA shell, which is the truth - deep links here are `/?example=...`, a query on `/`,
+  so there are no client-side routes. `backend/tests/test_static.py` covers the mount, which
+  nothing had exercised before.
 
 * **2026-09-06** - The phone layout, after a report from an iPhone. The raw log was rendering
   in several font sizes at once - mobile browsers inflate text per block when the block is much
