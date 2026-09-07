@@ -23,7 +23,6 @@ from pathlib import Path
 from cpsat_logutils import CpSatLog, parse_log
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from .analysis import Analysis, analyze
@@ -98,15 +97,16 @@ def site() -> SiteConfig:
 
 STATIC_DIR = Path(os.environ.get("STATIC_DIR", "/nonexistent"))
 if STATIC_DIR.is_dir():
-    # The whole built frontend, served by one mount so that a single container can
-    # host the app. Registered last: the API routes above are matched first.
+    # The built frontend, so that a single container can host the whole app.
     #
-    # This used to be a hand-written catch-all that joined the request path onto
-    # STATIC_DIR - which served any file the process could read, because the path
-    # arrives percent-decoded and `..` survives it. StaticFiles does the
-    # containment check itself, and there is nothing here it cannot serve: the
-    # build is index.html, two files from `public/`, and `assets/`. `html=True`
-    # answers `/` with index.html; an unknown path is a 404, which is the truth -
-    # deep links into this app are `/?example=...`, a query on `/`, so there are
-    # no client-side routes that would need the shell instead.
-    app.mount("/", StaticFiles(directory=STATIC_DIR, html=True), name="spa")
+    # `frontend()` registers low-priority routes: the API is matched first no
+    # matter where this line sits, which a `mount("/")` cannot promise - a mount
+    # swallows every route declared after it, and this is the end of the file.
+    # It also does its own containment check, which is what this used to get
+    # wrong (see tests/test_static.py).
+    #
+    # `fallback=None` because there is nothing to fall back to: deep links here
+    # are `/?example=...`, a query on `/`, so a path with no file behind it is
+    # genuinely not found. The default would answer a browser navigating to one
+    # with the shell, which is right for client-side routing and a lie here.
+    app.frontend("/", directory=STATIC_DIR, fallback=None)

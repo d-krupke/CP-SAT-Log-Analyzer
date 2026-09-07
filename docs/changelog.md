@@ -11,12 +11,15 @@ drop that prefix to find the file today.)
   joined the request path onto `STATIC_DIR` and served whatever came out, so `/..%2Fsecret`
   read any file the process could - on any deployment with `STATIC_DIR` set, which is the
   Docker image and therefore the public instance. The path reaches the app percent-decoded, so
-  a proxy that normalizes `/../` never saw it. The whole route is gone: one
-  `StaticFiles(html=True)` mount now serves the build, does the containment check itself, and
-  replaces the separate `/assets` mount. **Behaviour change:** an unknown path is a 404 instead
-  of the SPA shell, which is the truth - deep links here are `/?example=...`, a query on `/`,
-  so there are no client-side routes. `backend/tests/test_static.py` covers the mount, which
-  nothing had exercised before.
+  a proxy that normalizes `/../` never saw it. The whole route is gone: the build is served by
+  `app.frontend("/", directory=..., fallback=None)`, which does the containment check itself
+  and replaces the separate `/assets` mount. `frontend()` (FastAPI 0.138, now the dependency
+  floor) registers *low-priority* routes, so the API is matched first whatever the order in the
+  file - a `mount("/")` swallows every route declared after it, and this is the last statement
+  in `app/main.py`. **Behaviour change:** an unknown path is a 404 instead of the SPA shell,
+  which is the truth - deep links here are `/?example=...`, a query on `/`, so there are no
+  client-side routes (hence `fallback=None`, not the default `"auto"`).
+  `backend/tests/test_static.py` covers all of it; nothing had exercised this route before.
 
 * **2026-09-06** - The phone layout, after a report from an iPhone. The raw log was rendering
   in several font sizes at once - mobile browsers inflate text per block when the block is much

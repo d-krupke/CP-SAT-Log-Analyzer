@@ -8,8 +8,10 @@ the public deployment, which is the one configuration that sets ``STATIC_DIR``.
 A browser normalizes a literal ``/../`` away, which is why this was invisible in
 manual use; the encoded forms below are the ones that arrive intact.
 
-``StaticFiles`` refuses those itself, so these tests are here to keep the mount
-from being replaced by something hand-written again.
+``app.frontend()`` refuses those itself, so these tests are here to keep it from
+being replaced by something hand-written again - and to pin the two decisions it
+was chosen for: the API keeps priority over it, and a path with no file behind it
+is a 404 rather than the shell.
 
 The mount only exists when ``STATIC_DIR`` names a directory, and it is read at
 import time, so these tests reload ``app.main`` against a temporary one.
@@ -22,6 +24,7 @@ from collections.abc import Iterator
 from pathlib import Path
 
 import pytest
+from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 import app.main
@@ -88,3 +91,27 @@ def test_the_mount_cannot_climb_out_of_the_static_directory(
     response = static_client.get(path)
     assert "TOP SECRET" not in response.text
     assert response.status_code == 404
+
+
+def test_the_api_keeps_priority_over_the_frontend(static_client: TestClient) -> None:
+    """The frontend covers ``/``: the API routes still have to win under it."""
+    assert static_client.get("/api/health").json() == {"status": "ok"}
+
+
+def test_a_route_declared_after_the_frontend_still_matches() -> None:
+    """The reason this is ``frontend()`` and not ``mount("/")``.
+
+    A mount at ``/`` swallows every route declared after it, and the frontend is
+    the last statement in ``app.main`` - so with a mount, the next endpoint
+    appended to that file would silently 404. ``frontend()`` registers
+    low-priority routes instead, which is a property of the app rather than of
+    the order the file happens to be written in.
+    """
+    app = FastAPI()
+    app.frontend("/", directory=str(Path(__file__).parent), fallback=None)
+
+    @app.get("/api/added-afterwards")
+    def late() -> dict[str, bool]:
+        return {"ok": True}
+
+    assert TestClient(app).get("/api/added-afterwards").json() == {"ok": True}

@@ -44,7 +44,7 @@ corpus, damaged input, hint wordings). What runs here:
 | `backend/tests/test_insights.py` | the trigger framework: discovery, display order, the invariants of a box, and that a trigger which raises is contained |
 | `backend/tests/test_hints.py` | `build_hint_report`: the verdict per wording, the `complete_hint` evidence, and the vacuous line on a model with no variables |
 | `backend/tests/test_broken.py` | analysis and API on damaged logs, and the four log-quality triggers |
-| `backend/tests/test_static.py` | serving the built frontend: a real asset, the shell at `/`, a 404 for an unknown path, and that no encoded `..` climbs out of the static root |
+| `backend/tests/test_static.py` | serving the built frontend: a real asset, the shell at `/`, a 404 for an unknown path, that the API keeps priority over it, and that no encoded `..` climbs out of the static root |
 | `backend/tests/test_site.py` | the deployment chrome: an unconfigured instance shows no legal links, URLs and Markdown files are picked up from the environment, a broken file is reported |
 | `backend/tests/test_knowledge.py` | the knowledge base itself: required sections, documented labels, regressions on wrong claims |
 | `backend/tests/test_corpus.py` | `analyze()` on all 295 corpus logs: no crash, no trigger blows up, every worker and parameter documented |

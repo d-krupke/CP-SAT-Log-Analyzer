@@ -8,7 +8,9 @@ dependencies = [
     # github.com/d-krupke/cpsat-logutils. Capped at the next major: the schema this
     # app reads (Loc, the section models, the block index) is that package's API.
     "cpsat-logutils>=1.0,<2",
-    "fastapi>=0.115",
+    # 0.138 is where `app.frontend()` arrived; it serves the built frontend as
+    # low-priority routes, so the API keeps priority over the catch-all.
+    "fastapi>=0.138",
     # Imported directly (request/response models), not just pulled in by fastapi
     # and cpsat-logutils. Same floor as that package, whose models this app passes around.
     "pydantic>=2.10",
