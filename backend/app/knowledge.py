@@ -40,6 +40,7 @@ REQUIRED: dict[str, tuple[str, ...]] = {
     "parameters": ("safe", "unknown", "advice", "warning"),
     "metrics": (),
     "examples": ("examples",),
+    "importance": ("portfolio", "texts", "verdicts", "caveats", "lns"),
 }
 
 _cache: dict[str, tuple[float, dict[str, Any]]] = {}
@@ -78,6 +79,7 @@ def validate() -> list[str]:
             if key not in data:
                 problems.append(f"{path}: missing section [{key}]")
     problems.extend(_validate_subsolvers())
+    problems.extend(_validate_importance())
     problems.extend(_validate_model_indicators())
     return problems
 
@@ -97,6 +99,35 @@ def _validate_subsolvers() -> list[str]:
                 out.append(f"subsolvers.toml: {key} lacks '{field}'")
         if entry.get("role") not in roles:
             out.append(f"subsolvers.toml: {key} has unknown role {entry.get('role')!r}")
+    return out
+
+
+def _validate_importance() -> list[str]:
+    """Every verdict the ranking can produce needs a label and a text; the card its texts."""
+    from .importance import VERDICTS  # local: importance imports this module
+
+    try:
+        data = load("importance")
+    except Exception:  # noqa: BLE001 - reported by validate() already
+        return []
+    verdicts, texts = data.get("verdicts", {}), data.get("texts", {})
+    out = [
+        f"importance.toml: verdict {key!r} lacks '{field}'"
+        for key in VERDICTS
+        for field in ("label", "text")
+        if not verdicts.get(key, {}).get(field)
+    ]
+    out += [
+        f"importance.toml: [texts] lacks {key!r}"
+        for key in ("method", "fewer_workers", "snippet_hint")
+        if not texts.get(key)
+    ]
+    lns = data.get("lns", {})
+    out += [
+        f"importance.toml: [lns] lacks {key!r}"
+        for key in ("min_share", "min_workers", "max_workers", "title", "hint", "method")
+        if key not in lns
+    ]
     return out
 
 

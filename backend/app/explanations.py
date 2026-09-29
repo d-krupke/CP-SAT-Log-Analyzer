@@ -2,7 +2,8 @@
 
 This module only shapes the knowledge files into the API models; the texts
 themselves live in ``blocks.toml``, ``tables.toml``, ``response_fields.toml``,
-``subsolvers.toml``, ``constraints.toml``, ``model.toml`` and ``messages.toml`` (see
+``subsolvers.toml``, ``constraints.toml``, ``model.toml``, ``messages.toml`` and
+``importance.toml`` (see
 ``knowledge/README.md``). Keys are the stable identifiers used by the parser
 (block kinds, ``table_id``s, column names, response fields, subsolver names).
 """
@@ -76,6 +77,8 @@ class Explanations(BaseModel):
     constraint_complexity: dict[str, LevelDoc]
     domains: DomainDocs
     messages: dict[str, str]
+    importance_verdicts: dict[str, LevelDoc]
+    importance_texts: dict[str, str]
 
 
 def subsolver_docs() -> dict[str, SubsolverDoc]:
@@ -112,4 +115,13 @@ def all_explanations() -> Explanations:
         constraint_complexity={k: LevelDoc(**v) for k, v in cons["complexity"].items()},
         domains=DomainDocs(levels=dom["level"], **{k: v for k, v in dom.items() if k != "level"}),
         messages=load("messages")["messages"],
+        importance_verdicts={k: LevelDoc(**v) for k, v in load("importance")["verdicts"].items()},
+        importance_texts=_importance_texts(),
     )
+
+
+def _importance_texts() -> dict[str, str]:
+    """``[texts]`` plus the LNS hint's title and method as ``lns_title`` / ``lns_method``."""
+    data = load("importance")
+    lns = data["lns"]
+    return {**data["texts"], "lns_title": lns["title"], "lns_method": lns["method"]}

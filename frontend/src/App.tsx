@@ -27,6 +27,8 @@ const EMPTY_EXPLANATIONS: Explanations = {
   constraint_complexity: {},
   domains: { levels: [], holes: '', truncated: '', summary: '', constant: '' },
   messages: {},
+  importance_verdicts: {},
+  importance_texts: {},
 }
 
 function useTheme(): [string, () => void] {

@@ -1,4 +1,4 @@
-/** Who found what: per-subsolver solution and bound contributions, with the worker's role. */
+/** Who found what: per-subsolver solutions, objective share and bound contributions, with the worker's role. */
 import { Fragment, useState } from 'react'
 import { Card } from './Card'
 import { Md } from './Md'
@@ -28,6 +28,7 @@ export function SubsolversCard({ items, explanations }: { items: SubsolverContri
               <th>Subsolver</th>
               <th>Role</th>
               <th>Solutions</th>
+              <th title="Share of the total objective improvement">Objective share</th>
               <th>Bounds</th>
               <th>First solution</th>
               <th style={{ textAlign: 'left' }}>What it does</th>
@@ -50,6 +51,7 @@ export function SubsolversCard({ items, explanations }: { items: SubsolverContri
                       )}
                     </td>
                     <td className="num">{s.solutions}</td>
+                    <td className="num">{s.objective_share !== null ? `${(100 * s.objective_share).toFixed(1)}%` : ''}</td>
                     <td className="num">{s.bounds}</td>
                     <td className="num">{s.first_solution_time !== null ? `${s.first_solution_time.toFixed(2)} s` : ''}</td>
                     <td style={{ textAlign: 'left', whiteSpace: 'normal' }} className="muted">
@@ -59,7 +61,7 @@ export function SubsolversCard({ items, explanations }: { items: SubsolverContri
                   </tr>
                   {expanded && details && (
                     <tr className="details-row">
-                      <td colSpan={6} style={{ textAlign: 'left', whiteSpace: 'normal' }}>
+                      <td colSpan={7} style={{ textAlign: 'left', whiteSpace: 'normal' }}>
                         <Md text={details} />
                         {s.best_solution_line && (
                           <button className="link" onClick={() => select(s.best_solution_line!, 'panel')}>

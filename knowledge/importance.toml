@@ -1,0 +1,145 @@
+# Which full-problem strategies of the portfolio mattered for the objective search.
+#
+# Shown in the "Portfolio ranking" card (backend/app/importance.py computes it). The
+# numbers and wording come from the portfolio-importance study of 2026-09
+# (benchmarks/portfolio_study/REPORT.md). The rule was found on 12 instances (1305 CP-SAT
+# 9.15 runs) and then confirmed in a pre-registered test on 39 other instances of 13 problem
+# classes (1873 runs): keeping the strategies this ranking puts first beat CP-SAT's default
+# choice at 2-6 workers in 377 of 536 paired comparisons (27 of 39 instances); from
+# 12-worker logs in 363 of 552, in 30 s runs in 249 of 375 (3,000+ more runs). Change a
+# number here only with new evidence of that kind; the texts may be edited freely.
+#
+# The score of a full subsolver is its share of the total objective improvement, each
+# improvement weighted by the time t at which it happened. Counting solutions instead
+# was tested and is misleading: a worker that polishes in many tiny steps outranks the one
+# that made the big jumps.
+
+[portfolio]
+# CP-SAT's order of the full-problem strategies (GetFullWorkerParameters in
+# ortools/sat/cp_model_search.cc, v9.15). With n workers it runs the first F(n)
+# *applicable* names of this list; `fixed` needs a search strategy in the model and `core`
+# an objective with at least two terms, otherwise they are skipped. `max_lp_sym` replaces
+# `max_lp` on models with symmetries.
+default_order = [
+  'default_lp', 'fixed', 'core', 'no_lp', 'max_lp', 'max_lp_sym', 'quick_restart',
+  'reduced_costs', 'quick_restart_no_lp', 'pseudo_costs', 'lb_tree_search', 'probing',
+  'objective_lb_search', 'objective_shaving_no_lp', 'objective_shaving_max_lp',
+  'probing_max_lp', 'probing_no_lp', 'objective_lb_search_no_lp',
+  'objective_lb_search_max_lp',
+]
+# Never bad on their own in the study: default_lp's worst result alone was 1.66x the best
+# strategy, every other strategy had a 3x-17x failure somewhere; fixed was in the best pair
+# on every model that has a search strategy. A low score for them is labelled "backbone".
+always_keep = ['default_lp', 'fixed']
+# The largest portfolio the ranking was tested with: 8 full subsolvers (12 workers), where it
+# still beat the default in 363 of 552 held-out pairs (29 of 39 instances). On the 12
+# development instances it had looked like a coin flip (53/52); the larger test overruled that.
+reliable_max_full = 8
+# The longest runs the ranking was tested with were 30 s, where it still beat the default in
+# 249 of 375 held-out pairs (30 of 39 instances). Beyond this wall time it is untested
+# (a small margin above 30 s, since a 30 s limit ends a little after 30 s).
+long_run_seconds = 35.0
+# Below this share of the total improvement for all full subsolvers together, the LNS and
+# first-solution workers did the objective search and the ranking says little.
+min_full_share = 0.05
+
+# Texts of the card itself (the one-paragraph intro is `[cards].portfolio_ranking` in blocks.toml).
+[texts]
+# Behind the "How is this computed?" fold.
+method = '''
+Every improving solution counts with the objective improvement it made over the previous
+solution, multiplied by the time at which it was found: late improvements are the hard ones.
+Each worker's score is its sum of these, divided by the total, so all workers together make
+100%. The first solution improves nothing and counts zero.
+
+Tested on 39 instances of 13 problem classes that played no part in finding the rule
+(1873 CP-SAT 9.15 runs, 4 seeds each): re-running an 8-worker, 10 s log's model with 2-6 workers
+and only the strategies ranked first beat CP-SAT's own choice in 377 of 536 paired comparisons
+(159 losses), typically lowering the primal integral by about 10%; per instance, 27 of 39
+improved. It held when the ranking was read from a 12-worker log (363 of 552) and in 30 s runs
+(249 of 375). It is a coin flip on classic job shop, graph coloring and Golomb rulers.
+Counting solutions instead was tested and is misleading.'''
+fewer_workers = '''
+On fewer cores CP-SAT keeps only the first strategies of its fixed order. Pick a worker count to
+compare its choice with what this run suggests.'''
+snippet_hint = '''
+Passing exactly as many names as CP-SAT runs full strategies keeps the rest of the portfolio
+(LNS, first-solution heuristics) unchanged.'''
+
+# How each ranked strategy is labelled. `color` is one of info | good | warn | bad.
+[verdicts.carried]
+label = 'carried'
+color = 'good'
+text = '''
+Delivered the largest time-weighted share of the objective improvement among the
+full-problem strategies. Keep it when you run with fewer workers.'''
+
+[verdicts.contributed]
+label = 'contributed'
+color = 'info'
+text = '''
+Found some of the improving solutions. Worth keeping in the order shown.'''
+
+[verdicts.backbone]
+label = 'backbone'
+color = 'info'
+text = '''
+Found no improving solution in this run, but this strategy is the one that is never bad on
+its own (`default_lp`), or the one that uses your search strategy (`fixed`). Other workers
+often report the solutions it would have found. Drop it last.'''
+
+[verdicts.bound]
+label = 'bound worker'
+color = 'info'
+text = '''
+Improved the objective bound but found no improving solution. It matters for proving
+optimality, not for finding good solutions.'''
+
+[verdicts.shadowed]
+label = 'not needed here'
+color = 'info'
+text = '''
+Found no improving solution. That does not make it useless: a faster sibling may have
+reported the same solutions first. In this run the others covered its work.'''
+
+[caveats]
+many_full = '''
+This run had more full-problem strategies side by side than the ranking was tested with (up
+to 8, i.e. 12 workers). With many similar searches it is partly chance which one reports a
+solution first, so read the ranking as a rough hint.'''
+long_run = '''
+This run was longer than the ranking was tested with (up to 30 s; it still helped at 30 s,
+though less than at 10 s). In long runs more of the late improvement comes from LNS, so read
+the ranking as a rough hint.'''
+lns_dominated = '''
+Almost the whole objective improvement came from LNS and the first-solution heuristics, not
+from the full-problem strategies, so there is little to rank.'''
+custom_portfolio = '''
+The portfolio was set by `subsolvers`, `ignore_subsolvers` or `filter_subsolvers`, so the
+"CP-SAT default" column shows what this portfolio would keep, not what CP-SAT picks unasked.'''
+
+# "Give LNS more threads" (backend/app/lns_hint.py). Evidence: study Phases G and H.
+# The share counts the interleaved workers only (LNS neighborhoods, `ls`, `feasibility_pump`),
+# not the first-solution heuristics. With share >= 0.5, `num_full_subsolvers` = half the
+# workers beat the default in 53 of 67 held-out pairs at 8 workers (median primal integral
+# -28%), in 27 of 39 at 12 workers (-15%) and in 42 of 64 in 30 s runs at 8 workers (-13%);
+# below 0.5 it was about neutral. Switching single neighborhoods off never helped, so the
+# hint names none. Only 8 and 12 workers were tested: widen the range only with new runs.
+[lns]
+min_share = 0.5
+min_workers = 8
+max_workers = 12
+title = 'Give LNS more threads'
+hint = '''
+LNS and local search delivered **{share}%** of the objective progress in this run, but only
+the threads left over by the {full} full-problem strategies ran them. Try
+`num_full_subsolvers = {suggested}`: CP-SAT then runs {suggested} full strategies and gives the
+freed threads to LNS.'''
+method = '''
+Tested on 39 instances that played no part in finding this rule: when LNS carried at least
+half of the progress in one run, a second run with half the workers as full strategies had a
+lower primal integral in 53 of 67 cases at 8 workers and 10 s (typically about 25% lower), in
+27 of 39 at 12 workers (about 15% lower) and in 42 of 64 in 30 s runs (about 13% lower): the
+longer the run, the smaller the gain. When LNS carried less, it made no reliable difference.
+Keep the change only if your own runs confirm it; switching off single LNS neighborhoods did
+not help in any test.'''
