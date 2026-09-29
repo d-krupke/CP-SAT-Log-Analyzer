@@ -18,6 +18,7 @@ from pydantic import BaseModel, Field
 
 from .explanations import describe_subsolver
 from .hints import HintReport, build_hint_report
+from .importance import PortfolioRanking, build_ranking, objective_shares
 from .insights import Insight, build_insights
 from .metrics import Metric, build_metrics, loc_val
 from .parameters import ParameterInfo, describe_all
@@ -47,6 +48,9 @@ class SubsolverContribution(BaseModel):
     bounds: int = 0
     first_solution_time: float | None = None
     best_solution_line: int | None = None
+    objective_share: float | None = Field(
+        default=None, description="Share of the total objective improvement (0-1)"
+    )
     description: str | None = Field(default=None, description="One-line summary of the worker")
     role: str | None = None
 
@@ -58,6 +62,7 @@ class Analysis(BaseModel):
     subsolvers: list[SubsolverContribution]
     insights: list[Insight]
     hint: HintReport
+    portfolio_ranking: PortfolioRanking | None = None
 
 
 def analyze(log: CpSatLog) -> Analysis:
@@ -70,6 +75,7 @@ def analyze(log: CpSatLog) -> Analysis:
         subsolvers=build_subsolvers(log),
         insights=build_insights(log, progress, hint),
         hint=hint,
+        portfolio_ranking=build_ranking(log),
     )
 
 
@@ -167,4 +173,6 @@ def build_subsolvers(log: CpSatLog) -> list[SubsolverContribution]:
             num = row.values.get("Num")
             if isinstance(num, int):
                 setattr(get(row.name), attr, max(getattr(get(row.name), attr), num))
+    for name, share in objective_shares(log).items():
+        get(name).objective_share = share.share
     return sorted(contributions.values(), key=lambda c: (-c.solutions, -c.bounds, c.name))

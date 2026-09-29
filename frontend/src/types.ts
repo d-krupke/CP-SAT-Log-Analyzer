@@ -285,6 +285,46 @@ export interface SubsolverContribution {
   best_solution_line: number | null
   description: string | null
   role: string | null
+  /** Share of the total objective improvement (0-1); null when nothing improved. */
+  objective_share: number | null
+}
+
+/** One full-problem subsolver in the portfolio ranking (backend app/importance.py). */
+export interface RankedSubsolver {
+  name: string
+  /** Time-weighted share of the objective improvement (0-1). */
+  score: number
+  share: number
+  improvements: number
+  bounds: number
+  /** Key of `importance_verdicts`. */
+  verdict: string
+  line: number | null
+}
+
+/** With `workers` threads CP-SAT runs `full` full subsolvers: its pick vs this log's ranking. */
+export interface WorkerChoice {
+  workers: number
+  full: number
+  default: string[]
+  ranked: string[]
+}
+
+export interface PortfolioRanking {
+  ranked: RankedSubsolver[]
+  other_share: number
+  choices: WorkerChoice[]
+  caveats: string[]
+  line: number | null
+  lns_hint: LnsHint | null
+}
+export interface LnsHint {
+  share: number
+  workers: number
+  full: number
+  suggested_full: number
+  text: string
+  snippet: string
 }
 export interface Insight {
   level: Level
@@ -318,6 +358,7 @@ export interface Analysis {
   subsolvers: SubsolverContribution[]
   insights: Insight[]
   hint: HintReport
+  portfolio_ranking: PortfolioRanking | null
 }
 export interface ParseResult {
   log: CpSatLog
@@ -373,6 +414,8 @@ export interface Explanations {
   constraint_complexity: Record<string, LevelDoc>
   domains: DomainDocs
   messages: Record<string, string>
+  importance_verdicts: Record<string, LevelDoc>
+  importance_texts: Record<string, string>
 }
 export interface ExampleInfo {
   name: string

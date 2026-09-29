@@ -100,6 +100,11 @@ subsolvers = '''
 Which configuration of the portfolio produced the improving solutions and the bound improvements,
 combined from the search log and the final `Solutions`/`Objective bounds` tables. LNS workers
 typically dominate the solutions on large models; exact workers (`default_lp`, `max_lp`, `core`,
-...) and the bound-focused workers dominate the bounds. Workers that contribute nothing are
-candidates for `ignore_subsolvers` only if you have many cores idle; otherwise they still share
-clauses and bounds.'''
+...) and the bound-focused workers dominate the bounds. The *Objective share* column says how
+much of the total objective improvement each worker delivered; many solutions with a small share
+means polishing in tiny steps. A worker that contributed nothing may still have helped the others
+through shared clauses and bounds, so this table alone is no reason to remove it.'''
+portfolio_ranking = '''
+Which full-problem strategies of the portfolio drove the objective in this run, weighted toward
+late improvements. Use it to choose strategies for runs with fewer workers; it describes one
+run, so confirm on a second one.'''

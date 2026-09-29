@@ -16,7 +16,7 @@ wording - see "Adding things" below.
 | I want to change ... | File | Key |
 | --- | --- | --- |
 | the explanation on top of a log-section card (Solver, Initial model, Presolve, Search progress, Response, ...) | `blocks.toml` | `[blocks]`, key = section kind |
-| the intro of the Search progress plot, the Parameters card, the Subsolver contributions card or the Solution hint card | `blocks.toml` | `[cards]` |
+| the intro of the Search progress plot, the Parameters card, the Subsolver contributions card, the Portfolio ranking card or the Solution hint card | `blocks.toml` | `[cards]` |
 | a statistics table (`Search stats`, `Lp stats`, `LNS stats`, ...) or one of its columns | `tables.toml` | `[tables.<table_id>]`, `[tables.<table_id>.columns]` |
 | a field of the `CpSolverResponse summary:` | `response_fields.toml` | `[response_fields]` |
 | what a worker/subsolver does (`core`, `max_lp`, `rins`, ...), its role, the group descriptions | `subsolvers.toml` | `[subsolvers.<name>]`, `[roles]`, `[categories]`, `[[patterns]]` |
@@ -25,6 +25,7 @@ wording - see "Adding things" below.
 | the explanation of a solver message (`Problem closed by presolve.`, every `hint_*` verdict, ...) | `messages.toml` | `[messages]` |
 | advice for an overridden parameter, which parameters get a warning and the warning text | `parameters.toml` | `[advice]`, `safe`, `[[warning]]` |
 | when a tile in the Overview turns yellow/red and its hint | `metrics.toml` | one section per tile |
+| the verdicts, caveats and CP-SAT facts (default strategy order, strategies never marked useless, reliability limits) of the Portfolio ranking card, and when it suggests giving LNS more threads | `importance.toml` | `[portfolio]`, `[texts]`, `[verdicts.<key>]`, `[caveats]`, `[lns]` |
 | the description of an example log offered on the landing page | `examples.toml` | `[examples]` |
 | the description of a retired example log (`example_logs/archive/`, test material only) | `examples.toml` | `[archived]` |
 

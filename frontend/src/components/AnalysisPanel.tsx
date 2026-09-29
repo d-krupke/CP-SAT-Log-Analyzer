@@ -10,6 +10,7 @@ import { HintCard } from './HintCard'
 import { Overview } from './Overview'
 import { ParametersCard } from './ParametersCard'
 import { ProgressPlot } from './ProgressPlot'
+import { PortfolioRankingCard } from './PortfolioRankingCard'
 import { SubsolversCard } from './SubsolversCard'
 import { BlockCard } from './blocks/BlockCard'
 import { PHASE_LABELS, phaseOf } from '../state/phases'
@@ -60,7 +61,12 @@ export function AnalysisPanel({ result, explanations }: { result: ParseResult; e
           <Fragment key={ref.path}>
             {header !== null && <h2 className="phase">{PHASE_LABELS[header]}</h2>}
             <BlockCard blockRef={ref} log={log} explanations={explanations} />
-            {ref.path === '/search' && <SubsolversCard items={analysis.subsolvers} explanations={explanations} />}
+            {ref.path === '/search' && (
+              <>
+                <PortfolioRankingCard ranking={analysis.portfolio_ranking} explanations={explanations} />
+                <SubsolversCard items={analysis.subsolvers} explanations={explanations} />
+              </>
+            )}
           </Fragment>
         )
       })}

@@ -7,7 +7,8 @@
  * go looking for*: per-worker statistics, presolve passes, cut counters.
  *
  * Expanded: overview, progress plot, parameters, solver header, initial and
- * presolved model, solver portfolio, search progress, response summary,
+ * presolved model, solver portfolio, search progress, portfolio ranking (it
+ * answers "which strategies mattered", added 2026-09-28), response summary,
  * unrecognized sections (a warning, so never hidden), and the `Search stats`
  * table the response summary explicitly points at.
  * Collapsed: presolve log and summary, subsolver contributions, comments and
