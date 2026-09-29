@@ -72,3 +72,20 @@ def test_ranking_uses_rate_as_tiebreak_and_pruning_keeps_the_minimum():
         sig, 2, "x"
     )  # deterministic in the key
     assert len(sig) - len(prune_random(sig, 9, "y")) == KEEP_MIN
+
+
+def test_rins_and_lb_relax_variants_fold_into_their_pool_entry():
+    """`rins_lp_lns` reports for `rins/rens`, `lb_relax_lns_bool` for `lb_relax_lns` (added
+    2026-09-29: both were dropped before, which understated the pool share). The old
+    attribution stays available for rebuilding the Phase G pruning arms."""
+    log = parse_log(
+        LOG.replace("graph_arc_lns (d=", "rins_lp_lns (d=")
+        .replace("rnd_var_lns (d=", "lb_relax_lns_bool (d=")
+        .replace("rnd_var_lns]", "lb_relax_lns]")
+    )
+    sig = pool_signals(log, 10.0)
+    assert abs(sig["rins/rens"].late_share - 20 / 230) < 1e-9
+    assert abs(sig["lb_relax_lns"].late_share - 160 / 230) < 1e-9
+    old = pool_signals(log, 10.0, fold_variants=False)
+    assert old["rins/rens"].late_share == 0 and old["lb_relax_lns"].late_share == 0
+    assert abs(old["ls"].late_share - 50 / 230) < 1e-9

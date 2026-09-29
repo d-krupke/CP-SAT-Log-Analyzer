@@ -456,3 +456,13 @@ median -13% (10 s: -28%); below 0.5: 43/49, neutral. Threshold curve >= side: 0.
 Card changes (as pre-registered): `reliable_max_full` 7 -> 8 and `long_run_seconds` 30 ->
 35, i.e. the two caveats now mark the edge of the tested range instead of claiming
 unreliability; the method texts quote the held-out numbers; the LNS hint quotes 30 s.
+
+## Correction 2026-09-29: pool share with all neighborhood variants
+
+A review of the analyzer found `rins_*`/`rens_*` (pool name `rins/rens`) and
+`lb_relax_lns_bool(_h)` (`lb_relax_lns`) missing from the pool share: only `ls_*` was
+folded. `study/lns.py` now folds them (same rule as `pool_member` in the analyzer); the
+Phase G pruning arms keep the old attribution so they rebuild to the runs that exist.
+Re-evaluated from the cache, threshold unchanged at 0.5 (REPORT.md section 8 has the table):
+G 10 s 18/3 -> 19/4; H2 53/14 -> 55/14 (per instance 16/5); H2b 27/12 -> 27/13 (p = 0.039);
+H5 42/22 -> 45/27 (p = 0.044, median -10%). Below 0.5 still neutral. No decision changes.

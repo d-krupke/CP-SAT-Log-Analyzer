@@ -1,0 +1,280 @@
+/*
+ * Styles of the Portfolio ranking card (PortfolioRankingCard, FewerWorkers, LnsHintBox,
+ * CopySnippet). Moved out of index.css on 2026-09-29 to keep that file from growing; the
+ * color tokens (--good, --accent, ...) are defined there.
+ */
+.pr {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.pr-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.pr-bar {
+  display: flex;
+  height: 22px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  margin-bottom: 4px;
+}
+.pr-bar span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2px;
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+  border-right: 1px solid var(--panel);
+}
+.pr-bar span:last-child {
+  border-right: none;
+}
+.pr-bar span.other {
+  color: var(--muted);
+  background: repeating-linear-gradient(135deg, var(--neutral-soft) 0 6px, var(--panel-2) 6px 12px);
+}
+.pr-lns {
+  background: var(--good-soft);
+  border-left: 3px solid var(--good);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 13px;
+}
+.pr-lns-title {
+  font-weight: 600;
+  color: var(--good);
+  margin-bottom: 2px;
+}
+.pr-lns .md p {
+  margin: 2px 0;
+}
+.pr-lns .pr-snippet {
+  margin-top: 6px;
+}
+.pr-caveats {
+  background: var(--warn-soft);
+  border-left: 3px solid var(--warn);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 13px;
+}
+.pr-caveats-title {
+  font-weight: 600;
+  color: var(--warn);
+  margin-bottom: 2px;
+}
+.pr-caveats ul {
+  margin: 0;
+  padding-left: 18px;
+}
+.pr-caveats .md p {
+  margin: 2px 0;
+}
+.pr-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.pr-list li {
+  display: grid;
+  grid-template-columns: 22px minmax(120px, 1.2fr) 118px minmax(120px, 1.5fr) minmax(0, 1.3fr);
+  align-items: center;
+  gap: 10px;
+  padding: 7px 12px;
+  font-size: 13px;
+  border-top: 1px solid var(--border);
+}
+.pr-list li:first-child {
+  border-top: none;
+}
+.pr-list li.clickable {
+  cursor: pointer;
+}
+.pr-list li.clickable:hover {
+  background: var(--panel-2);
+}
+.pr-list li.idle .name,
+.pr-list li.idle .meter {
+  opacity: 0.55;
+}
+.pr-list .rank {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.pr-list .name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 12.5px;
+}
+.pr-list .swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  border: 1px solid;
+  flex: none;
+}
+.pr-list .tag {
+  justify-self: start;
+}
+.pr-list .meter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pr-list .track {
+  flex: 1;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--panel-2);
+  overflow: hidden;
+}
+.pr-list .track i {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+}
+.pr-list .meter b {
+  width: 36px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.pr-list .meta {
+  color: var(--muted);
+  font-size: 12px;
+}
+.pr-fewer {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: var(--panel-2);
+}
+.pr-fewer .md p {
+  margin: 0 0 8px;
+}
+.seg-buttons {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+.seg-buttons button {
+  min-width: 30px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  position: relative;
+}
+.seg-buttons button.diff::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--good);
+}
+.seg-buttons button.on {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.seg-buttons .small {
+  margin-left: 6px;
+}
+.pr-compare {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 6px 12px;
+  align-items: center;
+  font-size: 13px;
+}
+.pr-compare .who {
+  color: var(--muted);
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.chip {
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 1px 8px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+}
+.chip.added {
+  border-color: var(--good);
+  background: var(--good-soft);
+  color: var(--good);
+}
+.chip.dropped {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+.pr-snippet {
+  position: relative;
+  margin-top: 10px;
+}
+.pr-snippet pre {
+  margin: 0 0 4px;
+  padding: 8px 64px 8px 10px;
+  font-family: var(--mono);
+  font-size: 12px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow-x: auto;
+}
+.pr-snippet button {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 5px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  color: var(--text);
+  cursor: pointer;
+}
+.pr-method {
+  font-size: 13px;
+}
+.pr-method .md {
+  margin-top: 6px;
+  color: var(--muted);
+}
+@media (max-width: 640px) {
+  .pr-list li {
+    grid-template-columns: 22px 1fr auto;
+  }
+  .pr-list .meter,
+  .pr-list .meta {
+    grid-column: 2 / -1;
+  }
+}

@@ -18,7 +18,7 @@ from pydantic import BaseModel, Field
 
 from .explanations import describe_subsolver
 from .hints import HintReport, build_hint_report
-from .importance import PortfolioRanking, build_ranking, objective_shares
+from .importance import PortfolioRanking, Share, build_ranking, objective_shares
 from .insights import Insight, build_insights
 from .metrics import Metric, build_metrics, loc_val
 from .parameters import ParameterInfo, describe_all
@@ -68,14 +68,15 @@ class Analysis(BaseModel):
 def analyze(log: CpSatLog) -> Analysis:
     progress = build_progress(log)
     hint = build_hint_report(log)
+    shares = objective_shares(log)
     return Analysis(
         metrics=build_metrics(log, hint),
         progress=progress,
         parameters=describe_all(_parameters(log)),
-        subsolvers=build_subsolvers(log),
+        subsolvers=build_subsolvers(log, shares),
         insights=build_insights(log, progress, hint),
         hint=hint,
-        portfolio_ranking=build_ranking(log),
+        portfolio_ranking=build_ranking(log, shares),
     )
 
 
@@ -141,7 +142,9 @@ def _bound_of(ev: SearchEvent, sense: str | None) -> float | None:
     return None
 
 
-def build_subsolvers(log: CpSatLog) -> list[SubsolverContribution]:
+def build_subsolvers(
+    log: CpSatLog, shares: dict[str, Share] | None = None
+) -> list[SubsolverContribution]:
     contributions: dict[str, SubsolverContribution] = {}
 
     def get(name: str) -> SubsolverContribution:
@@ -173,6 +176,6 @@ def build_subsolvers(log: CpSatLog) -> list[SubsolverContribution]:
             num = row.values.get("Num")
             if isinstance(num, int):
                 setattr(get(row.name), attr, max(getattr(get(row.name), attr), num))
-    for name, share in objective_shares(log).items():
+    for name, share in (objective_shares(log) if shares is None else shares).items():
         get(name).objective_share = share.share
     return sorted(contributions.values(), key=lambda c: (-c.solutions, -c.bounds, c.name))

@@ -115,15 +115,18 @@ lns_dominated = '''
 Almost the whole objective improvement came from LNS and the first-solution heuristics, not
 from the full-problem strategies, so there is little to rank.'''
 custom_portfolio = '''
-The portfolio was set by `subsolvers`, `ignore_subsolvers` or `filter_subsolvers`, so the
-"CP-SAT default" column shows what this portfolio would keep, not what CP-SAT picks unasked.'''
+This run changed CP-SAT's choice of strategies (`subsolvers`, `ignore_subsolvers`,
+`filter_subsolvers`, `extra_subsolvers` or `num_full_subsolvers`). "CP-SAT keeps" under
+"Running on fewer cores" shows the order among the strategies this run had, with CP-SAT's
+default split of the threads, not what CP-SAT would pick unasked.'''
 
 # "Give LNS more threads" (backend/app/lns_hint.py). Evidence: study Phases G and H.
 # The share counts the interleaved workers only (LNS neighborhoods, `ls`, `feasibility_pump`),
 # not the first-solution heuristics. With share >= 0.5, `num_full_subsolvers` = half the
-# workers beat the default in 53 of 67 held-out pairs at 8 workers (median primal integral
-# -28%), in 27 of 39 at 12 workers (-15%) and in 42 of 64 in 30 s runs at 8 workers (-13%);
-# below 0.5 it was about neutral. Switching single neighborhoods off never helped, so the
+# workers beat the default in 55 of 69 held-out pairs at 8 workers (median primal integral
+# -27%), in 27 of 40 at 12 workers (-14%) and in 45 of 72 in 30 s runs at 8 workers (-10%);
+# below 0.5 it was about neutral. (Numbers as corrected on 2026-09-29, when `rins_*` and
+# `lb_relax_lns_*` solutions were first counted for the pool; REPORT.md section 8.) Switching single neighborhoods off never helped, so the
 # hint names none. Only 8 and 12 workers were tested: widen the range only with new runs.
 [lns]
 min_share = 0.5
@@ -138,8 +141,8 @@ freed threads to LNS.'''
 method = '''
 Tested on 39 instances that played no part in finding this rule: when LNS carried at least
 half of the progress in one run, a second run with half the workers as full strategies had a
-lower primal integral in 53 of 67 cases at 8 workers and 10 s (typically about 25% lower), in
-27 of 39 at 12 workers (about 15% lower) and in 42 of 64 in 30 s runs (about 13% lower): the
+lower primal integral in 55 of 69 cases at 8 workers and 10 s (typically about 25% lower), in
+27 of 40 at 12 workers (about 15% lower) and in 45 of 72 in 30 s runs (about 10% lower): the
 longer the run, the smaller the gain. When LNS carried less, it made no reliable difference.
 Keep the change only if your own runs confirm it; switching off single LNS neighborhoods did
 not help in any test.'''

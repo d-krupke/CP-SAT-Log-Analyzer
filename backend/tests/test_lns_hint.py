@@ -3,7 +3,9 @@
 Created 2026-09-28 with the hint. The study behind it (portfolio_study, Phases G and H)
 only supports it when the LNS pool delivered >= half of the time-weighted progress, at 8-12
 workers, and when the user has not set the split already; each test pins one of these
-conditions. The `ls_*` variant must count as the `ls` worker, first-solution workers not.
+conditions. Variants must count as their pool entry (`ls_*` as `ls`, `rins_lp_lns` as
+`rins/rens`, `lb_relax_lns_bool` as `lb_relax_lns`; added 2026-09-29 after a review found the
+last two uncounted), first-solution workers not.
 """
 
 from __future__ import annotations
@@ -12,6 +14,7 @@ from cpsat_logutils import parse_log
 
 from app.importance import build_ranking
 from app.knowledge import load
+from app.lns_hint import pool_member
 from tests.test_importance import FULL6, HEADER, _log
 
 # Weighted: no_lp 50*1 = 50; rnd_var_lns 100*4 = 400; ls variant 50*6 = 300 -> pool 700/750.
@@ -75,3 +78,33 @@ def test_no_hint_when_the_run_was_solved():
     assert ranking is not None and ranking.lns_hint is None
     feasible = build_ranking(_log(LNS_EVENTS, tail=response.replace("OPTIMAL", "FEASIBLE")))
     assert feasible is not None and feasible.lns_hint is not None
+
+
+def test_pool_member_maps_variants_to_their_pool_entry():
+    """The solution lines name variants; the pool lists the switchable worker. The longest
+    matching entry wins (`ls_lin_*` is `ls_lin`, not `ls`); first-solution names stay out."""
+    pool = {"ls", "ls_lin", "rins/rens", "lb_relax_lns", "graph_arc_lns"}
+    assert pool_member("graph_arc_lns", pool) == "graph_arc_lns"
+    assert pool_member("ls_restart_decay", pool) == "ls"
+    assert pool_member("ls_lin_restart", pool) == "ls_lin"
+    assert pool_member("rins_lp_lns", pool) == "rins/rens"
+    assert pool_member("rens_pump_lns", pool) == "rins/rens"
+    assert pool_member("lb_relax_lns_bool_h", pool) == "lb_relax_lns"
+    assert pool_member("fj_restart", pool) is None
+    assert pool_member("rins_lp_lns", {"ls"}) is None
+
+
+def test_rins_and_lb_relax_variants_count_toward_the_share():
+    """Weighted: no_lp 50*1 = 50, rins_lp_lns 100*4 = 400, lb_relax_lns_bool 50*6 = 300 ->
+    pool 700/750, the same run as LNS_EVENTS with other neighborhoods. Before the fix the
+    share was 0 and no hint was shown."""
+    events = LNS_EVENTS.replace("rnd_var_lns (d=5", "rins_lp_lns (d=5").replace(
+        "ls_restart_decay(batch:1)", "lb_relax_lns_bool (d=5.00e-01 s=15 t=0.10)"
+    )
+    text = HEADER.format(workers=8, full_line=FULL6).replace(
+        "3 interleaved subsolvers: [graph_arc_lns, ls, rnd_var_lns]",
+        "3 interleaved subsolvers: [graph_arc_lns, lb_relax_lns, rins/rens]",
+    )
+    ranking = build_ranking(parse_log(text + events))
+    assert ranking is not None and ranking.lns_hint is not None
+    assert abs(ranking.lns_hint.share - 700 / 750) < 1e-9

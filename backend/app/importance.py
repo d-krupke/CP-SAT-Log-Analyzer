@@ -26,7 +26,12 @@ from .lns_hint import LnsHint, build_hint
 from .solver_info import num_workers
 
 # Parameters that replace or filter CP-SAT's own choice of strategies.
-_PORTFOLIO_PARAMS = ("subsolvers", "ignore_subsolvers", "filter_subsolvers", "extra_subsolvers")
+_PORTFOLIO_PARAMS = (
+    "subsolvers", "ignore_subsolvers", "filter_subsolvers", "extra_subsolvers",
+    "num_full_subsolvers",
+)  # fmt: skip
+# Full workers CP-SAT lists but that `subsolvers` cannot select (set by shared_tree_num_workers).
+_NOT_SELECTABLE = frozenset({"shared_tree"})
 
 
 @dataclass
@@ -119,13 +124,19 @@ def objective_shares(log: CpSatLog) -> dict[str, Share]:
     return shares
 
 
-def _full_group(log: CpSatLog) -> tuple[list[str], int | None]:
-    if log.search is None:
-        return [], None
-    for group in log.search.subsolvers:
+@dataclass
+class _FullGroup:
+    names: list[str]  # distinct names, as listed
+    threads: int  # `default_lp(3)` counts 3
+    line: int | None
+
+
+def _full_group(log: CpSatLog) -> _FullGroup:
+    for group in log.search.subsolvers if log.search else []:
         if group.category == "full":
-            return [e.name for e in group.subsolvers], group.line
-    return [], None
+            names = [e.name for e in group.subsolvers]
+            return _FullGroup(names, sum(e.count for e in group.subsolvers), group.line)
+    return _FullGroup([], 0, None)
 
 
 def _bounds(log: CpSatLog) -> dict[str, int]:
@@ -153,6 +164,8 @@ def _choices(order: list[str], ranked: list[str], workers: int | None) -> list[W
     """One entry per smaller worker count at which CP-SAT would have to leave strategies out."""
     if workers is None:
         return []
+    order = [n for n in order if n not in _NOT_SELECTABLE]
+    ranked = [n for n in ranked if n not in _NOT_SELECTABLE]
     out = []
     for n in range(2, workers):
         f = full_subsolver_count(n)
@@ -162,11 +175,13 @@ def _choices(order: list[str], ranked: list[str], workers: int | None) -> list[W
     return out
 
 
-def build_ranking(log: CpSatLog) -> PortfolioRanking | None:
-    names, line = _full_group(log)
+def build_ranking(log: CpSatLog, shares: dict[str, Share] | None = None) -> PortfolioRanking | None:
+    """``shares`` is ``objective_shares(log)``, computed here if not given."""
+    group = _full_group(log)
+    names = group.names
     if len(names) < 2:
         return None
-    shares = objective_shares(log)
+    shares = objective_shares(log) if shares is None else shares
     if not shares:
         return None
     cfg = load("importance")
@@ -195,15 +210,15 @@ def build_ranking(log: CpSatLog) -> PortfolioRanking | None:
     ]
     full_share = sum(r.score for r in ranked)
     workers = num_workers(log)
-    caveats = _caveats(log, cfg, len(names), full_share)
+    caveats = _caveats(log, cfg, group.threads, full_share)
     n = workers.value if workers else None
     return PortfolioRanking(
         ranked=ranked,
         other_share=max(0.0, 1.0 - full_share),
         choices=_choices(order, ranked_names, n),
         caveats=caveats,
-        line=line,
-        lns_hint=build_hint(log, shares, n, len(names), cfg["lns"]),
+        line=group.line,
+        lns_hint=build_hint(log, shares, n, group.threads, cfg["lns"]),
     )
 
 

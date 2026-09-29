@@ -5,8 +5,11 @@ interleaved pool (LNS neighborhoods, `ls`, `feasibility_pump`). Pure functions o
 log (``cpsat_logutils``); the experiment is ``experiments/exp_g_lns.py``.
 
 Attribution: the ``#k`` solution lines name the neighborhood (``graph_arc_lns``,
-``rins/rens``) or the local-search variant (``ls_restart_decay``, ``fj_restart_...``); the
-variants are folded into the worker CP-SAT lets you switch off (``ls``, ``fj``). Each name
+``rins/rens``) or a variant (``ls_restart_decay``, ``rins_lp_lns``, ``lb_relax_lns_bool``,
+``fj_restart_...``); ``pool_name`` folds the variants into the worker CP-SAT lets you switch off
+(``ls``, ``rins/rens``, ``lb_relax_lns``, ``fj``). Until 2026-09-29 only ``ls_*`` and ``fj_*``
+were folded, so ``rins_*``, ``rens_*`` and ``lb_relax_lns_*`` improvements were missing from the
+pool share (REPORT.md section 7 has the corrected numbers). Each name
 gets the same time-weighted improvement share as the full subsolvers (``late``). The LNS
 stats table adds ``Improv/Calls``: how often a neighborhood improved its local solution,
 which is a denser signal than the global solution lines and breaks the ties among the many
@@ -19,6 +22,7 @@ the thread split (``num_full_subsolvers``); a neighborhood cannot be duplicated.
 from __future__ import annotations
 
 import random
+from collections.abc import Collection
 from dataclasses import dataclass
 from itertools import pairwise
 
@@ -41,8 +45,20 @@ class PoolSignal:
         return self.improving_calls / self.calls if self.calls else 0.0
 
 
-def pool_name(finder: str) -> str:
-    """The switchable worker behind a solution line's finder name."""
+def pool_name(finder: str, pool: Collection[str] = ()) -> str:
+    """The switchable worker behind a solution line's finder name.
+
+    Exact pool name first; ``rins_*`` / ``rens_*`` are ``rins/rens``; otherwise the longest pool
+    name the finder extends with ``_`` (``ls_lin_restart`` -> ``ls_lin`` before ``ls``). Same
+    rule as ``pool_member`` in the analyzer (backend/app/lns_hint.py).
+    """
+    if finder in pool:
+        return finder
+    if finder.startswith(("rins_", "rens_")) and "rins/rens" in pool:
+        return "rins/rens"
+    prefixes = [p for p in pool if finder.startswith(p + "_")]
+    if prefixes:
+        return max(prefixes, key=len)
     if finder.startswith("ls_"):
         return "ls"
     if finder.startswith("fj_"):
@@ -51,16 +67,17 @@ def pool_name(finder: str) -> str:
 
 
 def interleaved_names(log: CpSatLog) -> list[str]:
-    if not log.search:
-        return []
-    for g in log.search.subsolvers:
-        if g.category == "interleaved":
-            return [e.name for e in g.subsolvers]
-    return []
+    return log.search.subsolver_names("interleaved") if log.search else []
 
 
-def pool_signals(log: CpSatLog, time_limit: float) -> dict[str, PoolSignal]:
-    """Signals for every interleaved name of the log (empty names included)."""
+def pool_signals(
+    log: CpSatLog, time_limit: float, fold_variants: bool = True
+) -> dict[str, PoolSignal]:
+    """Signals for every interleaved name of the log (empty names included).
+
+    ``fold_variants=False`` is the attribution before 2026-09-29 (only ``ls_*``/``fj_*``
+    folded); the Phase G pruning arms were chosen and run with it, so they are rebuilt with it.
+    """
     out = {n: PoolSignal(n) for n in interleaved_names(log)}
     if not out or not log.search:
         return out
@@ -80,7 +97,7 @@ def pool_signals(log: CpSatLog, time_limit: float) -> dict[str, PoolSignal]:
         )
         delta = abs(prev.objective - cur.objective)
         if delta > 0 and cur.subsolver:
-            who = pool_name(cur.subsolver)
+            who = pool_name(cur.subsolver, out if fold_variants else ())
             weighted[who] = weighted.get(who, 0.0) + delta * min(cur.time, time_limit)
             if who in out:
                 out[who].improvements += 1

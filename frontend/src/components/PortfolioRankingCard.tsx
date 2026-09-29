@@ -13,6 +13,7 @@
  * The backend (app/importance.py) does the ranking; all texts come from
  * knowledge/importance.toml and the `portfolio_ranking` card text in blocks.toml.
  */
+import './PortfolioRankingCard.css'
 import { Card } from './Card'
 import { FewerWorkers } from './FewerWorkers'
 import { LnsHintBox } from './LnsHintBox'
@@ -40,8 +41,8 @@ export function PortfolioRankingCard({ ranking, explanations }: { ranking: Portf
     <Card
       kind="search"
       title="Portfolio ranking"
-      summary={top.score > 0 ? `${top.name} carried ${pct(top.score)}` : 'LNS did the work'}
-      path="/portfolio_ranking"
+      summary={top.score > 0 ? `${top.name} carried ${pct(top.score)}` : 'LNS & heuristics did the work'}
+      span={ranking.line !== null ? { start: ranking.line, end: ranking.line } : undefined}
       explanation={explanations.cards.portfolio_ranking}
       collapsed={cardCollapsedByDefault('portfolio_ranking')}
     >

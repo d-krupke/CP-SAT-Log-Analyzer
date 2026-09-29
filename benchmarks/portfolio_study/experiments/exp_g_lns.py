@@ -59,7 +59,8 @@ def arms(
     ref = default(p, i, t, seed ^ 1)
     if not runs.has(ref):
         return out
-    sig = pool_signals(runs.log(ref.key), t)
+    # The arms were chosen (and run) with the old attribution; rebuild them the same way.
+    sig = pool_signals(runs.log(ref.key), t, fold_variants=False)
     idle = prune_idle(sig)
     if idle:
         m = len(idle)

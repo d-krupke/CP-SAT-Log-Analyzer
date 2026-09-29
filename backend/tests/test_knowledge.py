@@ -136,3 +136,21 @@ def test_response_counters_are_not_attributed_to_the_first_full_worker() -> None
     for text in texts:
         assert "first full worker" not in text, text
     assert "finished first" in texts[0] or "finished first" in texts[-1]
+
+
+def test_importance_validation_catches_keys_the_ranking_indexes(monkeypatch) -> None:
+    """build_ranking reads [portfolio] and [caveats] directly and formats [lns].hint: a
+    renamed key or a wrong placeholder would fail every analysis (500), so validate() must
+    report it first. Added 2026-09-29 after a review found these unchecked."""
+    real = knowledge.load("importance")
+    broken = {
+        **real,
+        "portfolio": {k: v for k, v in real["portfolio"].items() if k != "reliable_max_full"},
+        "caveats": {k: v for k, v in real["caveats"].items() if k != "long_run"},
+        "lns": {**real["lns"], "hint": "LNS did {percent}%"},
+    }
+    monkeypatch.setattr(knowledge, "load", lambda name: broken if name == "importance" else {})
+    problems = knowledge._validate_importance()
+    assert any("[portfolio] lacks 'reliable_max_full'" in p for p in problems)
+    assert any("[caveats] lacks 'long_run'" in p for p in problems)
+    assert any("[lns].hint has a bad placeholder" in p for p in problems)

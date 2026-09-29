@@ -119,6 +119,33 @@ def test_caveats_for_many_full_subsolvers_and_custom_portfolios():
     assert caveats["custom_portfolio"] in ranking.caveats
 
 
+def test_repeated_strategies_count_as_threads():
+    """`default_lp(3)` and `shared_tree(6)` are 9 threads, not 2 names: 13 full threads exceed
+    the tested 8 even though only 6 names are listed. `shared_tree` is ranked like any other
+    worker but never offered for `subsolvers`, which cannot select it."""
+    full = (
+        "13 full problem subsolvers: [default_lp(3), max_lp, no_lp, quick_restart,"
+        " quick_restart_no_lp, shared_tree(6)]"
+    )
+    events = EVENTS.replace("#5       1.30s best:987   next:[0,986] quick_restart",
+                            "#5       1.30s best:987   next:[0,986] shared_tree")  # fmt: skip
+    ranking = build_ranking(_log(events, workers=16, full_line=full))
+    assert ranking is not None
+    assert load("importance")["caveats"]["many_full"] in ranking.caveats
+    assert "shared_tree" in [r.name for r in ranking.ranked]
+    assert all("shared_tree" not in c.ranked + c.default for c in ranking.choices)
+
+
+def test_num_full_subsolvers_counts_as_a_custom_portfolio():
+    """Setting the thread split changes what CP-SAT keeps, so the comparison needs the caveat."""
+    text = HEADER.format(workers=8, full_line=FULL6).replace(
+        "num_workers: 8", "num_workers: 8 num_full_subsolvers: 6"
+    )
+    ranking = build_ranking(parse_log(text + EVENTS))
+    assert ranking is not None
+    assert load("importance")["caveats"]["custom_portfolio"] in ranking.caveats
+
+
 def test_nothing_to_rank():
     """A single full subsolver or a run without improvements yields no card at all."""
     one = "1 full problem subsolvers: [default_lp]"
