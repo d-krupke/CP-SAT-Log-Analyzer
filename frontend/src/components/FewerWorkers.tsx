@@ -19,7 +19,11 @@ function snippet(c: WorkerChoice): string {
   ].join('\n')
 }
 
-const differs = (c: WorkerChoice) => c.ranked.join() !== c.default.join()
+/** Same strategies in another order is no difference: CP-SAT runs all of them either way. */
+const differs = (c: WorkerChoice) => {
+  const kept = new Set(c.default)
+  return c.ranked.length !== kept.size || c.ranked.some((n) => !kept.has(n))
+}
 
 export function FewerWorkers({ choices, texts }: { choices: WorkerChoice[]; texts: Record<string, string> }) {
   const [workers, setWorkers] = useState(() => (choices.find(differs) ?? choices[choices.length - 1]).workers)

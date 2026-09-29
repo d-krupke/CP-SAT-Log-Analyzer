@@ -122,12 +122,36 @@ def _validate_importance() -> list[str]:
         for key in ("method", "fewer_workers", "snippet_hint")
         if not texts.get(key)
     ]
+    portfolio, caveats = data.get("portfolio", {}), data.get("caveats", {})
+    out += [
+        f"importance.toml: [portfolio] lacks {key!r}"
+        for key in (
+            "default_order",
+            "always_keep",
+            "reliable_max_full",
+            "long_run_seconds",
+            "min_full_share",
+        )  # fmt: skip
+        if key not in portfolio
+    ]
+    out += [
+        f"importance.toml: [caveats] lacks {key!r}"
+        for key in ("many_full", "long_run", "lns_dominated", "custom_portfolio")
+        if not caveats.get(key)
+    ]
     lns = data.get("lns", {})
     out += [
         f"importance.toml: [lns] lacks {key!r}"
         for key in ("min_share", "min_workers", "max_workers", "title", "hint", "method")
         if key not in lns
     ]
+    try:
+        str(lns.get("hint", "")).format(share=50, full=6, suggested=4)
+    except (KeyError, IndexError, ValueError) as e:
+        out.append(
+            f"importance.toml: [lns].hint has a bad placeholder ({e!r});"
+            " only {share}, {full} and {suggested} exist"
+        )
     return out
 
 
