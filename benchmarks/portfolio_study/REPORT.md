@@ -187,7 +187,8 @@ lesson as Phase E for the full subsolvers: the log tells what to keep, not what 
 **How much LNS: a real lever.** If the LNS/LS pool delivered at least half of the
 time-weighted objective improvement in the log, giving it more threads
 (`num_full_subsolvers = 4` at 8 workers) beat the default in **18 of 21** paired runs at
-10 s (p = 0.001, median primal integral -17%) and in 6 of 7 at 30 s. With a low pool share
+10 s (p = 0.001, median primal integral -17%) and in 6 of 7 at 30 s (corrected share, see
+the end of section 8: 19 of 23 and 6 of 8). With a low pool share
 it did not help (12/15) and could be catastrophic (strip packing +405%, knapsack +3-30%).
 The split at 0.5 was fixed before the runs; the result is monotone in the threshold (0.7:
 13 of 13). Gains are consistent per model (jobshop swv06, both cvrp, set covering, qap).
@@ -217,7 +218,7 @@ improvement in the log of a different seed, `num_full_subsolvers=4` at 8 workers
 default in **53 of 67** pairs (p < 1e-5, median -28 %; per instance 14/4, p = 0.03). Below
 0.5 it was about neutral (52/37, median -5 %), with a few large losses (up to +166 %). At
 12 workers, `num_full_subsolvers=6` still helps above 0.5 (27/12, p = 0.02, median -15 %),
-but less, and not significantly per instance.
+but less, and not significantly per instance. (Corrected share: 55/14, 27/13; see below.)
 
 **Part 2 (the night after): the reliability limits.** The two limits that the analyzer's
 card warned about came from the 12 development instances and did not survive the larger
@@ -227,7 +228,8 @@ test (another 1,647 runs, same 39 instances, pre-registered):
 * **30 s** runs (log and test runs at 30 s): **249 better / 126 worse**, 30 of 39 instances,
   median -11 % (the development set had suggested a fade, 19/13).
 * More LNS threads in **30 s** runs with LNS share >= 0.5: **42 better / 22 worse**
-  (p = 0.017), median -13 %: still a gain, half the size of the 10 s one.
+  (p = 0.017), median -13 %: still a gain, half the size of the 10 s one. (Corrected share:
+  45/27, p = 0.044, median -10 %.)
 Lesson: with 12 instances and 2 seeds, "not significant" meant "too few runs", twice.
 
 What changes for the analyzer: the fewer-workers suggestion stands as is; its two caveats
@@ -235,11 +237,35 @@ now only mark the edge of the tested range (more than 8 full strategies, runs ov
 now well supported: "LNS delivered >= half of the progress: try num_full_subsolvers = half
 the workers; expect about -25 % primal integral at 8 workers, less at 12".
 
+**Correction (2026-09-29): the LNS share missed some neighborhoods.** A code review of the
+analyzer found that solution lines name some neighborhoods differently from the pool list:
+`rins_lp_lns`, `rins_pump_lns`, `rens_*` report for `rins/rens`, `lb_relax_lns_bool(_h)`
+for `lb_relax_lns`. Only `ls_*` had been folded, so these improvements were left out of the
+pool share (in 5 of 182 ranked corpus logs this crossed the 0.5 threshold). `study/lns.py`
+now folds them; the Phase G pruning arms are rebuilt with the old attribution, since that is
+how they were chosen and run. Re-evaluated from the cached runs, no new runs
+(`expH_report_2026-09-29.txt`; `exp_g_lns --report`), split at 0.5 as pre-registered:
+
+| comparison | as pre-registered | corrected share |
+|---|---|---|
+| G, nf4, 8 workers, 10 s | 18 / 3 | 19 / 4 |
+| G, nf4, 8 workers, 30 s | 6 / 1 | 6 / 2 |
+| H2, nf4, 8 workers, 10 s | 53 / 14 | **55 / 14**, median -27 %; per instance 16 / 5 (p = 0.027) |
+| H2b, nf6, 12 workers | 27 / 12 | **27 / 13** (p = 0.039), median -14 % |
+| H5, nf4, 8 workers, 30 s | 42 / 22 | **45 / 27** (p = 0.044), median -10 % |
+| below 0.5 (H2 / H5) | 52 / 37, 43 / 49 | 50 / 37, 40 / 44: still neutral |
+
+Every conclusion stands; the 30 s evidence is somewhat weaker. The medians differ a little
+from the first reports even without the fix (H2: -25 % instead of -28 %) because the primal
+integral is measured against the best objective known across all cached runs of an instance,
+and the later 30 s runs improved it; the win/loss counts do not depend on that.
+
 ## 9. Caveats
 
-* The metric is a short-run instrument for moderate portfolios: verified for 10 s logs
-  with about six full subsolvers (8 workers). At 12 workers it is a coin flip, at 30 s a
-  weak trend. CP-SAT 9.15, 12 instances.
+* The metric was verified for 10 s and 30 s logs with up to 8 full subsolvers (12
+  workers), CP-SAT 9.15, on 12 development and 39 held-out instances (section 8). Longer
+  runs and larger portfolios are untested; the development-set impressions "coin flip at 12
+  workers" and "fades at 30 s" did not hold up.
 * Run-to-run variance on cvrp is large (same-set pairs differ by up to 2.85 PI); results
   on that class should be read as win/loss only.
 * Knapsack and gap differences are real in sign but tiny in size (gaps around 0.001).
@@ -268,7 +294,7 @@ the workers; expect about -25 % primal integral at 8 workers, less at 12".
     for s in late12 long; do                                                # part 2 (~5 h)
       uv run python -m portfolio_study.experiments.exp_h_holdout $s; done
     uv run python -m portfolio_study.experiments.exp_h_holdout report --part2
-    uv run --with pytest pytest portfolio_study/tests -q                    # 12 tests
+    uv run --with pytest pytest portfolio_study/tests -q                    # 13 tests
 
 Runs are cached under `runs/<problem>/<instance>/` and reused across metrics whenever the
 whitelisted set is the same. A full re-run of everything takes about thirteen hours on 12 cores.

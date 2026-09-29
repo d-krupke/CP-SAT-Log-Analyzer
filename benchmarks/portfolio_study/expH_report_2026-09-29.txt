@@ -1,0 +1,133 @@
+
+H1 late top-F(n) from the 8-worker log vs default, 10 s, seeds (0, 1, 2, 3) (87 pairs with the default set skipped)
+all (abs dPI)                      377 better / 159 worse /  1 tie  p=0.0000  mean -0.115  median -0.028
+all (relative dPI)                 377 better / 159 worse /  1 tie  p=0.0000  mean -0.025  median -0.100
+per instance (mean abs dPI)         27 better /  12 worse /  0 tie  p=0.0237  mean -0.119  median -0.039
+n=2                                 74 better /  29 worse /  0 tie  p=0.0000  mean -0.167  median -0.048
+n=3                                118 better /  36 worse /  0 tie  p=0.0000  mean -0.122  median -0.061
+n=4                                 99 better /  43 worse /  0 tie  p=0.0000  mean -0.155  median -0.032
+n=6                                 86 better /  51 worse /  1 tie  p=0.0035  mean -0.027  median -0.008
+  cvrp                              38 better /  13 worse /  0 tie  p=0.0006  mean -0.162  median -0.164
+  dominating_set                    14 better /   2 worse /  0 tie  p=0.0042  mean -0.223  median -0.267
+  flexible_jobshop                  49 better /  15 worse /  0 tie  p=0.0000  mean -0.297  median -0.057
+  gap                               42 better /   2 worse /  0 tie  p=0.0000  mean -0.031  median -0.025
+  golomb_ruler                       4 better /   8 worse /  0 tie  p=0.3877  mean +0.004  median +0.049
+  graph_coloring                     3 better /   3 worse /  0 tie  p=1.0000  mean -0.028  median -0.020
+  jobshop                           32 better /  28 worse /  0 tie  p=0.6989  mean -0.009  median -0.009
+  max_clique                        13 better /   5 worse /  0 tie  p=0.0963  mean -0.253  median -0.082
+  mknapsack                         43 better /  13 worse /  0 tie  p=0.0001  mean +0.014  median -0.002
+  rcpsp                             38 better /  24 worse /  0 tie  p=0.0980  mean -0.032  median -0.025
+  set_covering                      36 better /  16 worse /  1 tie  p=0.0078  mean -0.072  median -0.024
+  strip_packing                     28 better /  18 worse /  0 tie  p=0.1839  mean -0.108  median -0.071
+  tsp                               37 better /  12 worse /  0 tie  p=0.0005  mean -0.289  median -0.241
+
+H2 num_full_subsolvers=4 vs default at 8 workers, 10 s, seeds (0, 1, 2, 3) (relative dPI)
+all                                105 better /  51 worse /  0 tie  p=0.0000  mean -0.104  median -0.095
+pool share >= 0.3                   70 better /  20 worse /  0 tie  p=0.0000  mean -0.207  median -0.241
+pool share <  0.3                   35 better /  31 worse /  0 tie  p=0.7122  mean +0.035  median -0.008
+pool share >= 0.4                   65 better /  17 worse /  0 tie  p=0.0000  mean -0.222  median -0.250
+pool share <  0.4                   40 better /  34 worse /  0 tie  p=0.5614  mean +0.026  median -0.008
+pool share >= 0.5                   55 better /  14 worse /  0 tie  p=0.0000  mean -0.229  median -0.270
+pool share <  0.5                   50 better /  37 worse /  0 tie  p=0.1980  mean -0.005  median -0.030
+pool share >= 0.6                   48 better /  11 worse /  0 tie  p=0.0000  mean -0.228  median -0.270
+pool share <  0.6                   57 better /  40 worse /  0 tie  p=0.1038  mean -0.029  median -0.045
+pool share >= 0.7                   37 better /   6 worse /  0 tie  p=0.0000  mean -0.266  median -0.296
+pool share <  0.7                   68 better /  45 worse /  0 tie  p=0.0380  mean -0.043  median -0.049
+  >=0.5 cvrp                         6 better /   2 worse /  0 tie  p=0.2891  mean -0.234  median -0.235
+  >=0.5 dominating_set               4 better /   0 worse /  0 tie  p=0.1250  mean -0.359  median -0.450
+  >=0.5 flexible_jobshop             7 better /   0 worse /  0 tie  p=0.0156  mean -0.251  median -0.243
+  >=0.5 graph_coloring               4 better /   0 worse /  0 tie  p=0.1250  mean -0.286  median -0.314
+  >=0.5 jobshop                      7 better /   4 worse /  0 tie  p=0.5488  mean -0.037  median -0.034
+  >=0.5 max_clique                   8 better /   0 worse /  0 tie  p=0.0078  mean -0.410  median -0.401
+  >=0.5 rcpsp                        5 better /   5 worse /  0 tie  p=1.0000  mean -0.039  median -0.012
+  >=0.5 set_covering                11 better /   0 worse /  0 tie  p=0.0010  mean -0.425  median -0.395
+  >=0.5 strip_packing                3 better /   3 worse /  0 tie  p=1.0000  mean -0.144  median -0.131
+
+H2 num_full_subsolvers=6 vs default at 12 workers, 10 s, seeds (0, 1) (relative dPI)
+all                                 48 better /  30 worse /  0 tie  p=0.0535  mean -0.066  median -0.044
+pool share >= 0.3                   33 better /  17 worse /  0 tie  p=0.0328  mean -0.095  median -0.140
+pool share <  0.3                   15 better /  13 worse /  0 tie  p=0.8506  mean -0.013  median -0.013
+pool share >= 0.4                   31 better /  17 worse /  0 tie  p=0.0595  mean -0.089  median -0.117
+pool share <  0.4                   17 better /  13 worse /  0 tie  p=0.5847  mean -0.028  median -0.015
+pool share >= 0.5                   27 better /  13 worse /  0 tie  p=0.0385  mean -0.103  median -0.140
+pool share <  0.5                   21 better /  17 worse /  0 tie  p=0.6271  mean -0.027  median -0.015
+pool share >= 0.6                   24 better /  12 worse /  0 tie  p=0.0652  mean -0.087  median -0.117
+pool share <  0.6                   24 better /  18 worse /  0 tie  p=0.4408  mean -0.047  median -0.016
+pool share >= 0.7                   18 better /  12 worse /  0 tie  p=0.3616  mean -0.044  median -0.062
+pool share <  0.7                   30 better /  18 worse /  0 tie  p=0.1114  mean -0.079  median -0.037
+  >=0.5 cvrp                         3 better /   1 worse /  0 tie  p=0.6250  mean -0.283  median -0.386
+  >=0.5 dominating_set               2 better /   0 worse /  0 tie  p=0.5000  mean -0.518  median -0.518
+  >=0.5 flexible_jobshop             3 better /   3 worse /  0 tie  p=1.0000  mean +0.013  median -0.029
+  >=0.5 golomb_ruler                 1 better /   0 worse /  0 tie  p=1.0000  mean -0.208  median -0.208
+  >=0.5 graph_coloring               1 better /   1 worse /  0 tie  p=1.0000  mean -0.061  median -0.061
+  >=0.5 jobshop                      4 better /   2 worse /  0 tie  p=0.6875  mean -0.087  median -0.043
+  >=0.5 max_clique                   2 better /   0 worse /  0 tie  p=0.5000  mean -0.124  median -0.124
+  >=0.5 rcpsp                        3 better /   2 worse /  0 tie  p=1.0000  mean -0.173  median -0.156
+  >=0.5 set_covering                 5 better /   1 worse /  0 tie  p=0.2188  mean -0.095  median -0.206
+  >=0.5 strip_packing                3 better /   3 worse /  0 tie  p=1.0000  mean +0.086  median +0.037
+
+H3 late top-F(n) from the 12-worker log vs default, 10 s, seeds (0, 1, 2, 3) (72 pairs with the default set skipped)
+all (abs dPI)                      363 better / 189 worse /  0 tie  p=0.0000  mean -0.090  median -0.020
+all (relative dPI)                 363 better / 189 worse /  0 tie  p=0.0000  mean +0.031  median -0.085
+per instance (mean abs dPI)         29 better /  10 worse /  0 tie  p=0.0034  mean -0.101  median -0.038
+n=2                                 70 better /  36 worse /  0 tie  p=0.0012  mean -0.207  median -0.023
+n=3                                102 better /  50 worse /  0 tie  p=0.0000  mean -0.088  median -0.023
+n=4                                102 better /  45 worse /  0 tie  p=0.0000  mean -0.092  median -0.033
+n=6                                 89 better /  58 worse /  0 tie  p=0.0131  mean -0.006  median -0.008
+  cvrp                              31 better /  20 worse /  0 tie  p=0.1608  mean +0.016  median -0.071
+  dominating_set                    13 better /   3 worse /  0 tie  p=0.0213  mean -0.187  median -0.181
+  flexible_jobshop                  42 better /  17 worse /  0 tie  p=0.0015  mean -0.347  median -0.046
+  gap                               39 better /   7 worse /  0 tie  p=0.0000  mean -0.027  median -0.020
+  golomb_ruler                       9 better /   7 worse /  0 tie  p=0.8036  mean -0.012  median -0.047
+  graph_coloring                     5 better /   3 worse /  0 tie  p=0.7266  mean -0.050  median -0.055
+  jobshop                           36 better /  23 worse /  0 tie  p=0.1175  mean -0.031  median -0.053
+  max_clique                        23 better /   9 worse /  0 tie  p=0.0201  mean -0.167  median -0.060
+  mknapsack                         46 better /  14 worse /  0 tie  p=0.0000  mean +0.027  median -0.002
+  rcpsp                             31 better /  33 worse /  0 tie  p=0.9007  mean -0.006  median +0.001
+  set_covering                      34 better /  14 worse /  0 tie  p=0.0055  mean -0.074  median -0.031
+  strip_packing                     17 better /  27 worse /  0 tie  p=0.1742  mean +0.079  median +0.084
+  tsp                               37 better /  12 worse /  0 tie  p=0.0005  mean -0.394  median -0.283
+
+H4 late top-F(n) from the 8-worker log vs default, 30 s, seeds (0, 1, 2, 3) (93 pairs with the default set skipped)
+all (abs dPI)                      249 better / 126 worse /  0 tie  p=0.0000  mean -0.171  median -0.032
+all (relative dPI)                 249 better / 126 worse /  0 tie  p=0.0000  mean +0.041  median -0.110
+per instance (mean abs dPI)         30 better /   9 worse /  0 tie  p=0.0011  mean -0.169  median -0.055
+n=2                                 66 better /  34 worse /  0 tie  p=0.0018  mean -0.220  median -0.065
+n=4                                106 better /  34 worse /  0 tie  p=0.0000  mean -0.230  median -0.092
+n=6                                 77 better /  58 worse /  0 tie  p=0.1210  mean -0.074  median -0.005
+  cvrp                              18 better /  18 worse /  0 tie  p=1.0000  mean -0.066  median -0.071
+  dominating_set                     6 better /   6 worse /  0 tie  p=1.0000  mean -0.166  median -0.012
+  flexible_jobshop                  33 better /  15 worse /  0 tie  p=0.0133  mean -0.474  median -0.144
+  gap                               28 better /   5 worse /  0 tie  p=0.0001  mean -0.030  median -0.017
+  golomb_ruler                       4 better /   4 worse /  0 tie  p=1.0000  mean +0.056  median +0.038
+  graph_coloring                     1 better /   1 worse /  0 tie  p=1.0000  mean +0.002  median +0.002
+  jobshop                           27 better /  17 worse /  0 tie  p=0.1742  mean -0.043  median -0.052
+  max_clique                         6 better /   3 worse /  0 tie  p=0.5078  mean -0.318  median -0.103
+  mknapsack                         33 better /   6 worse /  0 tie  p=0.0000  mean +0.022  median -0.006
+  rcpsp                             27 better /  18 worse /  0 tie  p=0.2327  mean -0.051  median -0.066
+  set_covering                      23 better /  11 worse /  0 tie  p=0.0576  mean -0.295  median -0.075
+  strip_packing                     18 better /  15 worse /  0 tie  p=0.7283  mean -0.311  median -0.105
+  tsp                               25 better /   7 worse /  0 tie  p=0.0021  mean -0.309  median -0.171
+
+H2 num_full_subsolvers=4 vs default at 8 workers, 30 s, seeds (0, 1, 2, 3) (relative dPI)
+all                                 85 better /  71 worse /  0 tie  p=0.2979  mean -0.008  median -0.015
+pool share >= 0.3                   56 better /  32 worse /  0 tie  p=0.0138  mean -0.081  median -0.091
+pool share <  0.3                   29 better /  39 worse /  0 tie  p=0.2750  mean +0.087  median +0.015
+pool share >= 0.4                   50 better /  31 worse /  0 tie  p=0.0448  mean -0.068  median -0.087
+pool share <  0.4                   35 better /  40 worse /  0 tie  p=0.6445  mean +0.058  median +0.013
+pool share >= 0.5                   45 better /  27 worse /  0 tie  p=0.0444  mean -0.081  median -0.102
+pool share <  0.5                   40 better /  44 worse /  0 tie  p=0.7436  mean +0.056  median +0.011
+pool share >= 0.6                   38 better /  22 worse /  0 tie  p=0.0519  mean -0.081  median -0.102
+pool share <  0.6                   47 better /  49 worse /  0 tie  p=0.9188  mean +0.038  median +0.009
+pool share >= 0.7                   33 better /  15 worse /  0 tie  p=0.0133  mean -0.152  median -0.164
+pool share <  0.7                   52 better /  56 worse /  0 tie  p=0.7730  mean +0.056  median +0.009
+  >=0.5 cvrp                         6 better /   4 worse /  0 tie  p=0.7539  mean -0.076  median -0.084
+  >=0.5 dominating_set               4 better /   0 worse /  0 tie  p=0.1250  mean -0.253  median -0.216
+  >=0.5 flexible_jobshop             7 better /   3 worse /  0 tie  p=0.3438  mean -0.086  median -0.098
+  >=0.5 graph_coloring               3 better /   1 worse /  0 tie  p=0.6250  mean -0.011  median -0.034
+  >=0.5 jobshop                      2 better /   6 worse /  0 tie  p=0.2891  mean +0.203  median +0.091
+  >=0.5 max_clique                   4 better /   3 worse /  0 tie  p=1.0000  mean +0.035  median -0.315
+  >=0.5 mknapsack                    2 better /   1 worse /  0 tie  p=1.0000  mean -0.016  median -0.040
+  >=0.5 rcpsp                        5 better /   7 worse /  0 tie  p=0.7744  mean -0.008  median +0.033
+  >=0.5 set_covering                11 better /   1 worse /  0 tie  p=0.0063  mean -0.408  median -0.384
+  >=0.5 strip_packing                1 better /   1 worse /  0 tie  p=1.0000  mean -0.011  median -0.011
