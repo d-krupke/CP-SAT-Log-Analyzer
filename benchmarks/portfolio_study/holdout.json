@@ -1,0 +1,1291 @@
+{
+ "rule": "study/holdout.py: larger half per class minus Phase A; passes_screen; first 4 per class",
+ "screened": [
+  [
+   "bin_packing_2d",
+   "cl_10_020_01",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "bin_packing_2d",
+   "cl_01_020_01",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "bin_packing_2d",
+   "cl_09_020_01",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "bin_packing_2d",
+   "cl_03_040_01",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "bin_packing_2d",
+   "cl_05_040_01",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "bin_packing_2d",
+   "cl_01_040_01",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "bin_packing_2d",
+   "cl_09_040_01",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "binpacking",
+   "Falkenauer_t120_19",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "binpacking",
+   "Waescher_TEST0005",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "binpacking",
+   "Waescher_TEST0014",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "binpacking",
+   "Falkenauer_t249_00",
+   false,
+   "only 1 active full subsolvers"
+  ],
+  [
+   "binpacking",
+   "Schwerin1_BPP1",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "binpacking",
+   "Schwerin1_BPP50",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "binpacking",
+   "Schwerin2_BPP1",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "binpacking",
+   "HARD0",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "binpacking",
+   "HARD5",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "binpacking",
+   "Hard28_BPP13",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "binpacking",
+   "Hard28_BPP40",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "binpacking",
+   "Hard28_BPP144",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "binpacking",
+   "Hard28_BPP645",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "cvrp",
+   "A-n39-k5",
+   true,
+   "5 late improvements, 5 active full subsolvers"
+  ],
+  [
+   "cvrp",
+   "P-n40-k5",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "cvrp",
+   "B-n41-k6",
+   true,
+   "13 late improvements, 5 active full subsolvers"
+  ],
+  [
+   "cvrp",
+   "A-n45-k6",
+   true,
+   "23 late improvements, 5 active full subsolvers"
+  ],
+  [
+   "cvrp",
+   "B-n50-k7",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "cvrp",
+   "P-n50-k7",
+   true,
+   "12 late improvements, 5 active full subsolvers"
+  ],
+  [
+   "cvrp",
+   "A-n53-k7",
+   true,
+   "17 late improvements, 4 active full subsolvers"
+  ],
+  [
+   "cvrp",
+   "P-n55-k10",
+   true,
+   "9 late improvements, 5 active full subsolvers"
+  ],
+  [
+   "cvrp",
+   "A-n60-k9",
+   true,
+   "21 late improvements, 5 active full subsolvers"
+  ],
+  [
+   "cvrp",
+   "A-n65-k9",
+   true,
+   "27 late improvements, 4 active full subsolvers"
+  ],
+  [
+   "cvrp",
+   "P-n76-k5",
+   true,
+   "36 late improvements, 6 active full subsolvers"
+  ],
+  [
+   "dominating_set",
+   "anna",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "dominating_set",
+   "games120",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "dominating_set",
+   "queen9_9",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "dominating_set",
+   "myciel6",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "dominating_set",
+   "miles250",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "dominating_set",
+   "queen8_12",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "dominating_set",
+   "myciel7",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "dominating_set",
+   "DSJC125.1",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "dominating_set",
+   "le450_5a",
+   true,
+   "2 late improvements, 4 active full subsolvers"
+  ],
+  [
+   "dominating_set",
+   "school1",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "flexible_jobshop",
+   "vdata_la21",
+   true,
+   "2 late improvements, 4 active full subsolvers"
+  ],
+  [
+   "flexible_jobshop",
+   "rdata_la21",
+   true,
+   "15 late improvements, 5 active full subsolvers"
+  ],
+  [
+   "flexible_jobshop",
+   "mk09",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "flexible_jobshop",
+   "mk07",
+   true,
+   "2 late improvements, 5 active full subsolvers"
+  ],
+  [
+   "flexible_jobshop",
+   "edata_la36",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "flexible_jobshop",
+   "mk10",
+   true,
+   "7 late improvements, 5 active full subsolvers"
+  ],
+  [
+   "flexible_jobshop",
+   "mk06",
+   true,
+   "2 late improvements, 4 active full subsolvers"
+  ],
+  [
+   "gap",
+   "gapa_00",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "gap",
+   "gapa_02",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "gap",
+   "gapa_04",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "gap",
+   "gapa_01",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "gap",
+   "gapa_03",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "gap",
+   "gapa_05",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "gap",
+   "gapb_03",
+   true,
+   "2 late improvements, 4 active full subsolvers"
+  ],
+  [
+   "gap",
+   "gapb_05",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "gap",
+   "gapc_03",
+   true,
+   "1 late improvements, 4 active full subsolvers"
+  ],
+  [
+   "gap",
+   "gapc_05",
+   true,
+   "1 late improvements, 4 active full subsolvers"
+  ],
+  [
+   "gap",
+   "gapd_03",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "golomb_ruler",
+   "order09",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "golomb_ruler",
+   "order10",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "golomb_ruler",
+   "order11",
+   true,
+   "1 late improvements, 5 active full subsolvers"
+  ],
+  [
+   "graph_coloring",
+   "zeroin.i.1",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "graph_coloring",
+   "r125.5",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "graph_coloring",
+   "DSJC125.1",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "graph_coloring",
+   "myciel7",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "graph_coloring",
+   "miles750",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "graph_coloring",
+   "queen8_12",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "graph_coloring",
+   "miles1000",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "graph_coloring",
+   "fpsol2.i.1",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "graph_coloring",
+   "inithx.i.1",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "graph_coloring",
+   "le450_5a",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "graph_coloring",
+   "le450_15a",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "graph_coloring",
+   "DSJC125.9",
+   true,
+   "1 late improvements, 4 active full subsolvers"
+  ],
+  [
+   "graph_coloring",
+   "le450_25a",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "graph_coloring",
+   "school1",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "graph_coloring",
+   "DSJC250.5",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "graph_coloring",
+   "flat300_28_0",
+   false,
+   "only 2 active full subsolvers"
+  ],
+  [
+   "graph_coloring",
+   "qg.order30",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "jobshop",
+   "la26",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "jobshop",
+   "la31",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "jobshop",
+   "la36",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "jobshop",
+   "la40",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "jobshop",
+   "abz7",
+   true,
+   "7 late improvements, 4 active full subsolvers"
+  ],
+  [
+   "jobshop",
+   "abz9",
+   true,
+   "3 late improvements, 4 active full subsolvers"
+  ],
+  [
+   "jobshop",
+   "swv01",
+   true,
+   "18 late improvements, 5 active full subsolvers"
+  ],
+  [
+   "jobshop",
+   "swv11",
+   true,
+   "35 late improvements, 5 active full subsolvers"
+  ],
+  [
+   "jobshop",
+   "ta01",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "jobshop",
+   "yn1",
+   true,
+   "2 late improvements, 3 active full subsolvers"
+  ],
+  [
+   "jobshop",
+   "ta21",
+   true,
+   "26 late improvements, 6 active full subsolvers"
+  ],
+  [
+   "jobshop",
+   "ta41",
+   true,
+   "31 late improvements, 4 active full subsolvers"
+  ],
+  [
+   "max_clique",
+   "sanr200_0.7",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "max_clique",
+   "brock200_1",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "max_clique",
+   "san200_0.7_1",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "max_clique",
+   "p_hat500-1",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "max_clique",
+   "p_hat300-2",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "max_clique",
+   "san200_0.9_1",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "max_clique",
+   "gen200_p0.9_44",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "max_clique",
+   "MANN_a27",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "max_clique",
+   "C250.9",
+   true,
+   "1 late improvements, 3 active full subsolvers"
+  ],
+  [
+   "max_clique",
+   "p_hat300-3",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "max_clique",
+   "brock400_1",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "max_clique",
+   "DSJC500_5",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "max_clique",
+   "keller5",
+   true,
+   "1 late improvements, 4 active full subsolvers"
+  ],
+  [
+   "mknapsack",
+   "mknapcb5_20",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "mknapsack",
+   "mknapcb5_10",
+   true,
+   "2 late improvements, 6 active full subsolvers"
+  ],
+  [
+   "mknapsack",
+   "mknapcb6_10",
+   true,
+   "2 late improvements, 4 active full subsolvers"
+  ],
+  [
+   "mknapsack",
+   "mknapcb6_00",
+   true,
+   "3 late improvements, 6 active full subsolvers"
+  ],
+  [
+   "mknapsack",
+   "mknapcb7_20",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "mknapsack",
+   "mknapcb7_10",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "mknapsack",
+   "mknapcb7_00",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "mknapsack",
+   "mknapcb8_20",
+   true,
+   "2 late improvements, 6 active full subsolvers"
+  ],
+  [
+   "mknapsack",
+   "mknapcb8_10",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "mknapsack",
+   "mknapcb8_00",
+   true,
+   "2 late improvements, 5 active full subsolvers"
+  ],
+  [
+   "mknapsack",
+   "mknapcb9_20",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "mknapsack",
+   "mknapcb9_10",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "mknapsack",
+   "mknapcb9_00",
+   true,
+   "1 late improvements, 6 active full subsolvers"
+  ],
+  [
+   "qap",
+   "tai15a",
+   false,
+   "only 1 active full subsolvers"
+  ],
+  [
+   "qap",
+   "esc16j",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "qap",
+   "esc16i",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "qap",
+   "esc16a",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "qap",
+   "esc16b",
+   false,
+   "only 2 active full subsolvers"
+  ],
+  [
+   "qap",
+   "nug16a",
+   false,
+   "only 0 active full subsolvers"
+  ],
+  [
+   "qap",
+   "nug18",
+   false,
+   "only 1 active full subsolvers"
+  ],
+  [
+   "qap",
+   "els19",
+   false,
+   "only 0 active full subsolvers"
+  ],
+  [
+   "qap",
+   "had20",
+   false,
+   "only 2 active full subsolvers"
+  ],
+  [
+   "qap",
+   "nug20",
+   false,
+   "only 1 active full subsolvers"
+  ],
+  [
+   "qap",
+   "tai20a",
+   false,
+   "only 0 active full subsolvers"
+  ],
+  [
+   "qap",
+   "kra30a",
+   false,
+   "no search"
+  ],
+  [
+   "qap",
+   "ste36a",
+   false,
+   "no search"
+  ],
+  [
+   "qap",
+   "wil50",
+   false,
+   "no search"
+  ],
+  [
+   "rcpsp",
+   "j6021_5",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "rcpsp",
+   "j6037_1",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "rcpsp",
+   "j6013_1",
+   true,
+   "1 late improvements, 4 active full subsolvers"
+  ],
+  [
+   "rcpsp",
+   "j6029_3",
+   true,
+   "3 late improvements, 4 active full subsolvers"
+  ],
+  [
+   "rcpsp",
+   "j12025_5",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "rcpsp",
+   "j1209_1",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "rcpsp",
+   "j12060_1",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "rcpsp",
+   "j1201_1",
+   true,
+   "1 late improvements, 5 active full subsolvers"
+  ],
+  [
+   "rcpsp",
+   "j12041_1",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "rcpsp",
+   "j12033_3",
+   true,
+   "2 late improvements, 5 active full subsolvers"
+  ],
+  [
+   "rcpsp",
+   "j12017_1",
+   true,
+   "1 late improvements, 3 active full subsolvers"
+  ],
+  [
+   "set_covering",
+   "scpc1",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "set_covering",
+   "scpc2",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "set_covering",
+   "scpd1",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "set_covering",
+   "scpd2",
+   true,
+   "1 late improvements, 3 active full subsolvers"
+  ],
+  [
+   "set_covering",
+   "scpclr12",
+   true,
+   "1 late improvements, 3 active full subsolvers"
+  ],
+  [
+   "set_covering",
+   "scpnre1",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "set_covering",
+   "scpnre2",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "set_covering",
+   "scpcyc10",
+   true,
+   "41 late improvements, 3 active full subsolvers"
+  ],
+  [
+   "set_covering",
+   "scpnrf1",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "set_covering",
+   "scpnrf2",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "set_covering",
+   "scpclr13",
+   true,
+   "2 late improvements, 3 active full subsolvers"
+  ],
+  [
+   "set_covering",
+   "scpnrg1",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "set_covering",
+   "scpnrg2",
+   true,
+   "3 late improvements, 3 active full subsolvers"
+  ],
+  [
+   "set_covering",
+   "scpcyc11",
+   true,
+   "89 late improvements, 4 active full subsolvers"
+  ],
+  [
+   "set_covering",
+   "scpnrh1",
+   true,
+   "1 late improvements, 4 active full subsolvers"
+  ],
+  [
+   "set_covering",
+   "scpnrh2",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "strip_packing",
+   "BENG06",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "strip_packing",
+   "N4a",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "strip_packing",
+   "c5-p1",
+   true,
+   "1 late improvements, 3 active full subsolvers"
+  ],
+  [
+   "strip_packing",
+   "N5a",
+   true,
+   "5 late improvements, 3 active full subsolvers"
+  ],
+  [
+   "strip_packing",
+   "BENG05",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "strip_packing",
+   "c6-p1",
+   true,
+   "7 late improvements, 3 active full subsolvers"
+  ],
+  [
+   "strip_packing",
+   "BENG10",
+   false,
+   "only 1 active full subsolvers"
+  ],
+  [
+   "strip_packing",
+   "c7-p1",
+   false,
+   "no solution"
+  ],
+  [
+   "strip_packing",
+   "N7a",
+   false,
+   "no solution"
+  ],
+  [
+   "tsp",
+   "st70",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "tsp",
+   "eil76",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "tsp",
+   "pr76",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "tsp",
+   "gr96",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "tsp",
+   "rat99",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "tsp",
+   "kro124p",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "tsp",
+   "kroA100",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "tsp",
+   "lin105",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "tsp",
+   "pr107",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "tsp",
+   "gr120",
+   true,
+   "9 late improvements, 5 active full subsolvers"
+  ],
+  [
+   "tsp",
+   "bier127",
+   false,
+   "no improvement after 3 s"
+  ],
+  [
+   "tsp",
+   "pr144",
+   true,
+   "4 late improvements, 6 active full subsolvers"
+  ],
+  [
+   "tsp",
+   "ch150",
+   true,
+   "14 late improvements, 6 active full subsolvers"
+  ],
+  [
+   "tsp",
+   "si175",
+   true,
+   "9 late improvements, 4 active full subsolvers"
+  ],
+  [
+   "tsp",
+   "brg180",
+   true,
+   "21 late improvements, 5 active full subsolvers"
+  ],
+  [
+   "tsp",
+   "rat195",
+   true,
+   "11 late improvements, 4 active full subsolvers"
+  ],
+  [
+   "tsp",
+   "d198",
+   true,
+   "10 late improvements, 3 active full subsolvers"
+  ],
+  [
+   "tsp",
+   "kroA200",
+   true,
+   "15 late improvements, 5 active full subsolvers"
+  ],
+  [
+   "tsp",
+   "gil262",
+   true,
+   "6 late improvements, 4 active full subsolvers"
+  ],
+  [
+   "tsp",
+   "a280",
+   true,
+   "7 late improvements, 4 active full subsolvers"
+  ],
+  [
+   "tsp",
+   "lin318",
+   true,
+   "7 late improvements, 4 active full subsolvers"
+  ]
+ ],
+ "selected": [
+  [
+   "cvrp",
+   "A-n39-k5"
+  ],
+  [
+   "cvrp",
+   "B-n41-k6"
+  ],
+  [
+   "cvrp",
+   "A-n45-k6"
+  ],
+  [
+   "cvrp",
+   "P-n50-k7"
+  ],
+  [
+   "dominating_set",
+   "le450_5a"
+  ],
+  [
+   "flexible_jobshop",
+   "vdata_la21"
+  ],
+  [
+   "flexible_jobshop",
+   "rdata_la21"
+  ],
+  [
+   "flexible_jobshop",
+   "mk07"
+  ],
+  [
+   "flexible_jobshop",
+   "mk10"
+  ],
+  [
+   "gap",
+   "gapb_03"
+  ],
+  [
+   "gap",
+   "gapc_03"
+  ],
+  [
+   "gap",
+   "gapc_05"
+  ],
+  [
+   "golomb_ruler",
+   "order11"
+  ],
+  [
+   "graph_coloring",
+   "DSJC125.9"
+  ],
+  [
+   "jobshop",
+   "abz7"
+  ],
+  [
+   "jobshop",
+   "abz9"
+  ],
+  [
+   "jobshop",
+   "swv01"
+  ],
+  [
+   "jobshop",
+   "swv11"
+  ],
+  [
+   "max_clique",
+   "C250.9"
+  ],
+  [
+   "max_clique",
+   "keller5"
+  ],
+  [
+   "mknapsack",
+   "mknapcb5_10"
+  ],
+  [
+   "mknapsack",
+   "mknapcb6_10"
+  ],
+  [
+   "mknapsack",
+   "mknapcb6_00"
+  ],
+  [
+   "mknapsack",
+   "mknapcb8_20"
+  ],
+  [
+   "rcpsp",
+   "j6013_1"
+  ],
+  [
+   "rcpsp",
+   "j6029_3"
+  ],
+  [
+   "rcpsp",
+   "j1201_1"
+  ],
+  [
+   "rcpsp",
+   "j12033_3"
+  ],
+  [
+   "set_covering",
+   "scpd2"
+  ],
+  [
+   "set_covering",
+   "scpclr12"
+  ],
+  [
+   "set_covering",
+   "scpcyc10"
+  ],
+  [
+   "set_covering",
+   "scpclr13"
+  ],
+  [
+   "strip_packing",
+   "c5-p1"
+  ],
+  [
+   "strip_packing",
+   "N5a"
+  ],
+  [
+   "strip_packing",
+   "c6-p1"
+  ],
+  [
+   "tsp",
+   "gr120"
+  ],
+  [
+   "tsp",
+   "pr144"
+  ],
+  [
+   "tsp",
+   "ch150"
+  ],
+  [
+   "tsp",
+   "si175"
+  ]
+ ]
+}
